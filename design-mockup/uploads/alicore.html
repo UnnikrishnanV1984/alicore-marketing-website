@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alicore — Architectural Products, Engineered to Elevate | GFRC & FRP Manufacturer</title>
+<meta name="description" content="Alicore manufactures premium GFRC and FRP architectural products — façade panels, jalis, cornices, columns and custom elements — for architects, developers and contractors.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --charcoal:#171614;
+    --charcoal-soft:#211f1c;
+    --white:#faf9f6;
+    --paper:#f2f0ea;
+    --warm-grey:#8a8377;
+    --concrete:#c7c2b8;
+    --concrete-line: rgba(23,22,20,0.12);
+    --metal:#a68b5b;
+    --metal-soft: rgba(166,139,91,0.14);
+    --text-dim: rgba(250,249,246,0.62);
+    --text-dim-2: rgba(23,22,20,0.6);
+    --ease: cubic-bezier(.16,.8,.24,1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto;} *{animation-duration:0.01ms !important; transition-duration:0.01ms !important;} }
+  body{
+    background:var(--white);
+    color:var(--charcoal);
+    font-family:'Inter',sans-serif;
+    font-weight:400;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  a{color:inherit; text-decoration:none;}
+  img{max-width:100%; display:block;}
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--metal);
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .eyebrow::before{
+    content:'';
+    width:22px; height:1px;
+    background:var(--metal);
+    display:inline-block;
+  }
+  h1,h2,h3,h4{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    letter-spacing:-0.01em;
+    line-height:1.08;
+  }
+  .wrap{
+    max-width:1240px;
+    margin:0 auto;
+    padding:0 40px;
+  }
+  section{ position:relative; }
+  button{ font-family:inherit; cursor:pointer; border:none; background:none; }
+
+  /* ---------- texture helpers (stand-in for photography) ---------- */
+  .tex-concrete{
+    background-color:#2a2824;
+    background-image:
+      radial-gradient(circle at 15% 25%, rgba(255,255,255,0.035) 0, transparent 40%),
+      radial-gradient(circle at 78% 60%, rgba(255,255,255,0.03) 0, transparent 45%),
+      repeating-linear-gradient(115deg, rgba(255,255,255,0.018) 0px, rgba(255,255,255,0.018) 1px, transparent 1px, transparent 6px);
+  }
+  .tex-frp{
+    background-color:#3a352c;
+    background-image:
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.05) 0px, transparent 2px, transparent 14px),
+      radial-gradient(circle at 30% 70%, rgba(166,139,91,0.25) 0, transparent 55%);
+  }
+  .tex-panel{
+    background: linear-gradient(160deg, #2c2a26 0%, #1a1917 70%);
+    position:relative;
+  }
+  .tex-panel::after{
+    content:'';
+    position:absolute; inset:0;
+    background-image: repeating-linear-gradient(0deg, transparent 0 38px, rgba(255,255,255,0.035) 38px 39px), repeating-linear-gradient(90deg, transparent 0 38px, rgba(255,255,255,0.035) 38px 39px);
+  }
+
+  /* ---------- NAV ---------- */
+  header{
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    background:rgba(250,249,246,0.86);
+    backdrop-filter:blur(14px);
+    border-bottom:1px solid transparent;
+    transition:border-color .3s var(--ease), background .3s var(--ease);
+  }
+  header.scrolled{ border-bottom-color:var(--concrete-line); }
+  .nav-inner{
+    max-width:1240px; margin:0 auto; padding:20px 40px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .logo{
+    font-family:'Fraunces', serif;
+    font-size:21px;
+    letter-spacing:0.02em;
+    font-weight:500;
+  }
+  .logo span{ color:var(--metal); }
+  nav ul{
+    list-style:none;
+    display:flex;
+    gap:34px;
+    font-size:13.5px;
+    letter-spacing:0.01em;
+  }
+  nav ul li a{
+    position:relative;
+    padding-bottom:4px;
+    color:var(--charcoal);
+    opacity:0.78;
+    transition:opacity .2s;
+  }
+  nav ul li a:hover{ opacity:1; }
+  .nav-right{ display:flex; align-items:center; gap:26px; }
+  .btn{
+    display:inline-flex; align-items:center; gap:10px;
+    padding:12px 24px;
+    font-size:13px; letter-spacing:0.03em;
+    border:1px solid var(--charcoal);
+    transition:all .25s var(--ease);
+  }
+  .btn-primary{ background:var(--charcoal); color:var(--white); }
+  .btn-primary:hover{ background:var(--metal); border-color:var(--metal); }
+  .btn-outline{ border-color:var(--concrete-line); color:var(--charcoal); }
+  .btn-outline:hover{ border-color:var(--charcoal); }
+  .btn-light{ border-color:rgba(250,249,246,0.35); color:var(--white); }
+  .btn-light:hover{ border-color:var(--white); background:rgba(250,249,246,0.06); }
+  .nav-cta{ padding:11px 22px; font-size:12.5px; }
+  .hamburger{ display:none; }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    min-height:100vh;
+    display:flex; align-items:flex-end;
+    padding-top:140px;
+    background:var(--charcoal);
+    color:var(--white);
+    position:relative;
+    overflow:hidden;
+  }
+  .hero-bg{
+    position:absolute; inset:0;
+  }
+  .hero-bg .panel-grid{
+    position:absolute; inset:0;
+    background-image:
+      linear-gradient(rgba(250,249,246,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(250,249,246,0.05) 1px, transparent 1px);
+    background-size:64px 64px;
+    mask-image: linear-gradient(to bottom, rgba(0,0,0,0.9), rgba(0,0,0,0.1) 85%);
+  }
+  .hero-bg .facade-shape{
+    position:absolute; right:-6%; top:8%;
+    width:56%; height:84%;
+    background: linear-gradient(150deg, #2b2822 0%, #171614 65%);
+    clip-path: polygon(18% 0%, 100% 0%, 100% 100%, 0% 100%);
+    opacity:0.9;
+  }
+  .hero-bg .facade-lines{
+    position:absolute; right:-6%; top:8%;
+    width:56%; height:84%;
+    clip-path: polygon(18% 0%, 100% 0%, 100% 100%, 0% 100%);
+    background-image: repeating-linear-gradient(100deg, transparent 0 46px, rgba(166,139,91,0.16) 46px 48px);
+  }
+  .hero-content{
+    position:relative; z-index:2;
+    max-width:1240px; margin:0 auto; width:100%;
+    padding:0 40px 96px;
+  }
+  .hero h1{
+    font-size:clamp(40px, 5.6vw, 78px);
+    max-width:15ch;
+    font-weight:400;
+  }
+  .hero h1 em{ font-style:italic; color:var(--metal); }
+  .hero-sub{
+    max-width:44ch;
+    margin-top:26px;
+    font-size:17px;
+    color:var(--text-dim);
+    font-weight:300;
+  }
+  .hero-actions{
+    display:flex; gap:16px; margin-top:44px; flex-wrap:wrap;
+  }
+  .hero-meta{
+    position:absolute; bottom:96px; right:40px; z-index:2;
+    display:none;
+    flex-direction:column; align-items:flex-end; gap:8px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px; letter-spacing:0.1em; text-transform:uppercase;
+    color:var(--text-dim);
+  }
+  @media(min-width:900px){ .hero-meta{ display:flex; } }
+
+  /* ---------- generic section spacing ---------- */
+  .section{ padding:130px 0; }
+  .section-tight{ padding:90px 0; }
+  .section-head{ max-width:640px; margin-bottom:56px; }
+  .section-head h2{ font-size:clamp(28px,3.4vw,44px); margin-top:16px; font-weight:400; }
+  .section-head p{ margin-top:18px; color:var(--text-dim-2); font-size:15.5px; max-width:56ch; }
+  .dark{ background:var(--charcoal); color:var(--white); }
+  .dark .section-head p{ color:var(--text-dim); }
+  .paper{ background:var(--paper); }
+
+  /* ---------- INTRO ---------- */
+  .intro-grid{
+    display:grid; grid-template-columns:0.9fr 1.1fr; gap:80px; align-items:start;
+  }
+  .intro-grid p{ font-size:16px; color:var(--text-dim-2); margin-bottom:18px; max-width:52ch; }
+  .intro-stats{
+    display:grid; grid-template-columns:1fr 1fr; gap:1px;
+    background:var(--concrete-line);
+    border:1px solid var(--concrete-line);
+    margin-top:36px;
+  }
+  .intro-stats div{ background:var(--white); padding:22px 24px; }
+  .intro-stats .k{ font-family:'Fraunces', serif; font-size:15px; color:var(--metal); }
+  .intro-stats .v{ font-size:13px; color:var(--text-dim-2); margin-top:6px; }
+
+  /* ---------- MATERIALS ---------- */
+  .materials{ display:grid; grid-template-columns:1fr 1fr; gap:2px; background:var(--concrete-line); }
+  .material-card{
+    background:var(--white);
+    padding:56px 48px;
+    position:relative;
+    overflow:hidden;
+  }
+  .material-swatch{
+    width:100%; height:190px;
+    margin-bottom:34px;
+    position:relative;
+    overflow:hidden;
+  }
+  .material-card h3{ font-size:30px; font-weight:400; }
+  .material-card p.desc{ margin-top:14px; color:var(--text-dim-2); font-size:15px; max-width:46ch; }
+  .tag-list{ display:flex; flex-wrap:wrap; gap:9px; margin-top:26px; }
+  .tag-list span{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px; letter-spacing:0.03em;
+    padding:7px 12px;
+    border:1px solid var(--concrete-line);
+    color:var(--text-dim-2);
+  }
+  .material-card .btn{ margin-top:32px; }
+
+  /* ---------- PRODUCT GRID ---------- */
+  .product-grid{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:1px;
+    background:var(--concrete-line); border:1px solid var(--concrete-line);
+  }
+  .product-card{
+    background:var(--white); padding:0;
+    display:flex; flex-direction:column;
+  }
+  .product-thumb{ height:190px; position:relative; overflow:hidden; }
+  .product-thumb .idx{
+    position:absolute; top:14px; left:16px;
+    font-family:'IBM Plex Mono', monospace; font-size:11px; color:rgba(250,249,246,0.7);
+    letter-spacing:0.08em;
+  }
+  .product-body{ padding:26px 28px 30px; flex:1; display:flex; flex-direction:column; }
+  .product-body .cat{
+    font-family:'IBM Plex Mono', monospace; font-size:10.5px; letter-spacing:0.1em;
+    text-transform:uppercase; color:var(--metal); margin-bottom:10px;
+  }
+  .product-body h4{ font-size:19px; font-weight:400; }
+  .product-body p{ font-size:13.5px; color:var(--text-dim-2); margin-top:10px; flex:1; }
+  .product-body .link{
+    margin-top:20px; font-size:12.5px; letter-spacing:0.04em;
+    display:inline-flex; align-items:center; gap:8px; color:var(--charcoal);
+    border-top:1px solid var(--concrete-line); padding-top:16px;
+  }
+  .product-body .link:hover{ color:var(--metal); }
+
+  /* ---------- CUSTOM MANUFACTURING ---------- */
+  .custom-mfg{
+    display:grid; grid-template-columns:1fr 1fr; min-height:560px;
+  }
+  .custom-mfg .side{ padding:100px 64px; display:flex; flex-direction:column; justify-content:center; }
+  .custom-mfg h2{ font-size:clamp(28px,3.2vw,42px); font-weight:400; margin-top:16px; }
+  .custom-mfg p{ margin-top:20px; color:var(--text-dim); font-size:15.5px; max-width:44ch; }
+  .input-chips{ display:flex; flex-wrap:wrap; gap:10px; margin-top:30px; }
+  .input-chips span{
+    font-size:12.5px; padding:9px 15px;
+    border:1px solid rgba(250,249,246,0.22); color:var(--text-dim);
+    font-family:'IBM Plex Mono', monospace;
+  }
+  .custom-mfg .btn{ margin-top:36px; width:fit-content; }
+  .custom-visual{ position:relative; overflow:hidden; }
+  .blueprint{
+    position:absolute; inset:0;
+    background:
+      linear-gradient(rgba(250,249,246,0.09) 1px, transparent 1px) 0 0/40px 40px,
+      linear-gradient(90deg, rgba(250,249,246,0.09) 1px, transparent 1px) 0 0/40px 40px,
+      linear-gradient(160deg,#221f1a,#171614);
+  }
+  .blueprint svg{ position:absolute; inset:0; width:100%; height:100%; }
+
+  /* ---------- APPLICATIONS ---------- */
+  .app-grid{
+    display:grid; grid-template-columns:repeat(4, 1fr); gap:1px;
+    background:var(--concrete-line); border:1px solid var(--concrete-line);
+  }
+  .app-card{
+    background:var(--charcoal); height:230px; position:relative; overflow:hidden;
+    display:flex; align-items:flex-end; padding:22px;
+  }
+  .app-card span{
+    color:var(--white); font-family:'Fraunces', serif; font-size:17px; font-weight:400;
+    position:relative; z-index:2;
+  }
+  .app-card::before{
+    content:''; position:absolute; inset:0; background:linear-gradient(0deg, rgba(0,0,0,0.6), transparent 60%);
+    z-index:1;
+  }
+
+  /* ---------- PROCESS ---------- */
+  .process-list{ margin-top:10px; }
+  .process-row{
+    display:grid; grid-template-columns:70px 1fr 1.4fr; gap:32px;
+    padding:30px 0; border-top:1px solid var(--concrete-line);
+    align-items:start;
+  }
+  .process-row:last-child{ border-bottom:1px solid var(--concrete-line); }
+  .process-row .num{ font-family:'IBM Plex Mono', monospace; color:var(--metal); font-size:14px; }
+  .process-row h4{ font-size:19px; font-weight:400; }
+  .process-row p{ font-size:14.5px; color:var(--text-dim-2); }
+
+  /* ---------- PROJECTS ---------- */
+  .filters{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:40px; }
+  .filters button{
+    font-size:12.5px; letter-spacing:0.04em; padding:9px 18px;
+    border:1px solid var(--concrete-line); color:var(--text-dim-2);
+    font-family:'IBM Plex Mono', monospace;
+    transition:all .2s;
+  }
+  .filters button.active, .filters button:hover{ border-color:var(--charcoal); color:var(--charcoal); }
+  .dark .filters button{ border-color:rgba(250,249,246,0.2); color:var(--text-dim); }
+  .dark .filters button.active, .dark .filters button:hover{ border-color:var(--white); color:var(--white); }
+  .projects-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+  .project-card{ position:relative; overflow:hidden; height:340px; }
+  .project-card .overlay{
+    position:absolute; inset:0; background:linear-gradient(0deg, rgba(0,0,0,0.78), transparent 55%);
+    display:flex; flex-direction:column; justify-content:flex-end; padding:26px;
+  }
+  .project-card .tag{
+    font-family:'IBM Plex Mono', monospace; font-size:10.5px; color:var(--metal);
+    letter-spacing:0.1em; text-transform:uppercase; margin-bottom:8px;
+  }
+  .project-card h4{ color:var(--white); font-size:20px; font-weight:400; }
+  .project-card .loc{ color:var(--text-dim); font-size:13px; margin-top:6px; }
+
+  /* ---------- WHY ---------- */
+  .why-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--concrete-line); border:1px solid var(--concrete-line); }
+  .why-card{ background:var(--white); padding:40px 36px; }
+  .why-card .num{ font-family:'IBM Plex Mono',monospace; color:var(--metal); font-size:12px; }
+  .why-card h4{ font-size:19px; font-weight:400; margin-top:18px; }
+  .why-card p{ font-size:14px; color:var(--text-dim-2); margin-top:12px; }
+
+  /* ---------- ARCHITECTS / DEVELOPERS ---------- */
+  .arch-section{ display:grid; grid-template-columns:1.1fr 0.9fr; gap:60px; align-items:center; }
+  .arch-section h2{ font-size:clamp(28px,3.2vw,42px); font-weight:400; margin-top:16px; }
+  .arch-section p{ margin-top:20px; color:var(--text-dim-2); font-size:15.5px; max-width:48ch; }
+  .role-list{ display:grid; grid-template-columns:1fr 1fr; gap:14px 30px; margin-top:30px; }
+  .role-list div{ font-size:14px; padding:12px 0; border-bottom:1px solid var(--concrete-line); color:var(--text-dim-2); }
+
+  /* ---------- FINAL CTA ---------- */
+  .final-cta{ background:var(--charcoal); color:var(--white); padding:140px 0; text-align:center; }
+  .final-cta h2{ font-size:clamp(34px,5vw,64px); font-weight:400; max-width:16ch; margin:0 auto; }
+  .final-cta p{ color:var(--text-dim); margin:22px auto 0; max-width:50ch; font-size:16px; }
+  .final-cta .hero-actions{ justify-content:center; margin-top:44px; }
+
+  /* ---------- FOOTER ---------- */
+  footer{ background:#111009; color:var(--text-dim); padding:80px 0 30px; }
+  .footer-grid{ display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:40px; padding-bottom:60px; border-bottom:1px solid rgba(250,249,246,0.1); }
+  .footer-grid h5{
+    font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:0.12em;
+    text-transform:uppercase; color:var(--metal); margin-bottom:18px;
+  }
+  .footer-grid ul{ list-style:none; display:flex; flex-direction:column; gap:11px; font-size:14px; }
+  .footer-grid ul li a:hover{ color:var(--white); }
+  .footer-logo{ font-family:'Fraunces', serif; font-size:22px; color:var(--white); }
+  .footer-grid p{ font-size:14px; margin-top:16px; max-width:32ch; }
+  .footer-bottom{ display:flex; justify-content:space-between; padding-top:26px; font-size:12.5px; flex-wrap:wrap; gap:12px; }
+
+  /* ---------- WHATSAPP FAB ---------- */
+  .wa-fab{
+    position:fixed; bottom:28px; right:28px; z-index:200;
+    width:58px; height:58px; border-radius:50%;
+    background:#1f2a20; border:1px solid rgba(250,249,246,0.15);
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 8px 24px rgba(0,0,0,0.35);
+    transition:transform .2s var(--ease);
+  }
+  .wa-fab:hover{ transform:translateY(-3px); }
+
+  /* ---------- reveal on scroll ---------- */
+  .reveal{ opacity:0; transform:translateY(22px); transition:opacity .7s var(--ease), transform .7s var(--ease); }
+  .reveal.in{ opacity:1; transform:translateY(0); }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media(max-width:1080px){
+    .product-grid{ grid-template-columns:repeat(2,1fr); }
+    .app-grid{ grid-template-columns:repeat(2,1fr); }
+    .why-grid{ grid-template-columns:1fr 1fr; }
+    .projects-grid{ grid-template-columns:1fr 1fr; }
+    .intro-grid{ grid-template-columns:1fr; gap:36px; }
+    .arch-section{ grid-template-columns:1fr; }
+  }
+  @media(max-width:760px){
+    .wrap{ padding:0 22px; }
+    nav ul{ display:none; }
+    .nav-cta{ display:none; }
+    .hamburger{ display:block; font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.08em; border:1px solid var(--concrete-line); padding:9px 14px; }
+    .hero-content{ padding:0 22px 70px; }
+    .hero h1{ max-width:100%; }
+    .materials{ grid-template-columns:1fr; }
+    .custom-mfg{ grid-template-columns:1fr; }
+    .custom-visual{ height:280px; order:-1; }
+    .custom-mfg .side{ padding:56px 26px; }
+    .product-grid{ grid-template-columns:1fr; }
+    .app-grid{ grid-template-columns:1fr 1fr; }
+    .why-grid{ grid-template-columns:1fr; }
+    .projects-grid{ grid-template-columns:1fr; }
+    .process-row{ grid-template-columns:44px 1fr; }
+    .process-row p{ grid-column:1 / -1; padding-left:0; }
+    .footer-grid{ grid-template-columns:1fr 1fr; }
+    .section{ padding:80px 0; }
+  }
+</style>
+</head>
+<body>
+
+<header id="siteHeader">
+  <div class="nav-inner">
+    <a href="#top" class="logo">ALI<span>CORE</span></a>
+    <nav>
+      <ul>
+        <li><a href="#about">About</a></li>
+        <li><a href="#products">Products</a></li>
+        <li><a href="#applications">Applications</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#manufacturing">Manufacturing</a></li>
+        <li><a href="#custom">Custom Solutions</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+    <div class="nav-right">
+      <a href="#contact" class="btn btn-primary nav-cta">Request a Quote</a>
+      <button class="hamburger">Menu</button>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="hero-bg">
+    <div class="facade-shape"></div>
+    <div class="facade-lines"></div>
+    <div class="panel-grid"></div>
+  </div>
+  <div class="hero-meta">
+    <span>GFRC — GLASS FIBER REINFORCED CONCRETE</span>
+    <span>FRP — FIBER REINFORCED PLASTIC</span>
+  </div>
+  <div class="hero-content">
+    <div class="eyebrow">ARCHITECTURAL PRODUCTS MANUFACTURER</div>
+    <h1>Architectural Products.<br>Engineered to <em>Elevate</em>.</h1>
+    <p class="hero-sub">Premium GFRC and FRP architectural solutions for façades, interiors, landscapes and custom architectural applications.</p>
+    <div class="hero-actions">
+      <a href="#products" class="btn btn-primary">Explore Products</a>
+      <a href="#contact" class="btn btn-light">Request a Quote</a>
+    </div>
+  </div>
+</section>
+
+<!-- INTRODUCTION -->
+<section class="section" id="about">
+  <div class="wrap">
+    <div class="intro-grid">
+      <div class="reveal">
+        <div class="eyebrow">ABOUT ALICORE</div>
+        <h2>Building the Elements Behind Exceptional Architecture</h2>
+      </div>
+      <div class="reveal">
+        <p>Alicore manufactures GFRC and FRP architectural products, engineered with a focus on design flexibility, dimensional precision and material durability. Every product is developed to translate an architectural intent into a component that can be consistently produced.</p>
+        <p>We work alongside architects, developers, builders, contractors and interior designers — supporting projects from early concept discussions through to manufactured, site-ready elements.</p>
+        <a href="#manufacturing" class="btn btn-outline">Discover Alicore</a>
+        <div class="intro-stats">
+          <div><div class="k">Design Flexibility</div><div class="v">Custom forms &amp; profiles</div></div>
+          <div><div class="k">Material Expertise</div><div class="v">GFRC &amp; FRP systems</div></div>
+          <div><div class="k">Project Support</div><div class="v">Concept to installation</div></div>
+          <div><div class="k">Manufacturing</div><div class="v">Purpose-built production</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CORE MATERIALS -->
+<section class="section-tight paper">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">CORE MATERIALS</div>
+      <h2>Two Materials. Engineered for Architecture.</h2>
+    </div>
+  </div>
+  <div class="materials">
+    <div class="material-card reveal">
+      <div class="material-swatch tex-concrete"></div>
+      <h3>GFRC</h3>
+      <p class="desc">Glass Fiber Reinforced Concrete solutions engineered for architectural façades, decorative elements, panels and custom applications.</p>
+      <div class="tag-list">
+        <span>Façade Panels</span><span>Jalis</span><span>Cornices</span><span>Columns</span><span>Mouldings</span><span>Architectural Elements</span><span>Custom Components</span>
+      </div>
+      <a href="#products" class="btn btn-outline">Explore GFRC</a>
+    </div>
+    <div class="material-card reveal">
+      <div class="material-swatch tex-frp"></div>
+      <h3>FRP</h3>
+      <p class="desc">Lightweight, versatile and durable FRP solutions for architectural, decorative and custom applications.</p>
+      <div class="tag-list">
+        <span>Architectural Elements</span><span>Decorative Components</span><span>FRP Sheets</span><span>Rain Drop Elements</span><span>Custom FRP Products</span>
+      </div>
+      <a href="#products" class="btn btn-outline">Explore FRP</a>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCTS -->
+<section class="section" id="products">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">PRODUCT RANGE</div>
+      <h2>Architectural Products</h2>
+      <p>Contact us for dimensions, specifications and project requirements on any product below.</p>
+    </div>
+  </div>
+  <div class="product-grid" id="productGrid"></div>
+</section>
+
+<!-- CUSTOM MANUFACTURING -->
+<section id="custom">
+  <div class="custom-mfg">
+    <div class="side tex-panel" style="background:none;">
+    </div>
+  </div>
+</section>
+
+<!-- APPLICATIONS -->
+<section class="section dark" id="applications">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">APPLICATIONS</div>
+      <h2>Designed for Diverse Architectural Applications</h2>
+    </div>
+  </div>
+  <div class="app-grid" id="appGrid"></div>
+</section>
+
+<!-- PROCESS -->
+<section class="section" id="manufacturing">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">OUR PROCESS</div>
+      <h2>From Concept to Completion</h2>
+      <p>A structured manufacturing sequence, coordinated from initial drawings through to on-site installation support.</p>
+    </div>
+    <div class="process-list" id="processList"></div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section class="section dark" id="projects">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">SELECTED PROJECTS</div>
+      <h2>A Portfolio in Progress</h2>
+      <p>Project details are added as work is completed and approved for publication. [PROJECT NAME] / [CLIENT NAME] placeholders indicate entries pending confirmation.</p>
+    </div>
+    <div class="filters" id="filters"></div>
+    <div class="projects-grid" id="projectsGrid"></div>
+  </div>
+</section>
+
+<!-- WHY ALICORE -->
+<section class="section paper">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">WHY ALICORE</div>
+      <h2>Why Choose Alicore?</h2>
+    </div>
+    <div class="why-grid" id="whyGrid"></div>
+  </div>
+</section>
+
+<!-- ARCHITECTS & DEVELOPERS -->
+<section class="section">
+  <div class="wrap arch-section">
+    <div class="reveal">
+      <div class="eyebrow">FOR ARCHITECTS &amp; DEVELOPERS</div>
+      <h2>Your Architectural Vision. Our Manufacturing Expertise.</h2>
+      <p>Alicore collaborates directly with project teams to move an architectural idea from drawing to manufactured product — coordinating specification, production and delivery.</p>
+      <div class="role-list">
+        <div>Architects</div><div>Developers</div>
+        <div>Builders</div><div>Contractors</div>
+        <div>Interior Designers</div><div>Landscape Designers</div>
+        <div>Project Consultants</div><div>Institutional Teams</div>
+      </div>
+      <a href="#contact" class="btn btn-primary" style="margin-top:32px;">Start a Project</a>
+    </div>
+    <div class="reveal tex-panel" style="height:420px;"></div>
+  </div>
+</section>
+
+<!-- CUSTOM SOLUTIONS CTA STRIP -->
+<section class="section-tight dark">
+  <div class="wrap">
+    <div class="section-head reveal" style="max-width:720px;">
+      <div class="eyebrow">CUSTOM SOLUTIONS</div>
+      <h2>Your Design. Your Dimensions. Our Manufacturing.</h2>
+      <p>Send us architectural drawings, CAD files, 3D models, sketches, reference photographs or approximate dimensions, and our team will assess how the design can be manufactured in GFRC or FRP.</p>
+    </div>
+    <a href="#contact" class="btn btn-light">Submit Project Enquiry</a>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final-cta" id="quote-cta">
+  <div class="wrap">
+    <h2>Let's Build Something Remarkable.</h2>
+    <p>Have an architectural requirement, drawing or custom design? Talk to our team about your project.</p>
+    <div class="hero-actions">
+      <a href="#contact" class="btn btn-primary" style="background:var(--metal); border-color:var(--metal);">Request a Quote</a>
+      <a href="#" class="btn btn-light">WhatsApp Us</a>
+      <a href="#contact" class="btn btn-light">Contact Alicore</a>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT / FOOTER -->
+<footer id="contact">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">ALI<span style="color:var(--metal);">CORE</span></div>
+        <p>Architectural ideas transformed into high-quality manufactured GFRC and FRP elements.</p>
+      </div>
+      <div>
+        <h5>Contact</h5>
+        <ul>
+          <li>[COMPANY ADDRESS]</li>
+          <li>[FACTORY LOCATION]</li>
+          <li>[PHONE]</li>
+          <li>[EMAIL]</li>
+        </ul>
+      </div>
+      <div>
+        <h5>Navigate</h5>
+        <ul>
+          <li><a href="#about">About</a></li>
+          <li><a href="#products">Products</a></li>
+          <li><a href="#applications">Applications</a></li>
+          <li><a href="#projects">Projects</a></li>
+          <li><a href="#manufacturing">Manufacturing</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Connect</h5>
+        <ul>
+          <li><a href="#">[WHATSAPP NUMBER]</a></li>
+          <li><a href="#">Instagram — [HANDLE]</a></li>
+          <li><a href="#">Facebook — [PAGE]</a></li>
+          <li><a href="#">Google Business Profile</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Alicore. All rights reserved.</span>
+      <span>Architectural Products · GFRC · FRP · Custom Manufacturing</span>
+    </div>
+  </div>
+</footer>
+
+<a class="wa-fab" href="#" aria-label="WhatsApp Alicore" title="Hello Alicore, I would like to discuss an architectural products requirement.">
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M17.6 6.32A8.86 8.86 0 0 0 3.05 16.94L2 21l4.18-1.03A8.86 8.86 0 0 0 17.6 6.32ZM12 19.53a7.4 7.4 0 0 1-3.77-1.03l-.27-.16-2.8.69.7-2.74-.18-.28A7.42 7.42 0 1 1 12 19.53Zm4.06-5.53c-.22-.11-1.3-.64-1.5-.72s-.35-.11-.5.11-.57.72-.7.87-.26.17-.48.06a6.06 6.06 0 0 1-1.78-1.1 6.68 6.68 0 0 1-1.24-1.54c-.13-.22 0-.34.1-.45.1-.1.22-.26.33-.39a1.5 1.5 0 0 0 .22-.37.4.4 0 0 0 0-.39c-.06-.11-.5-1.2-.68-1.65s-.36-.38-.5-.39h-.43a.82.82 0 0 0-.6.28 2.5 2.5 0 0 0-.78 1.86 4.34 4.34 0 0 0 .91 2.3 9.94 9.94 0 0 0 3.8 3.36c.53.23.94.36 1.26.46a3 3 0 0 0 1.4.09 2.29 2.29 0 0 0 1.5-1.06 1.86 1.86 0 0 0 .13-1.06c-.05-.09-.2-.15-.42-.26Z" fill="#e9e5db"/></svg>
+</a>
+
+<script>
+  // ---- data: products ----
+  const products = [
+    ["GFRC","GFRC Façade Panels","Large-format panels for building envelopes, engineered for repeatable installation.", "concrete"],
+    ["GFRC","GFRC Jalis","Perforated screen elements combining airflow, shading and architectural pattern.", "concrete"],
+    ["GFRC","GFRC Cornices","Linear profile elements used to define edges, transitions and roof lines.", "concrete"],
+    ["GFRC","GFRC Columns","Column cladding and forms for entrances, façades and covered walkways.", "concrete"],
+    ["GFRC","GFRC Mouldings","Decorative and functional trims for façade and interior detailing.", "concrete"],
+    ["GFRC","GFRC Architectural Elements", "Custom architectural forms produced to project-specific drawings.", "concrete"],
+    ["FRP","FRP Architectural Elements","Lightweight architectural forms for façade and structural-adjacent detailing.", "frp"],
+    ["FRP","FRP Decorative Products","Decorative components for interior and exterior architectural finishing.", "frp"],
+    ["FRP","FRP Sheets","Flat and formed sheet products for cladding and construction applications.", "frp"],
+    ["Custom","Custom Architectural Products","Products developed from architectural drawings, models or reference concepts.", "panel"],
+  ];
+  const grid = document.getElementById('productGrid');
+  products.forEach((p,i)=>{
+    const el = document.createElement('div');
+    el.className='product-card reveal';
+    el.innerHTML = `
+      <div class="product-thumb tex-${p[3]}"><span class="idx">${String(i+1).padStart(2,'0')}</span></div>
+      <div class="product-body">
+        <div class="cat">${p[0]}</div>
+        <h4>${p[1]}</h4>
+        <p>${p[2]}</p>
+        <a href="#contact" class="link">Enquire Now →</a>
+      </div>`;
+    grid.appendChild(el);
+  });
+
+  // ---- applications ----
+  const apps = ["Commercial Buildings","Residential Projects","Hotels & Resorts","Shopping Centres","Institutional Buildings","Religious Architecture","Interior Architecture","Landscape Architecture","Façade Projects","Renovation Projects","Custom Architectural Projects"];
+  const appGrid = document.getElementById('appGrid');
+  apps.forEach((a,i)=>{
+    const el = document.createElement('div');
+    el.className='app-card reveal tex-'+(i%3===0?'concrete':(i%3===1?'frp':'panel'));
+    el.innerHTML = `<span>${a}</span>`;
+    appGrid.appendChild(el);
+  });
+
+  // ---- process ----
+  const process = [
+    ["Design & Consultation","Understanding the architectural intent, material requirements and project scope with the design team."],
+    ["Drawing & Engineering","Developing manufacturing drawings from architectural inputs — CAD files, sketches or reference material."],
+    ["Pattern / Mould Development","Building the moulds or patterns required to produce the specified GFRC or FRP components."],
+    ["Manufacturing","Producing components under controlled conditions to the approved drawings and finish."],
+    ["Finishing & Quality Inspection","Surface finishing and dimensional checks prior to release for dispatch."],
+    ["Packing & Dispatch","Packing components for transport to protect finish and geometry in transit."],
+    ["Installation Support","Coordination and guidance to support the on-site installation team."],
+  ];
+  const pl = document.getElementById('processList');
+  process.forEach((s,i)=>{
+    const el = document.createElement('div');
+    el.className='process-row reveal';
+    el.innerHTML = `<div class="num">0${i+1}</div><h4>${s[0]}</h4><p>${s[1]}</p>`;
+    pl.appendChild(el);
+  });
+
+  // ---- why ----
+  const why = [
+    ["Design Flexibility","Architectural forms and customised solutions built around project drawings."],
+    ["Manufacturing Capability","Purpose-built manufacturing of GFRC and FRP architectural products."],
+    ["Precision","A focus on dimensional accuracy and consistent production quality."],
+    ["Material Expertise","Working experience across GFRC and FRP material systems."],
+    ["Project Support","Support from design coordination through manufacturing and delivery."],
+    ["Custom Solutions","Products developed around project-specific requirements and dimensions."],
+  ];
+  const wg = document.getElementById('whyGrid');
+  why.forEach((w,i)=>{
+    const el = document.createElement('div');
+    el.className='why-card reveal';
+    el.innerHTML = `<div class="num">0${i+1}</div><h4>${w[0]}</h4><p>${w[1]}</p>`;
+    wg.appendChild(el);
+  });
+
+  // ---- projects (placeholder portfolio) ----
+  const cats = ["All","GFRC","FRP","Façade","Interior","Custom"];
+  const projects = [
+    ["[PROJECT NAME]","[LOCATION]","GFRC","Façade panel supply & installation"],
+    ["[PROJECT NAME]","[LOCATION]","FRP","Decorative feature elements"],
+    ["[PROJECT NAME]","[LOCATION]","GFRC","Jali screen system"],
+    ["[PROJECT NAME]","[LOCATION]","Custom","Custom architectural components"],
+    ["[PROJECT NAME]","[LOCATION]","Interior","Interior feature panelling"],
+    ["[PROJECT NAME]","[LOCATION]","Façade","Cornice & moulding detailing"],
+  ];
+  const pg = document.getElementById('projectsGrid');
+  function renderProjects(filter){
+    pg.innerHTML='';
+    projects.filter(p=> filter==='All' || p[2]===filter).forEach(p=>{
+      const el = document.createElement('div');
+      el.className='project-card reveal in tex-'+(p[2]==='FRP'?'frp':(p[2]==='Custom'?'panel':'concrete'));
+      el.innerHTML = `<div class="overlay"><div class="tag">${p[2]}</div><h4>${p[0]}</h4><div class="loc">${p[1]}</div></div>`;
+      pg.appendChild(el);
+    });
+  }
+  const filtersEl = document.getElementById('filters');
+  cats.forEach((c,i)=>{
+    const b = document.createElement('button');
+    b.textContent = c;
+    if(i===0) b.classList.add('active');
+    b.addEventListener('click', ()=>{
+      filtersEl.querySelectorAll('button').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      renderProjects(c);
+    });
+    filtersEl.appendChild(b);
+  });
+  renderProjects('All');
+
+  // ---- custom manufacturing section content (built via JS to keep blueprint svg tidy) ----
+  const customSection = document.querySelector('.custom-mfg');
+  customSection.innerHTML = `
+    <div class="side reveal">
+      <div class="eyebrow">CUSTOM MANUFACTURING</div>
+      <h2>Have a Design? Let's Manufacture It.</h2>
+      <p>Alicore works from architectural drawings, CAD files, 3D models, sketches, reference photographs, custom dimensions and design concepts — converting architectural ideas into practical, manufactured GFRC and FRP components.</p>
+      <div class="input-chips">
+        <span>Architectural Drawings</span><span>CAD Files</span><span>3D Models</span><span>Sketches</span><span>Reference Photos</span><span>Custom Dimensions</span>
+      </div>
+      <a href="#contact" class="btn btn-primary" style="background:var(--metal);border-color:var(--metal);">Discuss Your Project</a>
+    </div>
+    <div class="custom-visual blueprint reveal">
+      <svg viewBox="0 0 500 500" preserveAspectRatio="xMidYMid slice">
+        <g stroke="rgba(166,139,91,0.55)" stroke-width="1" fill="none">
+          <rect x="90" y="80" width="320" height="340"/>
+          <line x1="90" y1="220" x2="410" y2="220"/>
+          <line x1="250" y1="80" x2="250" y2="420"/>
+          <circle cx="250" cy="150" r="36"/>
+          <path d="M90 340 L410 340" stroke-dasharray="4 4"/>
+        </g>
+      </svg>
+    </div>`;
+
+  // ---- header scroll state ----
+  const header = document.getElementById('siteHeader');
+  window.addEventListener('scroll', ()=>{
+    header.classList.toggle('scrolled', window.scrollY > 20);
+  });
+
+  // ---- reveal on scroll ----
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); } });
+  }, {threshold:0.12});
+  document.querySelectorAll('.reveal').forEach(el=> io.observe(el));
+</script>
+</body>
+</html>

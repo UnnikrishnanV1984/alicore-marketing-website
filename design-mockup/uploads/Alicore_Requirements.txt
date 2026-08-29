@@ -1,0 +1,594 @@
+ALICORE, an architectural products manufacturing company specializing in GFRC (Glass Fiber Reinforced Concrete) and FRP (Fiber Reinforced Plastic) architectural products.
+
+BRAND
+
+Company Name: ALICORE
+
+Suggested tagline:
+Architectural Products. Engineered to Elevate.
+
+Alternative tagline:
+Crafting Architecture. Building Possibilities.
+
+Brand positioning:
+ALICORE manufactures high-quality architectural products for architects, builders, developers, contractors and designers. The company specializes in customized architectural elements using GFRC and FRP, combining modern manufacturing technology, engineering and aesthetic design.
+
+The website should communicate:
+
+* Premium quality
+* Architectural excellence
+* Engineering capability
+* Custom manufacturing
+* Reliability
+* Large-project capability
+* Modern manufacturing
+* Professionalism
+* Innovation
+
+Do NOT make the website look like a small local construction company.
+
+Make it look like an established international architectural-products manufacturer.
+
+DESIGN STYLE
+
+Use a sophisticated architectural aesthetic.
+
+Primary colours:
+
+* Charcoal / near-black
+* Warm white
+* Light concrete grey
+* Subtle metallic/gold accent
+
+Use lots of white space.
+
+Typography:
+
+* Modern premium sans-serif
+* Strong bold headings
+* Clean readable body text
+
+Visual style:
+
+* Large architectural photographs
+* GFRC and FRP close-up textures
+* Modern buildings
+* Facades
+* Decorative jalis
+* Architectural panels
+* Manufacturing/process photographs
+* Minimal animations
+* Smooth scrolling
+* Premium transitions
+
+Avoid:
+
+* Cheap stock-photo appearance
+* Excessive gradients
+* Cartoon graphics
+* Too many colours
+* Crowded layouts
+* Generic construction-company templates
+
+WEBSITE STRUCTURE
+
+Create the following pages:
+
+1. Home
+2. About Alicore
+3. Products
+4. GFRC
+5. FRP
+6. Projects
+7. Custom Solutions
+8. Manufacturing
+9. Contact
+
+Also include strong enquiry/quotation buttons throughout the website.
+
+Main CTA buttons:
+
+Request a Quote
+
+Talk to Our Team
+
+View Products
+
+Discuss Your Project
+
+⸻
+
+HOME PAGE
+
+HERO SECTION
+
+Headline:
+
+Architectural Products. Engineered to Elevate.
+
+Subheading:
+
+Premium GFRC and FRP architectural solutions for contemporary buildings, facades and interiors.
+
+Supporting text:
+
+ALICORE combines architectural design, engineering and advanced manufacturing to create durable, lightweight and highly customizable architectural elements for residential, commercial, hospitality and large-scale developments.
+
+Buttons:
+
+Explore Products
+
+Request a Quote
+
+Hero background:
+Use a dramatic high-end modern building facade featuring architectural panels, jalis, cornices or decorative elements.
+
+⸻
+
+SECTION: WHO WE ARE
+
+Heading:
+
+Built for Architecture. Designed for Possibility.
+
+Text:
+
+ALICORE is an architectural products manufacturing company specializing in GFRC and FRP solutions.
+
+We work with architects, builders, developers, contractors and designers to transform architectural concepts into high-quality manufactured products.
+
+From standard architectural elements to highly customized designs, our focus is precision, durability, aesthetics and reliable project execution.
+
+Button:
+
+Discover Alicore
+
+⸻
+
+PRODUCTS SECTION
+
+Heading:
+
+Architectural Products
+
+Subheading:
+
+Engineered solutions for modern architecture.
+
+Create product cards for:
+
+GFRC Architectural Panels
+
+Lightweight architectural panels designed for contemporary facades and interiors.
+
+GFRC Cornices
+
+Decorative architectural profiles manufactured with precision for exterior and interior applications.
+
+GFRC Columns & Pillars
+
+Architectural columns and structural-looking decorative elements customized to project requirements.
+
+GFRC Jalis
+
+Decorative perforated screens combining traditional architectural aesthetics with modern manufacturing.
+
+GFRC Decorative Elements
+
+Custom profiles, mouldings, POS, trims, frames and other architectural components.
+
+FRP Architectural Products
+
+Lightweight, durable and corrosion-resistant FRP solutions for architectural and industrial applications.
+
+Custom Architectural Elements
+
+Products developed according to architectural drawings, CAD designs, dimensions and project requirements.
+
+Button:
+
+View All Products
+
+⸻
+
+GFRC SECTION
+
+Heading:
+
+GFRC — Strength Meets Architectural Freedom
+
+Text:
+
+Glass Fiber Reinforced Concrete enables architects and designers to create detailed architectural forms while maintaining a lightweight and durable construction solution.
+
+Highlight:
+
+* Lightweight construction
+* High design flexibility
+* Detailed surface finishes
+* Custom shapes and profiles
+* Suitable for large architectural facades
+* Durable exterior applications
+* Custom colours and textures
+
+CTA:
+
+Explore GFRC Solutions
+
+⸻
+
+FRP SECTION
+
+Heading:
+
+FRP — Lightweight. Durable. Versatile.
+
+Text:
+
+Our FRP solutions provide excellent design flexibility and durability for applications where lightweight construction, corrosion resistance and customized shapes are important.
+
+Highlight:
+
+* Lightweight
+* Corrosion resistant
+* High design flexibility
+* Custom shapes and sizes
+* Suitable for demanding environments
+* Low maintenance
+
+CTA:
+
+Explore FRP Solutions
+
+⸻
+
+WHY ALICORE
+
+Heading:
+
+Why Choose ALICORE?
+
+Create six premium icon cards:
+
+Custom Manufacturing
+
+Products manufactured according to project drawings, dimensions and design requirements.
+
+Architectural Precision
+
+Attention to geometry, detailing, dimensions and surface quality.
+
+Material Expertise
+
+Specialized knowledge of GFRC and FRP manufacturing.
+
+Project Support
+
+Support from design development through manufacturing and delivery.
+
+Quality Focus
+
+Consistent attention to material selection, production and finishing.
+
+Scalable Production
+
+Capability to support individual custom pieces as well as larger project requirements.
+
+⸻
+
+CUSTOM SOLUTIONS
+
+Heading:
+
+Your Design. Our Manufacturing.
+
+Text:
+
+Every architectural project is different.
+
+ALICORE works with architectural drawings, CAD files, reference images and design concepts to develop customized architectural products according to project requirements.
+
+Process:
+
+01 — Concept
+
+Understand the architectural requirement.
+
+02 — Design Development
+
+Review drawings, dimensions, profiles and details.
+
+03 — Engineering
+
+Develop the manufacturing approach and technical specifications.
+
+04 — Manufacturing
+
+Produce the required architectural elements with controlled manufacturing processes.
+
+05 — Finishing
+
+Apply the required surface finish, colour and detailing.
+
+06 — Delivery
+
+Prepare and deliver the products according to project requirements.
+
+CTA:
+
+Discuss Your Project
+
+⸻
+
+PROJECTS SECTION
+
+Heading:
+
+Architecture in Detail
+
+Subheading:
+
+From concept to completed architectural elements.
+
+Create a visually rich project gallery.
+
+Categories:
+
+* Commercial
+* Residential
+* Hospitality
+* Facades
+* Interiors
+* Custom Architectural Elements
+
+Each project should show:
+
+Project Name
+Location
+Product
+Material
+Application
+
+Use large professional architectural images.
+
+Do not invent project names, clients or locations.
+
+If actual project information is unavailable, use placeholders such as:
+
+Project Name — Coming Soon
+
+⸻
+
+MANUFACTURING SECTION
+
+Heading:
+
+From Design to Reality
+
+Text:
+
+Our manufacturing approach combines material expertise, craftsmanship and controlled production processes to transform architectural concepts into finished products.
+
+Show a visual manufacturing journey:
+
+Design → Mould Development → Material Preparation → Production → Finishing → Quality Check → Delivery
+
+Use authentic-looking manufacturing imagery featuring GFRC/FRP production.
+
+⸻
+
+QUALITY SECTION
+
+Heading:
+
+Built Around Quality
+
+Text:
+
+Quality begins with understanding the project.
+
+From material selection and mould preparation to production, finishing and final inspection, ALICORE focuses on maintaining consistency across every stage of manufacturing.
+
+Do not make unsupported claims such as ISO certification, specific testing certifications or international standards unless they are actually provided by the company.
+
+⸻
+
+INDUSTRIES WE SERVE
+
+Heading:
+
+Solutions Across Architecture
+
+Create cards for:
+
+* Residential Buildings
+* Commercial Buildings
+* Hospitality
+* Retail
+* Institutional Buildings
+* Office Buildings
+* Villas
+* Interior Architecture
+* Facade Projects
+* Landscape & Public Spaces
+
+⸻
+
+ABOUT PAGE
+
+Heading:
+
+About ALICORE
+
+Write a professional company introduction explaining that ALICORE focuses on manufacturing architectural products using GFRC and FRP.
+
+The tone should be confident but not exaggerated.
+
+Do not claim:
+
+* “Number one”
+* “Largest manufacturer”
+* “World’s best”
+* “Guaranteed”
+* “100% maintenance free”
+
+unless these claims are specifically verified.
+
+⸻
+
+CONTACT PAGE
+
+Heading:
+
+Let’s Build Something Remarkable.
+
+Text:
+
+Have an architectural requirement, drawing or project in development?
+
+Share your project details with our team and let’s explore the right manufacturing solution.
+
+Contact form fields:
+
+Name
+Company
+Phone
+Email
+Project Location
+Product / Requirement
+Estimated Quantity
+Message
+Upload Drawing / Reference
+
+CTA:
+
+Request a Quote
+
+Also include:
+
+WhatsApp Us
+
+Call Us
+
+Email Us
+
+⸻
+
+HEADER
+
+Create a clean sticky navigation:
+
+ALICORE logo
+
+Home
+About
+Products
+GFRC
+FRP
+Projects
+Custom Solutions
+Contact
+
+Button:
+
+Request a Quote
+
+⸻
+
+FOOTER
+
+ALICORE
+
+Architectural Products. Engineered to Elevate.
+
+GFRC | FRP | Custom Architectural Solutions
+
+Quick Links:
+Home
+About
+Products
+Projects
+Contact
+
+Contact:
+Phone: [ADD PHONE]
+Email: [ADD EMAIL]
+Location: [ADD ADDRESS]
+
+Social media:
+Instagram
+Facebook
+LinkedIn
+YouTube
+
+Copyright:
+©️ 2026 ALICORE. All Rights Reserved.
+
+⸻
+
+SEO
+
+Create SEO-friendly page titles and descriptions.
+
+Main keywords:
+
+GFRC manufacturer
+GFRC architectural products
+GFRC panels
+GFRC jali
+GFRC cornice
+GFRC facade panels
+FRP architectural products
+FRP manufacturer
+architectural products manufacturer
+architectural facade solutions
+custom GFRC products
+custom FRP products
+
+Do not keyword-stuff.
+
+⸻
+
+MOBILE DESIGN
+
+The website must be fully responsive.
+
+On mobile:
+
+* Large readable headings
+* Fast-loading images
+* Easy WhatsApp button
+* Easy Call button
+* Simple navigation
+* Large enquiry CTA
+* Properly optimized product images
+
+⸻
+
+FINAL DESIGN DIRECTION
+
+The final website should feel similar to a premium architectural materials brand.
+
+Think:
+
+Architecture + Engineering + Manufacturing + Luxury
+
+The website should immediately make an architect, builder or developer feel:
+
+“This company can handle serious architectural projects and custom manufacturing.”
+
+Use professional spacing, strong typography, high-quality architectural visuals and a sophisticated minimal design.
+
+Do not make the website unnecessarily complicated.
+
+Prioritize:
+
+1. Professional appearance
+2. Product presentation
+3. Trust
+4. Project capability
+5. Easy quotation enquiries
+6. Mobile responsiveness
+7. Fast loading
+8. SEO
+9. Clear contact options

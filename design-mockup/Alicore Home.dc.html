@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<![CDATA[<helmet>
+<title>Alicore — Architectural Products, Engineered to Elevate | GFRC, FRP, Precast & Facade Manufacturer</title>
+<meta name="description" content="Alicore manufactures premium GFRC, FRP, precast and facade architectural products — panels, jalis, cornices, columns and custom elements — for architects, developers and contractors.">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&family=Manrope:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="./image-slot.js"></script>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth;scroll-padding-top:92px}
+  body{background:#F6F4EF;color:#12110F;font-family:'Manrope',system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  img{display:block;max-width:100%}
+  a{color:#12110F;text-decoration:none}
+  a:hover{color:#B08D3C}
+  input,textarea,select,button{font:inherit;color:inherit}
+  ::selection{background:#C0973F;color:#12110F}
+  @keyframes rise{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</helmet>
+
+<div style="background:#12110F;color:rgba(246,244,239,.72);font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase">
+  <div style="max-width:1320px;margin:0 auto;padding:10px clamp(20px,4vw,48px);display:flex;flex-wrap:wrap;gap:8px 28px;align-items:center;justify-content:space-between">
+    <span style="color:#C0973F">Architectural Products. Engineered to Elevate.</span>
+    <div style="display:flex;flex-wrap:wrap;gap:8px 24px;align-items:center">
+      <a href="tel:+919995495395" style="color:rgba(246,244,239,.72);letter-spacing:.14em">Call 9995 495 395</a>
+      <a href="https://wa.me/919995495395" style="color:rgba(246,244,239,.72);letter-spacing:.14em">WhatsApp</a>
+      <span style="color:rgba(246,244,239,.4)">www.alicore.in</span>
+    </div>
+  </div>
+</div>
+
+<header style="position:sticky;top:0;z-index:60;background:rgba(246,244,239,.92);backdrop-filter:blur(16px);border-bottom:1px solid rgba(18,17,15,.1)">
+  <div style="max-width:1320px;margin:0 auto;padding:14px clamp(20px,4vw,48px);display:flex;flex-wrap:wrap;gap:14px 28px;align-items:center;justify-content:space-between">
+    <a href="#top" style="display:flex;align-items:center;gap:12px;flex:0 0 auto">
+      <img src="assets/alicore-monogram.jpg" alt="Alicore" style="width:38px;height:38px;object-fit:cover;object-position:50% 30%;mix-blend-mode:multiply">
+      <span style="display:flex;flex-direction:column;gap:3px">
+        <span style="font-family:'Jost',sans-serif;font-size:19px;font-weight:500;letter-spacing:.34em;line-height:1">ALICORE</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.24em;color:#B08D3C;text-transform:uppercase">Architectural Products</span>
+      </span>
+    </a>
+    <nav style="display:flex;flex-wrap:wrap;gap:10px 26px;align-items:center;font-family:'Jost',sans-serif;font-size:14px;letter-spacing:.06em">
+      <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="5">
+        <a href="{{ n.href }}" onClick="{{ n.select }}" style="position:relative;padding:6px 0 5px;border-bottom:2px solid {{ n.line }};color:{{ n.color }};transition:color .2s,border-color .2s" style-hover="color:#12110F">{{ n.label }}</a>
+      </sc-for>
+      <a href="#contact" style="display:inline-flex;align-items:center;gap:10px;background:#12110F;color:#F6F4EF;padding:12px 22px;font-family:'Jost',sans-serif;font-size:13px;letter-spacing:.1em;text-transform:uppercase;transition:background .25s" style-hover="background:#B08D3C;color:#12110F">Request a Quote</a>
+    </nav>
+  </div>
+</header>
+
+<section id="top" style="position:relative;background:#12110F;color:#F6F4EF;min-height:min(880px,92vh);display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden">
+  <div style="position:relative;z-index:2;max-width:1320px;margin:0 auto;width:100%;padding:clamp(56px,8vh,110px) clamp(20px,4vw,48px) clamp(40px,6vw,72px);display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:clamp(32px,5vw,64px);align-items:center">
+    <div>
+    <div style="display:flex;align-items:center;gap:12px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#C0973F">
+      <span style="width:26px;height:1px;background:#C0973F;display:inline-block"></span>Architectural Products Manufacturer
+    </div>
+    <h1 style="font-family:'Jost',sans-serif;font-weight:400;font-size:clamp(38px,6.4vw,86px);line-height:1.02;letter-spacing:-.015em;margin-top:26px;max-width:17ch;text-wrap:balance">Architectural Products. Engineered to <span style="color:#C0973F">Elevate</span>.</h1>
+    <p style="margin-top:26px;max-width:52ch;font-size:clamp(16px,1.5vw,19px);line-height:1.6;color:rgba(246,244,239,.78);font-weight:300">Premium GFRC and FRP architectural solutions for contemporary buildings, facades and interiors.</p>
+    <p style="margin-top:16px;max-width:62ch;font-size:15px;line-height:1.7;color:rgba(246,244,239,.55);font-weight:300">Alicore combines architectural design, engineering and advanced manufacturing to create durable, lightweight and highly customizable architectural elements for residential, commercial, hospitality and large-scale developments.</p>
+    <div style="display:flex;flex-wrap:wrap;gap:14px;margin-top:40px">
+      <a href="#products" style="display:inline-flex;align-items:center;gap:12px;background:#C0973F;color:#12110F;padding:16px 30px;font-family:'Jost',sans-serif;font-size:14px;letter-spacing:.1em;text-transform:uppercase;transition:background .25s" style-hover="background:#F6F4EF">Explore Products</a>
+      <a href="#contact" style="display:inline-flex;align-items:center;gap:12px;border:1px solid rgba(246,244,239,.35);color:#F6F4EF;padding:16px 30px;font-family:'Jost',sans-serif;font-size:14px;letter-spacing:.1em;text-transform:uppercase;transition:all .25s" style-hover="border-color:#F6F4EF;background:rgba(246,244,239,.07)">Request a Quote</a>
+    </div>
+    </div>
+    <div style="position:relative;aspect-ratio:4/5;min-height:clamp(280px,42vh,540px);background:#1A1917">
+      <image-slot id="alicore-hero" shape="rect" fit="cover" placeholder="Hero photograph — facade with GFRC panels / jali screens"></image-slot>
+      <div style="position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(18,17,15,.55) 100%);pointer-events:none"></div>
+    </div>
+  </div>
+  <div style="position:relative;z-index:2;border-top:1px solid rgba(246,244,239,.16);background:rgba(18,17,15,.55)">
+    <div style="max-width:1320px;margin:0 auto;padding:clamp(28px,3.5vw,40px) clamp(20px,4vw,48px);display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:clamp(24px,3vw,44px)">
+      <sc-for list="{{ pillars }}" as="p" hint-placeholder-count="4">
+        <div style="display:flex;flex-direction:column;gap:12px;padding-left:18px;border-left:1px solid rgba(246,244,239,.18)">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:#C0973F">{{ p.n }}</span>
+          <span style="font-family:'Jost',sans-serif;font-size:clamp(19px,1.7vw,23px);font-weight:400;letter-spacing:.14em;line-height:1;color:#F6F4EF">{{ p.code }}</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:rgba(246,244,239,.52);line-height:1.7;max-width:24ch">{{ p.full }}</span>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</section>
+
+<section id="about" style="padding:clamp(80px,10vw,150px) 0">
+  <div style="max-width:1320px;margin:0 auto;padding:0 clamp(20px,4vw,48px);display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:clamp(40px,6vw,90px);align-items:start">
+    <div>
+      <div style="display:flex;align-items:center;gap:12px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#B08D3C">
+        <span style="width:26px;height:1px;background:#B08D3C;display:inline-block"></span>Who We Are
+      </div>
+      <h2 style="font-family:'Jost',sans-serif;font-weight:400;font-size:clamp(30px,3.8vw,50px);line-height:1.08;letter-spacing:-.01em;margin-top:20px;max-width:20ch;text-wrap:balance">Built for Architecture. Designed for Possibility.</h2>
+      <div style="margin-top:34px;position:relative;aspect-ratio:4/3">
+        <image-slot id="alicore-about" shape="rect" fit="cover" placeholder="Close-up: GFRC surface texture / finished panel"></image-slot>
+      </div>
+    </div>
+    <div>
+      <p style="font-size:17px;line-height:1.7;color:rgba(18,17,15,.72);max-width:54ch">Alicore is an architectural products manufacturing company specializing in GFRC and FRP solutions.</p>
+      <p style="font-size:16px;line-height:1.75;color:rgba(18,17,15,.6);max-width:54ch;margin-top:18px">We work with architects, builders, developers, contractors and designers to transform architectural concepts into high-quality manufactured products.</p>
+      <p style="font-size:16px;line-height:1.75;color:rgba(18,17,15,.6);max-width:54ch;margin-top:18px">From standard architectural elements to highly customized designs, our focus is precision, durability, aesthetics and reliable project execution.</p>
+      <a href="#custom" style="display:inline-flex;align-items:center;gap:12px;border:1px solid rgba(18,17,15,.2);padding:15px 28px;margin-top:32px;font-family:'Jost',sans-serif;font-size:13px;letter-spacing:.1em;text-transform:uppercase;transition:all .25s" style-hover="border-color:#12110F;background:#12110F;color:#F6F4EF">Discover Alicore</a>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:1px;background:rgba(18,17,15,.12);border:1px solid rgba(18,17,15,.12);margin-top:44px">
+        <sc-for list="{{ capabilities }}" as="c" hint-placeholder-count="4">
+          <div style="background:#F6F4EF;padding:24px">
+            <div style="font-family:'Jost',sans-serif;font-size:16px;letter-spacing:.02em;color:#12110F">{{ c.k }}</div>
+            <div style="font-size:13px;color:rgba(18,17,15,.55);margin-top:8px;line-height:1.5">{{ c.v }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="products" style="padding:clamp(80px,10vw,150px) 0;background:#ECE8E0">
+  <div style="max-width:1320px;margin:0 auto;padding:0 clamp(20px,4vw,48px)">
+    <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-end;justify-content:space-between;max-width:100%">
+      <div>
+        <div style="display:flex;align-items:center;gap:12px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#B08D3C">
+          <span style="width:26px;height:1px;background:#B08D3C;display:inline-block"></span>Product Range
+        </div>
+        <h2 style="font-family:'Jost',sans-serif;font-weight:400;font-size:clamp(30px,3.8vw,50px);line-height:1.08;margin-top:20px">Architectural Products</h2>
+        <p style="margin-top:16px;font-size:16px;color:rgba(18,17,15,.6);max-width:48ch">Engineered solutions for modern architecture.</p>
+      </div>
+      <a href="#contact" style="display:inline-flex;align-items:center;gap:12px;border:1px solid rgba(18,17,15,.2);padding:15px 28px;font-family:'Jost',sans-serif;font-size:13px;letter-spacing:.1em;text-transform:uppercase;transition:all .25s" style-hover="border-color:#12110F;background:#12110F;color:#F6F4EF">View All Products</a>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1px;background:rgba(18,17,15,.14);border:1px solid rgba(18,17,15,.14);margin-top:52px">
+      <a href="#gfrc" style="background:#F6F4EF;padding:34px 32px 38px;display:flex;flex-direction:column;gap:10px;transition:background .25s" style-hover="background:#12110F;color:#F6F4EF">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#B08D3C">Material 01</span>
+        <span style="font-family:'Jost',sans-serif;font-size:30px;letter-spacing:.1em">GFRC</span>
+        <span style="font-size:14.5px;line-height:1.6;opacity:.65;max-width:40ch">Glass Fiber Reinforced Concrete — panels, jalis, cornices, columns and custom architectural forms.</span>
+        <span style="font-family:'Jost',sans-serif;font-size:13px;letter-spacing:.08em;text-transform:uppercase;margin-top:6px">Explore GFRC →</span>
+      </a>
+      <a href="#frp" style="background:#F6F4EF;padding:34px 32px 38px;display:flex;flex-direction:column;gap:10px;transition:background .25s" style-hover="background:#12110F;color:#F6F4EF">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#B08D3C">Material 02</span>
+        <span style="font-family:'Jost',sans-serif;font-size:30px;letter-spacing:.1em">FRP</span>
+        <span style="font-size:14.5px;line-height:1.6;opacity:.65;max-width:40ch">Fiber Reinforced Plastic — lightweight, corrosion-resistant elements for architectural applications.</span>
+        <span style="font-family:'Jost',sans-serif;font-size:13px;letter-spacing:.08em;text-transform:uppercase;margin-top:6px">Explore FRP →</span>
+      </a>
+      <sc-for list="{{ products }}" as="p" hint-placeholder-count="7">
+        <div style="background:#F6F4EF;display:flex;flex-direction:column">
+          <div style="position:relative;aspect-ratio:4/3;background:#DAD5CB">
+            <image-slot id="{{ p.slot }}" shape="rect" fit="cover" placeholder="{{ p.shot }}"></image-slot>
+            <div style="position:absolute;top:0;left:0;background:#12110F;color:#C0973F;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;padding:7px 11px;pointer-events:none">{{ p.idx }}</div>
+          </div>
+          <div style="padding:28px 28px 32px;display:flex;flex-direction:column;flex:1">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#B08D3C">{{ p.cat }}</div>
+            <h3 style="font-family:'Jost',sans-serif;font-weight:400;font-size:22px;line-height:1.2;margin-top:12px">{{ p.name }}</h3>
+            <p style="font-size:14.5px;line-height:1.6;color:rgba(18,17,15,.6);margin-top:12px;flex:1">{{ p.desc }}</p>
+            <a href="#contact" style="margin-top:24px;padding-top:18px;border-top:1px solid rgba(18,17,15,.14);font-family:'Jost',sans-serif;font-size:13px;letter-spacing:.08em;text-transform:uppercase;display:inline-flex;align-items:center;gap:10px" style-hover="color:#B08D3C">Enquire →</a>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</section>
+
+<section id="gfrc" style="background:#12110F;color:#F6F4EF">
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr))">
+    <div style="position:relative;min-height:clamp(320px,42vw,620px)">
+      <image-slot id="alicore-gfrc" shape="rect" fit="cover" placeholder="GFRC facade / jali screen close-up"></image-slot>
+    </div>
+    <div style="padding:clamp(56px,7vw,110px) clamp(24px,5vw,80px);display:flex;flex-direction:column;justify-content:center">
+      <div style="display:flex;align-items:center;gap:12px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#C0973F">
+        <span style="width:26px;height:1px;background:#C0973F;display:inline-block"></span>Material 01 — GFRC
+      </div>
+      <h2 style="font-family:'Jost',sans-serif;font-weight:400;font-size:clamp(28px,3.4vw,46px);line-height:1.1;margin-top:20px;max-width:22ch;text-wrap:balance">GFRC — Strength Meets Architectural Freedom</h2>
+      <p style="margin-top:22px;font-size:16px;line-height:1.75;color:rgba(246,244,239,.66);max-width:52ch;font-weight:300">Glass Fiber Reinforced Concrete enables architects and designers to create detailed architectural forms while maintaining a lightweight and durable construction solution.</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px 28px;margin-top:34px">
+        <sc-for list="{{ gfrcPoints }}" as="g" hint-placeholder-count="7">
+          <div style="display:flex;gap:12px;align-items:baseline;font-size:14.5px;color:rgba(246,244,239,.8);padding-bottom:12px;border-bottom:1px solid rgba(246,244,239,.12)">
+            <span style="width:5px;height:5px;background:#C0973F;flex:0 0 auto"></span>{{ g }}
+          </div>
+        </sc-for>
+      </div>
+      <a href="#contact" style="align-self:flex-start;display:inline-flex;align-items:center;gap:12px;background:#C0973F;color:#12110F;padding:16px 30px;margin-top:40px;font-family:'Jost',sans-serif;font-size:13px;letter-spacing:.1em;text-transform:uppercase;transition:background .25s" style-hover="background:#F6F4EF">Explore GFRC Solutions</a>
+    </div>
+  </div>
+</section>
+
+<section id="frp" style="background:#1A1917;color:#F6F4EF">
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr))">
+    <div style="padding:clamp(56px,7vw,110px) clamp(24px,5vw,80px);display:flex;flex-direction:column;justify-content:center">
+      <div style="display:flex;align-items:center;gap:12px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#C0973F">
+        <span style="width:26px;height:1px;background:#C0973F;display:inline-block"></span>Material 02 — FRP
+      </div>
+      <h2 style="font-family:'Jost',sans-serif;font-weight:400;font-size:clamp(28px,3.4vw,46px);line-height:1.1;margin-top:20px;max-width:22ch">FRP — Lightweight. Durable. Versatile.</h2>
+      <p style="margin-top:22px;font-size:16px;line-height:1.75;color:rgba(246,244,239,.66);max-width:52ch;font-weight:300">Our FRP solutions provide excellent design flexibility and durability for applications where lightweight construction, corrosion resistance and customized shapes are important.</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px 28px;margin-top:34px">
+        <sc-for list="{{ frpPoints }}" as="f" hint-placeholder-count="6">
+          <div style="display:flex;gap:12px;align-items:baseline;font-size:14.5px;color:rgba(246,244,239,.8);padding-bottom:12px;border-bottom:1px solid rgba(246,244,239,.12)">
+            <span style="width:5px;height:5px;background:#C0973F;flex:0 0 auto"></span>{{ f }}
+          </div>
+        </sc-for>
+      </div>
+      <a href="#contact" style="align-self:flex-start;display:inline-flex;align-items:center;gap:12px;border:1px solid rgba(246,244,239,.35);color:#F6F4EF;padding:16px 30px;margin-top:40px;font-family:'Jost',sans-serif;font-size:13px;letter-spacing:.1em;text-transform:uppercase;transition:all .25s" style-hover="border-color:#F6F4EF;background:rgba(246,244,239,.07)">Explore FRP Solutions</a>
+    </div>
+    <div style="position:relative;min-height:clamp(320px,42vw,620px)">
+      <image-slot id="alicore-frp" shape="rect" fit="cover" placeholder="FRP element / moulded component photo"></image-slot>
+    </div>
+  </div>
+</section>
+
+<section style="padding:clamp(80px,10vw,150px) 0">
+  <div style="max-width:1320px;margin:0 auto;padding:0 clamp(20px,4vw,48px)">
+    <div style="display:flex;align-items:center;gap:12px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#B08D3C">
+      <span style="width:26px;height:1px;background:#B08D3C;display:inline-block"></span>Why Alicore
+    </div>
+    <h2 style="font-family:'Jost',sans-serif;font-weight:400;font-size:clamp(30px,3.8vw,50px);line-height:1.08;margin-top:20px">Why Choose Alicore?</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:1px;background:rgba(18,17,15,.14);border:1px solid rgba(18,17,15,.14);margin-top:52px">
+      <sc-for list="{{ why }}" as="w" hint-placeholder-count="6">
+        <div style="background:#F6F4EF;padding:40px 34px 44px;transition:background .3s" style-hover="background:#ECE8E0">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:#B08D3C">{{ w.idx }}</div>
+          <h3 style="font-family:'Jost',sans-serif;font-weight:400;font-size:21px;margin-top:20px;line-height:1.2">{{ w.name }}</h3>
+          <p style="font-size:14.5px;line-height:1.65;color:rgba(18,17,15,.6);margin-top:14px">{{ w.desc }}</p>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</section>
+
+<section id="custom" style="padding:clamp(80px,10vw,150px) 0;background:#ECE8E0">
+  <div style="max-width:1320px;margin:0 auto;padding:0 clamp(20px,4vw,48px)">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:clamp(32px,5vw,80px);align-items:end">
+      <div>
+        <div style="display:flex;align-items:center;gap:12px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#B08D3C">
+          <span style="width:26px;height:1px;background:#B08D3C;display:inline-block"></span>Custom Solutions
+        </div>
+        <h2 style="font-family:'Jost',sans-serif;font-weight:400;font-size:clamp(30px,3.8vw,50px);line-height:1.08;margin-top:20px">Your Design. Our Manufacturing.</h2>
+      </div>
+      <div>
+        <p style="font-size:16px;line-height:1.75;color:rgba(18,17,15,.65);max-width:54ch">Every architectural project is different. Alicore works with architectural drawings, CAD files, reference images and design concepts to develop customized architectural products according to project requirements.</p>
+        <a href="#contact" style="display:inline-flex;align-items:center;gap:12px;background:#12110F;color:#F6F4EF;padding:16px 30px;margin-top:26px;font-family:'Jost',sans-serif;font-size:13px;letter-spacing:.1em;text-transform:uppercase;transition:background .25s" style-hover="background:#B08D3C;color:#12110F">Discuss Your Project</a>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1px;background:rgba(18,17,15,.14);margin-top:60px;border-top:1px solid rgba(18,17,15,.14)">
+      <sc-for list="{{ steps }}" as="s" hint-placeholder-count="6">
+        <div style="background:#ECE8E0;padding:34px 30px 40px;border-bottom:1px solid rgba(18,17,15,.14)">
+          <div style="font-family:'Jost',sans-serif;font-size:40px;font-weight:300;color:#C0973F;line-height:1">{{ s.n }}</div>
+          <h3 style="font-family:'Jost',sans-serif;font-weight:500;font-size:17px;letter-spacing:.06em;text-transform:uppercase;margin-top:22px">{{ s.name }}</h3>
+          <p style="font-size:14.5px;line-height:1.65;color:rgba(18,17,15,.6);margin-top:12px">{{ s.desc }}</p>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</section>
+
+<section id="projects" style="padding:clamp(80px,10vw,150px) 0;background:#12110F;color:#F6F4EF">
+  <div style="max-width:1320px;margin:0 auto;padding:0 clamp(20px,4vw,48px)">
+    <div style="display:flex;align-items:center;gap:12px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#C0973F">
+      <span style="width:26px;height:1px;background:#C0973F;display:inline-block"></span>Projects
+    </div>
+    <h2 style="font-family:'Jost',sans-serif;font-weight:400;font-size:clamp(30px,3.8vw,50px);line-height:1.08;margin-top:20px">Architecture in Detail</h2>
+    <p style="margin-top:16px;font-size:16px;color:rgba(246,244,239,.6);max-width:52ch;font-weight:300">From concept to completed architectural elements.</p>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:44px">
+      <sc-for list="{{ categories }}" as="c" hint-placeholder-count="7">
+        <button onClick="{{ c.select }}" style="padding:10px 20px;border:1px solid {{ c.border }};background:{{ c.bg }};color:{{ c.fg }};font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .2s">{{ c.label }}</button>
+      </sc-for>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:24px;margin-top:36px">
+      <sc-for list="{{ visibleProjects }}" as="pr" hint-placeholder-count="6">
+        <div style="position:relative;aspect-ratio:4/3;background:#1F1D1A;overflow:hidden">
+          <image-slot id="{{ pr.slot }}" shape="rect" fit="cover" placeholder="{{ pr.shot }}"></image-slot>
+          <div style="position:absolute;inset:0;background:linear-gradient(0deg,rgba(18,17,15,.9) 0%,rgba(18,17,15,.15) 55%,transparent 100%);display:flex;flex-direction:column;justify-content:flex-end;padding:26px;pointer-events:none">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#C0973F">{{ pr.cat }}</div>
+            <h3 style="font-family:'Jost',sans-serif;font-weight:400;font-size:22px;margin-top:10px;color:#F6F4EF">{{ pr.name }}</h3>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:6px 18px;margin-top:14px;font-size:12.5px;color:rgba(246,244,239,.6)">
+              <span>Location — {{ pr.location }}</span>
+              <span>Material — {{ pr.material }}</span>
+              <span>Product — {{ pr.product }}</span>
+              <span>Application — {{ pr.application }}</span>
+            </div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</section>
+
+<section id="manufacturing" style="padding:clamp(80px,10vw,150px) 0">
+  <div style="max-width:1320px;margin:0 auto;padding:0 clamp(20px,4vw,48px)">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:clamp(32px,5vw,80px);align-items:start">
+      <div>
+        <div style="display:flex;align-items:center;gap:12px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#B08D3C">
+          <span style="width:26px;height:1px;background:#B08D3C;display:inline-block"></span>Manufacturing
+        </div>
+        <h2 style="font-family:'Jost',sans-serif;font-weight:400;font-size:clamp(30px,3.8vw,50px);line-height:1.08;margin-top:20px">From Design to Reality</h2>
+        <p style="margin-top:22px;font-size:16px;line-height:1.75;color:rgba(18,17,15,.65);max-width:52ch">Our manufacturing approach combines material expertise, craftsmanship and controlled production processes to transform architectural concepts into finished products.</p>
+        <div style="margin-top:36px;position:relative;aspect-ratio:16/10">
+          <image-slot id="alicore-factory" shape="rect" fit="cover" placeholder="Production floor: GFRC spray / mould work"></image-slot>
+        </div>
+      </div>
+      <div>
+        <sc-for list="{{ journey }}" as="j" hint-placeholder-count="7">
+          <div style="display:grid;grid-template-columns:56px 1fr;gap:20px;padding:20px 0;border-bottom:1px solid rgba(18,17,15,.14);align-items:center">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#B08D3C">{{ j.n }}</div>
+            <div>
+              <div style="font-family:'Jost',sans-serif;font-size:19px;font-weight:400">{{ j.name }}</div>
+              <div style="font-size:14px;color:rgba(18,17,15,.58);margin-top:6px;line-height:1.6">{{ j.desc }}</div>
+            </div>
+          </div>
+        </sc-for>
+        <div style="border:1px solid rgba(18,17,15,.14);padding:34px 32px;margin-top:44px;background:#ECE8E0">
+          <h3 style="font-family:'Jost',sans-serif;font-weight:400;font-size:24px">Built Around Quality</h3>
+          <p style="font-size:15px;line-height:1.7;color:rgba(18,17,15,.65);margin-top:14px">Quality begins with understanding the project. From material selection and mould preparation to production, finishing and final inspection, Alicore focuses on maintaining consistency across every stage of manufacturing.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="padding:clamp(70px,8vw,120px) 0;background:#ECE8E0">
+  <div style="max-width:1320px;margin:0 auto;padding:0 clamp(20px,4vw,48px)">
+    <div style="display:flex;align-items:center;gap:12px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#B08D3C">
+      <span style="width:26px;height:1px;background:#B08D3C;display:inline-block"></span>Industries We Serve
+    </div>
+    <h2 style="font-family:'Jost',sans-serif;font-weight:400;font-size:clamp(30px,3.8vw,50px);line-height:1.08;margin-top:20px">Solutions Across Architecture</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1px;background:rgba(18,17,15,.14);border:1px solid rgba(18,17,15,.14);margin-top:48px">
+      <sc-for list="{{ industries }}" as="i" hint-placeholder-count="10">
+        <div style="background:#ECE8E0;padding:26px 24px;display:flex;align-items:center;gap:14px;transition:background .25s" style-hover="background:#F6F4EF">
+          <span style="width:6px;height:6px;background:#C0973F;flex:0 0 auto"></span>
+          <span style="font-family:'Jost',sans-serif;font-size:16.5px;letter-spacing:.02em">{{ i }}</span>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</section>
+
+<section id="contact" style="background:#12110F;color:#F6F4EF;padding:clamp(80px,10vw,150px) 0">
+  <div style="max-width:1320px;margin:0 auto;padding:0 clamp(20px,4vw,48px);display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:clamp(40px,6vw,90px);align-items:start">
+    <div>
+      <div style="display:flex;align-items:center;gap:12px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#C0973F">
+        <span style="width:26px;height:1px;background:#C0973F;display:inline-block"></span>Contact
+      </div>
+      <h2 style="font-family:'Jost',sans-serif;font-weight:400;font-size:clamp(32px,4.4vw,58px);line-height:1.06;margin-top:22px;max-width:18ch;text-wrap:balance">Let's Build Something Remarkable.</h2>
+      <p style="margin-top:22px;font-size:16.5px;line-height:1.7;color:rgba(246,244,239,.66);max-width:48ch;font-weight:300">Have an architectural requirement, drawing or project in development? Share your project details with our team and let's explore the right manufacturing solution.</p>
+      <div style="display:grid;gap:1px;background:rgba(246,244,239,.14);border:1px solid rgba(246,244,239,.14);margin-top:40px">
+        <a href="tel:+919995495395" style="background:#12110F;color:#F6F4EF;padding:24px 26px;display:flex;justify-content:space-between;align-items:center;gap:16px;transition:background .25s" style-hover="background:#1F1D1A;color:#F6F4EF">
+          <span><span style="display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#C0973F">Call Us</span><span style="display:block;font-family:'Jost',sans-serif;font-size:22px;letter-spacing:.06em;margin-top:8px">9995 495 395</span></span>
+          <span style="color:rgba(246,244,239,.4)">→</span>
+        </a>
+        <a href="https://wa.me/919995495395" style="background:#12110F;color:#F6F4EF;padding:24px 26px;display:flex;justify-content:space-between;align-items:center;gap:16px;transition:background .25s" style-hover="background:#1F1D1A;color:#F6F4EF">
+          <span><span style="display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#C0973F">WhatsApp Us</span><span style="display:block;font-family:'Jost',sans-serif;font-size:22px;letter-spacing:.02em;margin-top:8px">Send project details</span></span>
+          <span style="color:rgba(246,244,239,.4)">→</span>
+        </a>
+        <a href="mailto:info@alicore.in" style="background:#12110F;color:#F6F4EF;padding:24px 26px;display:flex;justify-content:space-between;align-items:center;gap:16px;transition:background .25s" style-hover="background:#1F1D1A;color:#F6F4EF">
+          <span><span style="display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#C0973F">Email Us</span><span style="display:block;font-family:'Jost',sans-serif;font-size:22px;letter-spacing:.02em;margin-top:8px">[ADD EMAIL]</span></span>
+          <span style="color:rgba(246,244,239,.4)">→</span>
+        </a>
+      </div>
+    </div>
+
+    <div style="background:#F6F4EF;color:#12110F;padding:clamp(28px,4vw,48px)">
+      <sc-if value="{{ sent }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:60px 0;text-align:center">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#B08D3C">Enquiry Received</div>
+          <h3 style="font-family:'Jost',sans-serif;font-weight:400;font-size:30px;margin-top:18px">Thank you.</h3>
+          <p style="font-size:15px;color:rgba(18,17,15,.6);margin-top:14px;max-width:36ch;margin-left:auto;margin-right:auto">Our team will review your requirement and respond with the right manufacturing approach.</p>
+          <button onClick="{{ reset }}" style="margin-top:28px;border:1px solid rgba(18,17,15,.2);background:none;padding:14px 26px;font-family:'Jost',sans-serif;font-size:13px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer">Send another</button>
+        </div>
+      </sc-if>
+      <sc-if value="{{ notSent }}" hint-placeholder-val="{{ true }}">
+        <div>
+          <h3 style="font-family:'Jost',sans-serif;font-weight:500;font-size:15px;letter-spacing:.14em;text-transform:uppercase">Request a Quote</h3>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px 20px;margin-top:28px">
+            <label style="display:flex;flex-direction:column;gap:8px"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(18,17,15,.55)">Name *</span><input id="enq-name" type="text" placeholder="Full name" style="border:none;border-bottom:1px solid rgba(18,17,15,.25);background:none;padding:10px 0;font-size:15px;outline:none"></label>
+            <label style="display:flex;flex-direction:column;gap:8px"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(18,17,15,.55)">Company</span><input id="enq-company" type="text" placeholder="Firm / company" style="border:none;border-bottom:1px solid rgba(18,17,15,.25);background:none;padding:10px 0;font-size:15px;outline:none"></label>
+            <label style="display:flex;flex-direction:column;gap:8px"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(18,17,15,.55)">Phone *</span><input id="enq-phone" type="tel" placeholder="Mobile number" style="border:none;border-bottom:1px solid rgba(18,17,15,.25);background:none;padding:10px 0;font-size:15px;outline:none"></label>
+            <label style="display:flex;flex-direction:column;gap:8px"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(18,17,15,.55)">Email *</span><input id="enq-email" type="email" placeholder="name@company.com" style="border:none;border-bottom:1px solid rgba(18,17,15,.25);background:none;padding:10px 0;font-size:15px;outline:none"></label>
+            <label style="display:flex;flex-direction:column;gap:8px"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(18,17,15,.55)">Project Location</span><input id="enq-location" type="text" placeholder="City / site" style="border:none;border-bottom:1px solid rgba(18,17,15,.25);background:none;padding:10px 0;font-size:15px;outline:none"></label>
+            <label style="display:flex;flex-direction:column;gap:8px"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(18,17,15,.55)">Estimated Quantity</span><input id="enq-qty" type="text" placeholder="sq.ft / nos." style="border:none;border-bottom:1px solid rgba(18,17,15,.25);background:none;padding:10px 0;font-size:15px;outline:none"></label>
+          </div>
+          <label style="display:flex;flex-direction:column;gap:8px;margin-top:22px"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(18,17,15,.55)">Product / Requirement</span>
+            <select id="enq-product" style="border:none;border-bottom:1px solid rgba(18,17,15,.25);background:none;padding:10px 0;font-size:15px;outline:none">
+              <option>GFRC Architectural Panels</option>
+              <option>GFRC Cornices</option>
+              <option>GFRC Columns &amp; Pillars</option>
+              <option>GFRC Jalis</option>
+              <option>GFRC Decorative Elements</option>
+              <option>FRP Architectural Products</option>
+              <option>Custom Architectural Elements</option>
+              <option>Not sure yet — please advise</option>
+            </select>
+          </label>
+          <label style="display:flex;flex-direction:column;gap:8px;margin-top:22px"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(18,17,15,.55)">Message</span><textarea id="enq-message" rows="3" placeholder="Scope, timeline, finish, references…" style="border:none;border-bottom:1px solid rgba(18,17,15,.25);background:none;padding:10px 0;font-size:15px;outline:none;resize:vertical"></textarea></label>
+          <div style="display:flex;align-items:center;gap:14px;border:1px solid rgba(18,17,15,.16);background:rgba(18,17,15,.03);padding:18px 20px;margin-top:26px">
+            <span style="width:6px;height:6px;background:#C0973F;flex:0 0 auto"></span>
+            <span style="font-size:13.5px;line-height:1.6;color:rgba(18,17,15,.65)">Have drawings or reference images? Send them to us on <a href="https://wa.me/919995495395">WhatsApp</a> and we'll match them to your enquiry.</span>
+          </div>
+          <button onClick="{{ submit }}" style="width:100%;margin-top:28px;background:#12110F;color:#F6F4EF;border:none;padding:19px 26px;font-family:'Jost',sans-serif;font-size:14px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:background .25s" style-hover="background:#B08D3C;color:#12110F">Request a Quote</button>
+          <p style="font-size:12.5px;color:rgba(18,17,15,.5);margin-top:14px;line-height:1.6">Prefer to talk? Call 9995 495 395 or message us on WhatsApp — we respond to project enquiries the same working day.</p>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+</section>
+
+<footer style="background:#0C0B0A;color:rgba(246,244,239,.6);padding:clamp(56px,7vw,90px) 0 28px">
+  <div style="max-width:1320px;margin:0 auto;padding:0 clamp(20px,4vw,48px)">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:clamp(32px,4vw,56px);padding-bottom:52px;border-bottom:1px solid rgba(246,244,239,.12)">
+      <div>
+        <span style="display:block;font-family:'Jost',sans-serif;font-size:22px;font-weight:500;letter-spacing:.34em;color:#F6F4EF">ALICORE</span>
+        <span style="display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#C0973F;margin-top:10px">Architectural Products. Engineered to Elevate.</span>
+        <p style="font-size:14px;line-height:1.7;margin-top:20px;max-width:32ch">GFRC | FRP | Custom Architectural Solutions.</p>
+      </div>
+      <div>
+        <h4 style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#C0973F;font-weight:400">Quick Links</h4>
+        <div style="display:flex;flex-direction:column;gap:11px;margin-top:20px;font-size:14.5px">
+          <a href="#top" style="color:rgba(246,244,239,.6)" style-hover="color:#F6F4EF">Home</a>
+          <a href="#about" style="color:rgba(246,244,239,.6)" style-hover="color:#F6F4EF">About</a>
+          <a href="#products" style="color:rgba(246,244,239,.6)" style-hover="color:#F6F4EF">Products</a>
+          <a href="#projects" style="color:rgba(246,244,239,.6)" style-hover="color:#F6F4EF">Projects</a>
+          <a href="#contact" style="color:rgba(246,244,239,.6)" style-hover="color:#F6F4EF">Contact</a>
+        </div>
+      </div>
+      <div>
+        <h4 style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#C0973F;font-weight:400">Products</h4>
+        <div style="display:flex;flex-direction:column;gap:11px;margin-top:20px;font-size:14.5px">
+          <a href="#gfrc" style="color:rgba(246,244,239,.6)" style-hover="color:#F6F4EF">GFRC Panels &amp; Jalis</a>
+          <a href="#gfrc" style="color:rgba(246,244,239,.6)" style-hover="color:#F6F4EF">Cornices &amp; Columns</a>
+          <a href="#frp" style="color:rgba(246,244,239,.6)" style-hover="color:#F6F4EF">FRP Architectural Products</a>
+          <a href="#custom" style="color:rgba(246,244,239,.6)" style-hover="color:#F6F4EF">Custom Elements</a>
+          <a href="#manufacturing" style="color:rgba(246,244,239,.6)" style-hover="color:#F6F4EF">Manufacturing</a>
+        </div>
+      </div>
+      <div>
+        <h4 style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#C0973F;font-weight:400">Contact</h4>
+        <div style="display:flex;flex-direction:column;gap:11px;margin-top:20px;font-size:14.5px">
+          <a href="tel:+919995495395" style="color:rgba(246,244,239,.6)" style-hover="color:#F6F4EF">9995 495 395</a>
+          <span>[ADD EMAIL]</span>
+          <span>[ADD ADDRESS]</span>
+          <span style="color:rgba(246,244,239,.45)">www.alicore.in</span>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase">
+          <a href="#" style="color:rgba(246,244,239,.6)" style-hover="color:#C0973F">Instagram</a>
+          <a href="#" style="color:rgba(246,244,239,.6)" style-hover="color:#C0973F">Facebook</a>
+          <a href="#" style="color:rgba(246,244,239,.6)" style-hover="color:#C0973F">LinkedIn</a>
+          <a href="#" style="color:rgba(246,244,239,.6)" style-hover="color:#C0973F">YouTube</a>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-between;padding-top:24px;font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:rgba(246,244,239,.42)">
+      <span>© 2026 Alicore. All Rights Reserved.</span>
+      <span style="display:flex;flex-wrap:wrap;gap:12px 24px;align-items:center">
+        <span>GFRC · FRP · Precast · Facade Solutions</span>
+        <a href="Alicore Admin.dc.html" style="color:rgba(246,244,239,.5);border-bottom:1px solid rgba(246,244,239,.25);letter-spacing:.12em" style-hover="color:#C0973F">Staff Login</a>
+      </span>
+    </div>
+  </div>
+</footer>
+
+<a href="https://wa.me/919995495395" aria-label="WhatsApp Alicore" title="Hello Alicore, I would like to discuss an architectural products requirement." style="position:fixed;right:28px;bottom:28px;z-index:80;width:58px;height:58px;border-radius:50%;background:#1f2a20;border:1px solid rgba(250,249,246,.15);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(0,0,0,.35);transition:transform .2s" style-hover="transform:translateY(-3px)">
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="#e9e5db" aria-hidden="true"><path d="M17.6 6.32A8.86 8.86 0 0 0 3.05 16.94L2 21l4.18-1.03A8.86 8.86 0 0 0 17.6 6.32ZM12 19.53a7.4 7.4 0 0 1-3.77-1.03l-.27-.16-2.8.69.7-2.74-.18-.28A7.42 7.42 0 1 1 12 19.53Zm4.06-5.53c-.22-.11-1.3-.64-1.5-.72s-.35-.11-.5.11-.57.72-.7.87-.26.17-.48.06a6.06 6.06 0 0 1-1.78-1.1 6.68 6.68 0 0 1-1.24-1.54c-.13-.22 0-.34.1-.45.1-.1.22-.26.33-.39a1.5 1.5 0 0 0 .22-.37.4.4 0 0 0 0-.39c-.06-.11-.5-1.2-.68-1.65s-.36-.38-.5-.39h-.43a.82.82 0 0 0-.6.28 2.5 2.5 0 0 0-.78 1.86 4.34 4.34 0 0 0 .91 2.3 9.94 9.94 0 0 0 3.8 3.36c.53.23.94.36 1.26.46a3 3 0 0 0 1.4.09 2.29 2.29 0 0 0 1.5-1.06 1.86 1.86 0 0 0 .13-1.06c-.05-.09-.2-.15-.42-.26Z"/></svg>
+</a>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#C0973F&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;#C0973F&quot;,&quot;#B08D3C&quot;,&quot;#8C8A82&quot;,&quot;#A8763A&quot;]}}">
+class Component extends DCLogic {
+  state = { cat: "All", sent: false, active: "top" };
+
+  componentDidMount() {
+    this.locked = 0;
+    this._active = this.state.active;
+    this._y = -1;
+    this.nav = { top: "top", about: "about", products: "products", gfrc: "products", frp: "products", custom: "custom", projects: "projects", manufacturing: "manufacturing", contact: "contact" };
+    this.order = Object.keys(this.nav);
+    this.apply = () => {
+      if (Date.now() < this.locked) return;
+      const line = 150;
+      let current = this._active;
+      let best = -Infinity;
+      this.order.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const top = el.getBoundingClientRect().top;
+        if (top <= line && top > best) { best = top; current = this.nav[id]; }
+      });
+      if (current === this._active) return;
+      this._active = current;
+      this.setState({ active: current });
+    };
+    window.addEventListener("scroll", this.apply, { passive: true });
+    window.addEventListener("resize", this.apply);
+    this.spyTimer = setInterval(this.apply, 250);
+    this.apply();
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("scroll", this.apply);
+    window.removeEventListener("resize", this.apply);
+    clearInterval(this.spyTimer);
+  }
+
+  renderVals() {
+    const gold = this.props.accent ?? "#C0973F";
+    const cats = ["All", "Commercial", "Residential", "Facades", "Interiors", "Custom Architectural Elements"];
+    const projects = [
+      { cat: "Commercial", material: "GFRC", product: "Facade panels", application: "Building envelope", slot: "alicore-proj-1", shot: "Commercial facade — GFRC panel system" },
+      { cat: "Facades", material: "GFRC", product: "Jali screens", application: "Shading screen", slot: "alicore-proj-2", shot: "Jali screen facade detail" },
+      { cat: "Residential", material: "GFRC", product: "Cornices & mouldings", application: "Elevation detailing", slot: "alicore-proj-3", shot: "Villa elevation with cornices" },
+      { cat: "Interiors", material: "FRP", product: "Decorative elements", application: "Feature wall", slot: "alicore-proj-4", shot: "Lobby feature element" },
+      { cat: "Interiors", material: "GFRC", product: "Wall panels", application: "Interior cladding", slot: "alicore-proj-5", shot: "Interior GFRC panelling" },
+      { cat: "Custom Architectural Elements", material: "GFRC / FRP", product: "Custom profiles", application: "Bespoke element", slot: "alicore-proj-6", shot: "Custom moulded element close-up" }
+    ].map(p => ({ ...p, name: "Project Name — Coming Soon", location: "Location — Coming Soon" }));
+
+    const nav = [["#top", "Home", "top"], ["#about", "About", "about"], ["#products", "Products", "products"], ["#projects", "Projects", "projects"], ["#custom", "Custom Solutions", "custom"], ["#manufacturing", "Manufacturing", "manufacturing"], ["#contact", "Contact", "contact"]];
+
+    return {
+      accent: gold,
+      navItems: nav.map(n => {
+        const on = this.state.active === n[2];
+        return {
+          href: n[0], label: n[1],
+          color: on ? "#12110F" : "rgba(18,17,15,.68)",
+          line: on ? gold : "transparent",
+          select: () => { this.locked = Date.now() + 900; this._active = n[2]; this._y = -1; this.setState({ active: n[2] }); }
+        };
+      }),
+      sent: this.state.sent,
+      notSent: !this.state.sent,
+      submit: (e) => {
+        e.preventDefault();
+        const val = id => { const el = document.getElementById(id); return el ? String(el.value || "").trim() : ""; };
+        const entry = {
+          id: "ENQ-" + Date.now().toString(36).toUpperCase(),
+          submittedAt: new Date().toISOString(),
+          name: val("enq-name"), company: val("enq-company"), phone: val("enq-phone"),
+          email: val("enq-email"), location: val("enq-location"), quantity: val("enq-qty"),
+          product: val("enq-product"), message: val("enq-message"), status: "new"
+        };
+        try {
+          const key = "alicore.enquiries";
+          const list = JSON.parse(localStorage.getItem(key) || "[]");
+          list.push(entry);
+          localStorage.setItem(key, JSON.stringify(list));
+        } catch (err) { /* storage unavailable */ }
+        ["enq-name", "enq-company", "enq-phone", "enq-email", "enq-location", "enq-qty", "enq-message"].forEach(id => { const el = document.getElementById(id); if (el) el.value = ""; });
+        this.setState({ sent: true });
+      },
+      reset: () => this.setState({ sent: false }),
+
+      pillars: [
+        { n: "01", code: "GFRC", full: "Glass Fiber Reinforced Concrete" },
+        { n: "02", code: "FRP", full: "Fiber Reinforced Plastic" },
+        { n: "03", code: "PRECAST", full: "Precision · Strength · Performance" },
+        { n: "04", code: "FACADE", full: "Elevating Spaces · Defining Style" }
+      ],
+
+      capabilities: [
+        { k: "Custom Manufacturing", v: "Made to project drawings and dimensions" },
+        { k: "Material Expertise", v: "GFRC and FRP systems" },
+        { k: "Project Support", v: "Design development to delivery" },
+        { k: "Scalable Production", v: "Single pieces to full projects" }
+      ],
+
+      products: [
+        ["GFRC", "GFRC Architectural Panels", "Lightweight architectural panels designed for contemporary facades and interiors.", "Large-format GFRC panel facade"],
+        ["GFRC", "GFRC Cornices", "Decorative architectural profiles manufactured with precision for exterior and interior applications.", "Cornice profile detail"],
+        ["GFRC", "GFRC Columns & Pillars", "Architectural columns and structural-looking decorative elements customized to project requirements.", "Column cladding at entrance"],
+        ["GFRC", "GFRC Jalis", "Decorative perforated screens combining traditional architectural aesthetics with modern manufacturing.", "Perforated jali screen"],
+        ["GFRC", "GFRC Decorative Elements", "Custom profiles, mouldings, trims, frames and other architectural components.", "Moulding and trim detail"],
+        ["FRP", "FRP Architectural Products", "Lightweight, durable and corrosion-resistant FRP solutions for architectural and industrial applications.", "FRP moulded element"],
+        ["Custom", "Custom Architectural Elements", "Products developed according to architectural drawings, CAD designs, dimensions and project requirements.", "Custom element from drawing"]
+      ].map((p, i) => ({ cat: p[0], name: p[1], desc: p[2], shot: p[3], idx: String(i + 1).padStart(2, "0"), slot: "alicore-prod-" + (i + 1) })),
+
+      gfrcPoints: ["Lightweight construction", "High design flexibility", "Detailed surface finishes", "Custom shapes and profiles", "Large architectural facades", "Durable exterior applications", "Custom colours and textures"],
+      frpPoints: ["Lightweight", "Corrosion resistant", "High design flexibility", "Custom shapes and sizes", "Demanding environments", "Low maintenance"],
+
+      why: [
+        ["Custom Manufacturing", "Products manufactured according to project drawings, dimensions and design requirements."],
+        ["Architectural Precision", "Attention to geometry, detailing, dimensions and surface quality."],
+        ["Material Expertise", "Specialized knowledge of GFRC and FRP manufacturing."],
+        ["Project Support", "Support from design development through manufacturing and delivery."],
+        ["Quality Focus", "Consistent attention to material selection, production and finishing."],
+        ["Scalable Production", "Capability to support individual custom pieces as well as larger project requirements."]
+      ].map((w, i) => ({ idx: String(i + 1).padStart(2, "0"), name: w[0], desc: w[1] })),
+
+      steps: [
+        ["01", "Concept", "Understand the architectural requirement."],
+        ["02", "Design Development", "Review drawings, dimensions, profiles and details."],
+        ["03", "Engineering", "Develop the manufacturing approach and technical specifications."],
+        ["04", "Manufacturing", "Produce the required architectural elements with controlled processes."],
+        ["05", "Finishing", "Apply the required surface finish, colour and detailing."],
+        ["06", "Delivery", "Prepare and deliver the products according to project requirements."]
+      ].map(s => ({ n: s[0], name: s[1], desc: s[2] })),
+
+      journey: [
+        ["01", "Design", "Architectural intent translated into manufacturing inputs."],
+        ["02", "Mould Development", "Patterns and moulds built for the specified profile."],
+        ["03", "Material Preparation", "Mix design and material selection for the application."],
+        ["04", "Production", "Components produced under controlled conditions."],
+        ["05", "Finishing", "Surface finish, colour and texture applied."],
+        ["06", "Quality Check", "Dimensional and finish inspection before release."],
+        ["07", "Delivery", "Packed and dispatched to protect geometry and finish."]
+      ].map(j => ({ n: j[0], name: j[1], desc: j[2] })),
+
+      industries: ["Residential Buildings", "Commercial Buildings", "Hospitality", "Retail", "Institutional Buildings", "Office Buildings", "Villas", "Interior Architecture", "Facade Projects", "Landscape & Public Spaces"],
+
+      categories: cats.map(c => ({
+        label: c,
+        select: () => this.setState({ cat: c }),
+        bg: this.state.cat === c ? gold : "transparent",
+        fg: this.state.cat === c ? "#12110F" : "rgba(246,244,239,.7)",
+        border: this.state.cat === c ? gold : "rgba(246,244,239,.22)"
+      })),
+
+      visibleProjects: this.state.cat === "All" ? projects : projects.filter(p => p.cat === this.state.cat)
+    };
+  }
+}
+</script>
+</body>
+</html>

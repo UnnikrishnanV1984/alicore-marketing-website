@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<![CDATA[<helmet>
+<title>Alicore — Staff Console</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&family=Manrope:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="./image-slot.js"></script>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#12110F;color:#F6F4EF;font-family:'Manrope',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  img{display:block;max-width:100%}
+  a{color:#C0973F;text-decoration:none}
+  a:hover{color:#F6F4EF}
+  input,button,select,textarea{font:inherit;color:inherit}
+  ::selection{background:#C0973F;color:#12110F}
+</style>
+</helmet>
+
+<sc-if value="{{ locked }}" hint-placeholder-val="{{ true }}">
+  <div style="min-height:100vh;display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr))">
+    <div style="padding:clamp(40px,6vw,80px);display:flex;flex-direction:column;justify-content:space-between;gap:40px;background:#0C0B0A">
+      <a href="Alicore Home.dc.html" style="display:flex;align-items:center;gap:12px;color:#F6F4EF">
+        <img src="assets/alicore-badge.jpg" alt="Alicore" style="width:44px;height:44px;border-radius:50%;object-fit:cover">
+        <span style="display:flex;flex-direction:column;gap:4px">
+          <span style="font-family:'Jost',sans-serif;font-size:18px;font-weight:500;letter-spacing:.32em;line-height:1">ALICORE</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.22em;color:#C0973F;text-transform:uppercase">Staff Console</span>
+        </span>
+      </a>
+      <div>
+        <h1 style="font-family:'Jost',sans-serif;font-weight:400;font-size:clamp(30px,3.6vw,46px);line-height:1.1;max-width:20ch;text-wrap:balance">Manage site imagery and project enquiries.</h1>
+        <p style="margin-top:20px;font-size:15px;line-height:1.7;color:rgba(246,244,239,.55);max-width:44ch;font-weight:300">Sign in to upload photography for every image placement on the website and review enquiries submitted through the quote form.</p>
+      </div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:rgba(246,244,239,.35)">Authorised personnel only</div>
+    </div>
+    <div style="padding:clamp(40px,6vw,80px);display:flex;flex-direction:column;justify-content:center">
+      <div style="max-width:400px;width:100%">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#C0973F">Sign In</div>
+        <h2 style="font-family:'Jost',sans-serif;font-weight:400;font-size:30px;margin-top:14px">Staff Login</h2>
+        <label style="display:flex;flex-direction:column;gap:9px;margin-top:34px">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(246,244,239,.5)">Username</span>
+          <input id="admin-user" type="text" autocomplete="username" placeholder="admin" style="border:none;border-bottom:1px solid rgba(246,244,239,.28);background:none;padding:11px 0;font-size:16px;outline:none">
+        </label>
+        <label style="display:flex;flex-direction:column;gap:9px;margin-top:24px">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(246,244,239,.5)">Password</span>
+          <input id="admin-pass" type="password" autocomplete="current-password" placeholder="••••••••" style="border:none;border-bottom:1px solid rgba(246,244,239,.28);background:none;padding:11px 0;font-size:16px;outline:none">
+        </label>
+        <sc-if value="{{ error }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top:20px;border-left:2px solid #C0973F;padding-left:14px;font-size:13.5px;color:rgba(246,244,239,.75)">Incorrect username or password.</div>
+        </sc-if>
+        <button onClick="{{ login }}" style="width:100%;margin-top:34px;background:#C0973F;color:#12110F;border:none;padding:18px 26px;font-family:'Jost',sans-serif;font-size:14px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:background .25s" style-hover="background:#F6F4EF">Sign In</button>
+        <p style="margin-top:22px;font-size:12.5px;line-height:1.7;color:rgba(246,244,239,.45)">Demo credentials — <span style="color:#C0973F">admin</span> / <span style="color:#C0973F">alicore2026</span>. This prototype runs entirely in the browser; a live deployment needs real server-side authentication.</p>
+        <a href="Alicore Home.dc.html" style="display:inline-block;margin-top:28px;font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase">← Back to website</a>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ unlocked }}" hint-placeholder-val="{{ false }}">
+  <div style="min-height:100vh;display:flex;flex-direction:column">
+    <header style="position:sticky;top:0;z-index:40;background:rgba(12,11,10,.94);backdrop-filter:blur(14px);border-bottom:1px solid rgba(246,244,239,.14)">
+      <div style="max-width:1440px;margin:0 auto;padding:16px clamp(20px,3vw,40px);display:flex;flex-wrap:wrap;gap:14px 28px;align-items:center;justify-content:space-between">
+        <div style="display:flex;align-items:center;gap:12px">
+          <img src="assets/alicore-badge.jpg" alt="Alicore" style="width:34px;height:34px;border-radius:50%;object-fit:cover">
+          <span style="font-family:'Jost',sans-serif;font-size:16px;font-weight:500;letter-spacing:.3em">ALICORE</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:#C0973F;border-left:1px solid rgba(246,244,239,.2);padding-left:12px">Staff Console</span>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
+          <button onClick="{{ showEnquiries }}" style="border:1px solid {{ tabEnqBorder }};background:{{ tabEnqBg }};color:{{ tabEnqFg }};padding:11px 20px;font-family:'Jost',sans-serif;font-size:13px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:all .2s">Enquiries · {{ count }}</button>
+          <button onClick="{{ showMedia }}" style="border:1px solid {{ tabMedBorder }};background:{{ tabMedBg }};color:{{ tabMedFg }};padding:11px 20px;font-family:'Jost',sans-serif;font-size:13px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:all .2s">Image Library</button>
+          <a href="Alicore Home.dc.html" style="padding:11px 18px;font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(246,244,239,.6)">View Site</a>
+          <button onClick="{{ logout }}" style="border:none;background:none;padding:11px 4px;font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(246,244,239,.6);cursor:pointer">Sign Out</button>
+        </div>
+      </div>
+    </header>
+
+    <sc-if value="{{ onEnquiries }}" hint-placeholder-val="{{ true }}">
+      <div style="max-width:1440px;margin:0 auto;width:100%;padding:clamp(32px,4vw,56px) clamp(20px,3vw,40px) 80px">
+        <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-end;justify-content:space-between">
+          <div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#C0973F">Quote Requests</div>
+            <h2 style="font-family:'Jost',sans-serif;font-weight:400;font-size:clamp(26px,3vw,38px);margin-top:14px">Enquiries</h2>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:1px;background:rgba(246,244,239,.14);border:1px solid rgba(246,244,239,.14)">
+            <div style="background:#12110F;padding:16px 26px">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:rgba(246,244,239,.5)">Total</div>
+              <div style="font-family:'Jost',sans-serif;font-size:26px;margin-top:6px">{{ count }}</div>
+            </div>
+            <div style="background:#12110F;padding:16px 26px">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:rgba(246,244,239,.5)">Last 7 days</div>
+              <div style="font-family:'Jost',sans-serif;font-size:26px;margin-top:6px;color:#C0973F">{{ recent }}</div>
+            </div>
+            <div style="background:#12110F;padding:16px 26px">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:rgba(246,244,239,.5)">Oldest open</div>
+              <div style="font-family:'Jost',sans-serif;font-size:26px;margin-top:6px">{{ oldest }}</div>
+            </div>
+          </div>
+        </div>
+
+        <sc-if value="{{ hasEnquiries }}" hint-placeholder-val="{{ true }}">
+          <div style="margin-top:36px;border:1px solid rgba(246,244,239,.14)">
+            <div style="display:grid;grid-template-columns:1.4fr 1.1fr 1.5fr 0.9fr 0.9fr;gap:20px;padding:15px 24px;background:rgba(246,244,239,.05);font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:rgba(246,244,239,.55)">
+              <span>Contact</span><span>Project</span><span>Requirement</span><span>Submitted</span><span>Age</span>
+            </div>
+            <sc-for list="{{ enquiries }}" as="e" hint-placeholder-count="3">
+              <div style="display:grid;grid-template-columns:1.4fr 1.1fr 1.5fr 0.9fr 0.9fr;gap:20px;padding:22px 24px;border-top:1px solid rgba(246,244,239,.12);align-items:start">
+                <div>
+                  <div style="font-family:'Jost',sans-serif;font-size:17px">{{ e.name }}</div>
+                  <div style="font-size:13px;color:rgba(246,244,239,.55);margin-top:6px">{{ e.company }}</div>
+                  <div style="font-size:13px;color:rgba(246,244,239,.55);margin-top:4px">{{ e.phone }}</div>
+                  <div style="font-size:13px;color:rgba(246,244,239,.55);margin-top:4px">{{ e.email }}</div>
+                </div>
+                <div>
+                  <div style="font-size:14px;color:rgba(246,244,239,.8)">{{ e.location }}</div>
+                  <div style="font-size:13px;color:rgba(246,244,239,.5);margin-top:6px">Qty — {{ e.quantity }}</div>
+                  <div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.12em;color:rgba(246,244,239,.4);margin-top:10px">{{ e.id }}</div>
+                </div>
+                <div>
+                  <div style="font-size:14px;color:#C0973F">{{ e.product }}</div>
+                  <div style="font-size:13.5px;line-height:1.6;color:rgba(246,244,239,.6);margin-top:8px">{{ e.message }}</div>
+                </div>
+                <div style="font-size:13.5px;color:rgba(246,244,239,.75)">
+                  <div>{{ e.dateLabel }}</div>
+                  <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:rgba(246,244,239,.45);margin-top:6px">{{ e.timeLabel }}</div>
+                </div>
+                <div>
+                  <span style="display:inline-block;border:1px solid {{ e.ageBorder }};color:{{ e.ageColor }};padding:7px 12px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase">{{ e.ageLabel }}</span>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:14px;margin-top:26px;align-items:center">
+            <button onClick="{{ refresh }}" style="border:1px solid rgba(246,244,239,.25);background:none;padding:13px 22px;font-family:'Jost',sans-serif;font-size:13px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer">Refresh</button>
+            <button onClick="{{ exportCsv }}" style="border:1px solid rgba(246,244,239,.25);background:none;padding:13px 22px;font-family:'Jost',sans-serif;font-size:13px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer">Copy as CSV</button>
+            <button onClick="{{ clearAll }}" style="border:none;background:none;padding:13px 4px;font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(246,244,239,.45);cursor:pointer">Clear all</button>
+            <span style="font-size:12.5px;color:rgba(246,244,239,.4);max-width:52ch">Prototype storage — enquiries are held in this browser only. A live site needs a server or form service to receive them.</span>
+          </div>
+        </sc-if>
+        <sc-if value="{{ noEnquiries }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top:36px;border:1px solid rgba(246,244,239,.14);padding:clamp(40px,6vw,80px);text-align:center">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#C0973F">No enquiries yet</div>
+            <h3 style="font-family:'Jost',sans-serif;font-weight:400;font-size:26px;margin-top:16px">Nothing in the queue.</h3>
+            <p style="font-size:14.5px;line-height:1.7;color:rgba(246,244,239,.55);margin:14px auto 0;max-width:44ch">Submissions from the website's Request a Quote form will appear here with their submission time and age.</p>
+            <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:28px">
+              <a href="Alicore Home.dc.html" style="border:1px solid rgba(246,244,239,.25);color:#F6F4EF;padding:14px 24px;font-family:'Jost',sans-serif;font-size:13px;letter-spacing:.08em;text-transform:uppercase">Open the form</a>
+              <button onClick="{{ refresh }}" style="border:1px solid rgba(246,244,239,.25);background:none;padding:14px 24px;font-family:'Jost',sans-serif;font-size:13px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer">Refresh</button>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ onMedia }}" hint-placeholder-val="{{ false }}">
+      <div style="max-width:1440px;margin:0 auto;width:100%;padding:clamp(32px,4vw,56px) clamp(20px,3vw,40px) 80px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#C0973F">Website Imagery</div>
+        <h2 style="font-family:'Jost',sans-serif;font-weight:400;font-size:clamp(26px,3vw,38px);margin-top:14px">Image Library</h2>
+        <p style="margin-top:16px;font-size:15px;line-height:1.7;color:rgba(246,244,239,.6);max-width:66ch;font-weight:300">Every image placement on the website appears below. Drag a photograph onto a slot — or click to browse — and it fills that position on the live page. Use landscape shots at 2000px wide or larger; keep files under 500 KB where possible so pages stay fast.</p>
+        <sc-for list="{{ groups }}" as="g" hint-placeholder-count="4">
+          <div style="margin-top:56px">
+            <div style="display:flex;flex-wrap:wrap;gap:12px 20px;align-items:baseline;border-bottom:1px solid rgba(246,244,239,.14);padding-bottom:14px">
+              <h3 style="font-family:'Jost',sans-serif;font-weight:400;font-size:21px;letter-spacing:.02em">{{ g.title }}</h3>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:rgba(246,244,239,.45)">{{ g.note }}</span>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:24px;margin-top:26px">
+              <sc-for list="{{ g.slots }}" as="s" hint-placeholder-count="4">
+                <div>
+                  <div style="position:relative;aspect-ratio:4/3;background:#1A1917;border:1px solid rgba(246,244,239,.12)">
+                    <image-slot id="{{ s.id }}" shape="rect" fit="cover" placeholder="{{ s.label }}"></image-slot>
+                  </div>
+                  <div style="font-family:'Jost',sans-serif;font-size:15px;margin-top:12px">{{ s.title }}</div>
+                  <div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:rgba(246,244,239,.42);margin-top:6px">{{ s.id }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+  </div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:860}}">
+class Component extends DCLogic {
+  state = { auth: false, error: false, tab: "enquiries", list: [], tick: 0 };
+
+  componentDidMount() {
+    try { if (sessionStorage.getItem("alicore.admin.session") === "1") this.setState({ auth: true }); } catch (e) {}
+    this.load();
+  }
+
+  load() {
+    let list = [];
+    try { list = JSON.parse(localStorage.getItem("alicore.enquiries") || "[]"); } catch (e) { list = []; }
+    if (!Array.isArray(list)) list = [];
+    this.setState({ list: list.slice().reverse() });
+  }
+
+  save(list) {
+    try { localStorage.setItem("alicore.enquiries", JSON.stringify(list)); } catch (e) {}
+  }
+
+  renderVals() {
+    const gold = "#C0973F";
+    const now = Date.now();
+    const dayMs = 86400000;
+    const fmtDate = new Intl.DateTimeFormat("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+    const fmtTime = new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false });
+
+    const enquiries = this.state.list.map(e => {
+      const d = new Date(e.submittedAt);
+      const days = Math.floor((now - d.getTime()) / dayMs);
+      const hours = Math.floor((now - d.getTime()) / 3600000);
+      const ageLabel = days >= 1 ? days + (days === 1 ? " day" : " days") : (hours >= 1 ? hours + (hours === 1 ? " hour" : " hours") : "Just now");
+      const hot = days >= 3;
+      return {
+        id: e.id || "—",
+        name: e.name || "Name not given",
+        company: e.company || "—",
+        phone: e.phone || "—",
+        email: e.email || "—",
+        location: e.location || "Location not given",
+        quantity: e.quantity || "—",
+        product: e.product || "—",
+        message: e.message || "No message",
+        dateLabel: fmtDate.format(d),
+        timeLabel: fmtTime.format(d) + " hrs",
+        ageLabel: ageLabel,
+        ageColor: hot ? gold : "rgba(246,244,239,.7)",
+        ageBorder: hot ? gold : "rgba(246,244,239,.22)"
+      };
+    });
+
+    const ages = this.state.list.map(e => Math.floor((now - new Date(e.submittedAt).getTime()) / dayMs));
+    const recent = ages.filter(a => a <= 7).length;
+    const oldestDays = ages.length ? Math.max.apply(null, ages) : 0;
+
+    const tabOn = key => ({
+      bg: this.state.tab === key ? gold : "transparent",
+      fg: this.state.tab === key ? "#12110F" : "rgba(246,244,239,.75)",
+      border: this.state.tab === key ? gold : "rgba(246,244,239,.25)"
+    });
+    const te = tabOn("enquiries");
+    const tm = tabOn("media");
+
+    const groups = [
+      { title: "Home — Key Visuals", note: "hero, about, materials, manufacturing", slots: [
+        ["alicore-hero", "Hero photograph — facade with GFRC panels / jali screens", "Hero"],
+        ["alicore-about", "Close-up: GFRC surface texture / finished panel", "Who We Are"],
+        ["alicore-gfrc", "GFRC facade / jali screen close-up", "GFRC Section"],
+        ["alicore-frp", "FRP element / moulded component photo", "FRP Section"],
+        ["alicore-factory", "Production floor: GFRC spray / mould work", "Manufacturing"]
+      ]},
+      { title: "Products", note: "one photograph per product card", slots: [
+        ["alicore-prod-1", "Large-format GFRC panel facade", "GFRC Architectural Panels"],
+        ["alicore-prod-2", "Cornice profile detail", "GFRC Cornices"],
+        ["alicore-prod-3", "Column cladding at entrance", "GFRC Columns & Pillars"],
+        ["alicore-prod-4", "Perforated jali screen", "GFRC Jalis"],
+        ["alicore-prod-5", "Moulding and trim detail", "GFRC Decorative Elements"],
+        ["alicore-prod-6", "FRP moulded element", "FRP Architectural Products"],
+        ["alicore-prod-7", "Custom element from drawing", "Custom Architectural Elements"]
+      ]},
+      { title: "Projects", note: "gallery tiles — replace as projects are approved", slots: [
+        ["alicore-proj-1", "Commercial facade — GFRC panel system", "Commercial"],
+        ["alicore-proj-2", "Jali screen facade detail", "Facades"],
+        ["alicore-proj-3", "Villa elevation with cornices", "Residential"],
+        ["alicore-proj-4", "Lobby feature element", "Interiors — FRP"],
+        ["alicore-proj-5", "Interior GFRC panelling", "Interiors"],
+        ["alicore-proj-6", "Custom moulded element close-up", "Custom Elements"]
+      ]}
+    ].map(g => ({ title: g.title, note: g.note, slots: g.slots.map(s => ({ id: s[0], label: s[1], title: s[2] })) }));
+
+    return {
+      locked: !this.state.auth,
+      unlocked: this.state.auth,
+      error: this.state.error,
+      onEnquiries: this.state.auth && this.state.tab === "enquiries",
+      onMedia: this.state.auth && this.state.tab === "media",
+      tabEnqBg: te.bg, tabEnqFg: te.fg, tabEnqBorder: te.border,
+      tabMedBg: tm.bg, tabMedFg: tm.fg, tabMedBorder: tm.border,
+      count: this.state.list.length,
+      recent: recent,
+      oldest: oldestDays >= 1 ? oldestDays + "d" : (this.state.list.length ? "<1d" : "—"),
+      enquiries: enquiries,
+      hasEnquiries: enquiries.length > 0,
+      noEnquiries: enquiries.length === 0,
+      groups: groups,
+
+      login: () => {
+        const u = (document.getElementById("admin-user") || {}).value || "";
+        const p = (document.getElementById("admin-pass") || {}).value || "";
+        if (u.trim().toLowerCase() === "admin" && p === "alicore2026") {
+          try { sessionStorage.setItem("alicore.admin.session", "1"); } catch (e) {}
+          this.setState({ auth: true, error: false });
+          this.load();
+        } else {
+          this.setState({ error: true });
+        }
+      },
+      logout: () => {
+        try { sessionStorage.removeItem("alicore.admin.session"); } catch (e) {}
+        this.setState({ auth: false, error: false });
+      },
+      showEnquiries: () => { this.setState({ tab: "enquiries" }); this.load(); },
+      showMedia: () => this.setState({ tab: "media" }),
+      refresh: () => this.load(),
+      clearAll: () => {
+        this.save([]);
+        this.setState({ list: [] });
+      },
+      exportCsv: () => {
+        const rows = [["Reference", "Submitted", "Days old", "Name", "Company", "Phone", "Email", "Location", "Quantity", "Requirement", "Message"]];
+        this.state.list.forEach(e => {
+          const d = new Date(e.submittedAt);
+          rows.push([e.id, d.toISOString(), String(Math.floor((now - d.getTime()) / dayMs)), e.name, e.company, e.phone, e.email, e.location, e.quantity, e.product, (e.message || "").replace(/\s+/g, " ")]);
+        });
+        const csv = rows.map(r => r.map(c => '"' + String(c == null ? "" : c).replace(/"/g, '""') + '"').join(",")).join("\n");
+        if (navigator.clipboard) navigator.clipboard.writeText(csv);
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>
