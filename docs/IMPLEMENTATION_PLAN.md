@@ -18,6 +18,25 @@ Inputs: `design-mockup/uploads/Alicore_Requirements.txt` (authority),
 
 ---
 
+## 0a. Where the build departs from the mockup
+
+`CLAUDE.md` makes the brief the authority wherever it and the mockup disagree.
+Every such departure is recorded here, so it can be audited without re-reading
+both sources or asking whoever built it.
+
+| Area | Mockup | Brief | Built | Why |
+|---|---|---|---|---|
+| Header nav | 7 items: Home, About, Products, Projects, Custom Solutions, Manufacturing, Contact | 8 items: adds GFRC and FRP, omits Manufacturing | **9 items** — the brief's 8 plus Manufacturing | GFRC and FRP are named verbatim in the brief and are the two product lines searched by name. Manufacturing is kept because the home page still carries a `#manufacturing` section; following the brief literally left it unreachable from the menu. |
+| Enquiry attachment | No file input | Lists a file upload | **No file input** | Client chose the mockup. `0003_remove_enquiry_attachments.sql` drops the column and the private bucket. |
+| Enquiries "Clear all" | One button wiping the queue | — | **Per-row Archive** | An irreversible wipe sitting beside live customer leads. Archive is reversible and keeps the audit trail. |
+| Enquiry failure | `try/catch` that silently reports success | — | **Fails loudly**, with call/WhatsApp fallback | The prototype's silent catch loses a lead and tells the customer it worked. |
+| Staff login | Hardcoded `admin` / `alicore2026` | — | **Supabase Auth** | A prototype affordance; must never reach a deployed environment. |
+| Scroll spy | 250ms `setInterval` poll | — | **IntersectionObserver** | Same behaviour, no timer running for the life of the page. |
+
+Anything not listed here follows the mockup.
+
+---
+
 ## 1. Stack
 
 | Layer | Choice | Free-tier notes |

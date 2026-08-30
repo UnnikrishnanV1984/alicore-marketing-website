@@ -22,6 +22,16 @@ export const site = {
  * Primary navigation. `anchor` is the in-page target used on the long-scroll
  * home page; `href` is the standalone page. The header links to the page and
  * the scroll-spy highlights by anchor when we are on `/`.
+ *
+ * The brief and the mockup disagree here, so this list follows neither exactly
+ * (see the divergence table in docs/IMPLEMENTATION_PLAN.md):
+ *
+ *   GFRC, FRP     from the brief, which names the header items verbatim and
+ *                 overrides the mockup per CLAUDE.md. They are also the two
+ *                 product lines people search for by name.
+ *   Manufacturing from the mockup. The brief omits it, but the home page still
+ *                 carries a #manufacturing section -- dropping the link left a
+ *                 section of the page unreachable from the menu.
  */
 export const nav = [
   { label: 'Home', href: '/', anchor: '#top', id: 'top' },
@@ -31,6 +41,7 @@ export const nav = [
   { label: 'FRP', href: '/frp', anchor: '#frp', id: 'frp' },
   { label: 'Projects', href: '/projects', anchor: '#projects', id: 'projects' },
   { label: 'Custom Solutions', href: '/custom-solutions', anchor: '#custom', id: 'custom' },
+  { label: 'Manufacturing', href: '/manufacturing', anchor: '#manufacturing', id: 'manufacturing' },
   { label: 'Contact', href: '/contact', anchor: '#contact', id: 'contact' },
 ] as const;
 

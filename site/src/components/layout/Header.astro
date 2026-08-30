@@ -135,7 +135,7 @@ const { scrollSpy = false, active } = Astro.props;
     // Returning to desktop width while the sheet is open would otherwise leave
     // body scroll locked.
     window.addEventListener('resize', () => {
-      if (open && window.innerWidth > 1100) setOpen(false);
+      if (open && window.innerWidth > 1200) setOpen(false);
     });
   })();
 
@@ -239,7 +239,7 @@ const { scrollSpy = false, active } = Astro.props;
   .al-nav {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px 26px;
+    gap: 10px 20px;
     align-items: center;
     font-family: var(--font-display);
     font-size: 14px;
@@ -322,8 +322,10 @@ const { scrollSpy = false, active } = Astro.props;
     transform: translateY(-3.75px) rotate(-45deg);
   }
 
-  /* Below 1100px the nine-item nav can no longer share a line with the logo. */
-  @media (max-width: 1100px) {
+  /* Below 1200px the nine-item nav can no longer share a line with the logo.
+     Raised from 1100px when Manufacturing was restored -- at 1100 the last
+     item wrapped under the logo before the burger took over. */
+  @media (max-width: 1200px) {
     .al-nav {
       display: none;
     }
