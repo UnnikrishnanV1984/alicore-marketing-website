@@ -17,7 +17,7 @@ export const SESSION_COOKIE = 'al_session';
 export const REFRESH_COOKIE = 'al_refresh';
 
 function authClient(locals: unknown) {
-  const url = serverEnv(locals, 'PUBLIC_SUPABASE_URL');
+  const url = serverEnv(locals, 'PUBLIC_SUPABASE_URL')?.replace(/\/rest\/v1\/?$/, '').replace(/\/+$/, '');
   const key = serverEnv(locals, 'PUBLIC_SUPABASE_ANON_KEY');
   if (!url || !key) return null;
   return createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });

@@ -47,6 +47,13 @@ FROM node:22-bookworm-slim AS run
 
 WORKDIR /app
 
+# workerd validates TLS against the SYSTEM certificate store, and the Debian
+# slim images ship without one. Node has its own bundled roots, so npm install
+# succeeds and the omission only shows up at runtime -- as
+# "TLS peer's certificate is not trusted" on every outbound HTTPS call, which
+# reads like a Supabase outage rather than a missing package.
+RUN apt-get update     && apt-get install -y --no-install-recommends ca-certificates     && rm -rf /var/lib/apt/lists/*
+
 # Only wrangler is needed to serve; the app's own dependencies are already
 # bundled into dist/_worker.js by the build.
 COPY package.json package-lock.json ./
