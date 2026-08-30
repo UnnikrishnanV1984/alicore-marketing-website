@@ -21,10 +21,15 @@ export const POST: APIRoute = async (context) => {
 
   const hook = serverEnv(context.locals, 'CF_DEPLOY_HOOK');
   if (!hook) {
+    // Say what is true and what happens next. The old wording ("ask a
+    // developer to set CF_DEPLOY_HOOK") left the editor unsure whether their
+    // edit had been lost -- it has not, it is saved and waiting for a build.
     return json(
       {
         error:
-          'No deploy hook is configured, so the site cannot be rebuilt from here. Ask a developer to set CF_DEPLOY_HOOK.',
+          'Your changes are saved, but this site is not yet connected to its ' +
+          'publishing service, so it cannot rebuild itself. The changes will ' +
+          'appear the next time the site is built. (Developer: set CF_DEPLOY_HOOK.)',
       },
       501,
     );
