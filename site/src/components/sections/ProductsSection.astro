@@ -58,7 +58,7 @@ const Heading = headingLevel;
                 <a href={`/products/${p.slug}`}>{p.name}</a>
               </h3>
               <p class="al-product__desc">{p.desc}</p>
-              <span class="al-product__more">View product →</span>
+              <a href="/contact" class="al-product__more">Enquire →</a>
             </div>
           </article>
         ))
@@ -193,18 +193,6 @@ const Heading = headingLevel;
     margin-top: 12px;
   }
 
-  /* Stretched link: the whole card is clickable, but the accessible name
-     stays on the heading anchor rather than duplicating into a second link. */
-  .al-product__name a::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-  }
-
-  .al-product {
-    position: relative;
-  }
-
   .al-product__name a:hover {
     color: var(--color-gold-ink);
   }
@@ -218,6 +206,9 @@ const Heading = headingLevel;
   }
 
   .al-product__more {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
     margin-top: 24px;
     padding-top: 18px;
     border-top: 1px solid var(--color-rule);
@@ -226,9 +217,10 @@ const Heading = headingLevel;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--color-on-light-60);
+    transition: color 0.2s var(--ease-premium);
   }
 
-  .al-product:hover .al-product__more {
+  .al-product__more:hover {
     color: var(--color-gold-ink);
   }
 </style>

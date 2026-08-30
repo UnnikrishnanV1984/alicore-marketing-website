@@ -17,7 +17,7 @@ try {
   const { data, error } = await supabase
     .from('enquiries')
     .select(
-      'id, ref, created_at, name, company, phone, email, location, product, quantity, message, attachment_path, status, internal_note',
+      'id, ref, created_at, name, company, phone, email, location, product, quantity, message, status, internal_note',
     )
     .order('created_at', { ascending: false })
     .limit(500);
@@ -36,7 +36,6 @@ try {
     product: r.product,
     quantity: r.quantity,
     message: r.message,
-    attachmentPath: r.attachment_path,
     status: r.status,
     internalNote: r.internal_note,
   }));

@@ -11,7 +11,7 @@ import {
 
 const hasEmail = contact.emailDisplay !== PLACEHOLDER_EMAIL;
 const hasAddress = contact.addressDisplay !== PLACEHOLDER_ADDRESS;
-const liveSocial = social.filter((s) => s.href);
+
 ---
 
 <footer class="al-footer">
@@ -41,7 +41,7 @@ const liveSocial = social.filter((s) => s.href);
         <h2 class="al-footer__head">Contact</h2>
         <div class="al-footer__links">
           <a href={contact.phoneHref}>{contact.phoneDisplay}</a>
-          <a href={contact.whatsappHref} rel="noopener">WhatsApp Us</a>
+          <a href={contact.whatsappHref} target="_blank" rel="noopener noreferrer">WhatsApp Us</a>
           {
             hasEmail ? (
               <a href={contact.emailHref}>{contact.emailDisplay}</a>
@@ -60,17 +60,21 @@ const liveSocial = social.filter((s) => s.href);
           <span class="al-footer__domain">{site.domain}</span>
         </div>
 
-        {
-          liveSocial.length > 0 && (
-            <div class="al-footer__social">
-              {liveSocial.map((s) => (
-                <a href={s.href} rel="noopener me" target="_blank">
+        <div class="al-footer__social">
+          {
+            social.map((s) =>
+              s.href ? (
+                <a href={s.href} target="_blank" rel="noopener noreferrer me">
                   {s.label}
                 </a>
-              ))}
-            </div>
-          )
-        }
+              ) : (
+                /* Shown, as the mockup does, but not a dead href="#" link
+                   until a real profile URL is supplied. */
+                <span class="al-footer__social-pending">{s.label}</span>
+              ),
+            )
+          }
+        </div>
       </div>
     </div>
 
@@ -183,6 +187,10 @@ const liveSocial = social.filter((s) => s.href);
 
   .al-footer__social a:hover {
     color: var(--color-gold);
+  }
+
+  .al-footer__social-pending {
+    color: rgb(246 244 239 / 0.3);
   }
 
   .al-footer__base {

@@ -41,29 +41,3 @@ export const PATCH: APIRoute = async (context) => {
     return json({ error: 'Could not save the change.' }, 500);
   }
 };
-
-/**
- * Short-lived signed download for an enquiry attachment.
- *
- * The bucket is private, so this is the only route to the file. 5 minutes is
- * enough to click through and short enough that a copied URL is not a leak.
- */
-export const GET: APIRoute = async (context) => {
-  const staff = await requireStaff(context);
-  if (isResponse(staff)) return staff;
-
-  const path = context.url.searchParams.get('attachment');
-  if (!path) return json({ error: 'No attachment specified.' }, 400);
-
-  try {
-    const supabase = serviceClient(context.locals);
-    const { data, error } = await supabase.storage
-      .from('enquiry-attachments')
-      .createSignedUrl(path, 300);
-    if (error || !data) throw new Error(error?.message ?? 'no url');
-    return context.redirect(data.signedUrl, 302);
-  } catch (err) {
-    console.error('[admin/enquiries] signed url failed', err);
-    return json({ error: 'Could not open that file.' }, 500);
-  }
-};

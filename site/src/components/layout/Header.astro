@@ -70,7 +70,7 @@ const { scrollSpy = false, active } = Astro.props;
     <a class="al-sheet__cta" href="/contact">Request a Quote</a>
     <div class="al-sheet__direct">
       <a href={contact.phoneHref}>Call {contact.phoneDisplay}</a>
-      <a href={contact.whatsappHref} rel="noopener">WhatsApp Us</a>
+      <a href={contact.whatsappHref} target="_blank" rel="noopener noreferrer">WhatsApp Us</a>
     </div>
   </div>
 </div>

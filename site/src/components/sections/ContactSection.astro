@@ -13,13 +13,14 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
 const hasEmail = contact.emailDisplay !== PLACEHOLDER_EMAIL;
 
 const directs = [
-  { label: 'Call Us', value: contact.phoneDisplay, href: contact.phoneHref, wide: true },
-  { label: 'WhatsApp Us', value: 'Send project details', href: contact.whatsappHref, wide: false },
+  { label: 'Call Us', value: contact.phoneDisplay, href: contact.phoneHref, wide: true, newTab: false },
+  { label: 'WhatsApp Us', value: 'Send project details', href: contact.whatsappHref, wide: false, newTab: true },
   {
     label: 'Email Us',
     value: contact.emailDisplay,
     href: hasEmail ? contact.emailHref : '',
     wide: false,
+    newTab: false,
   },
 ];
 ---
@@ -38,7 +39,12 @@ const directs = [
         {
           directs.map((d) =>
             d.href ? (
-              <a href={d.href} class="al-direct" rel="noopener">
+              <a
+                href={d.href}
+                class="al-direct"
+                target={d.newTab ? '_blank' : undefined}
+                rel={d.newTab ? 'noopener noreferrer' : undefined}
+              >
                 <span>
                   <span class="al-direct__label">{d.label}</span>
                   <span class={`al-direct__value${d.wide ? ' is-wide' : ''}`}>{d.value}</span>
@@ -231,17 +237,6 @@ const directs = [
     line-height: 1.5;
   }
 
-  .al-field__hint {
-    font-size: 12.5px;
-    color: var(--color-on-light-55);
-    line-height: 1.5;
-  }
-
-  .al-field__file {
-    padding: 12px 0;
-    font-size: 14px;
-  }
-
   /* Honeypot -- removed from the accessibility tree and off-screen, never
      display:none (some bots skip hidden fields). */
   .al-hp {
@@ -279,15 +274,6 @@ const directs = [
 
   .al-form__turnstile {
     margin-top: 22px;
-  }
-
-  .al-form__progress {
-    margin-top: 18px;
-    font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--color-gold-ink);
   }
 
   .al-form__error {

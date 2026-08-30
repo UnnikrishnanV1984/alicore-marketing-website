@@ -54,7 +54,6 @@ export async function sendStaffAlert(
   locals: unknown,
   data: EnquiryInput,
   ref: string,
-  attachmentUrl: string | null,
 ): Promise<boolean> {
   const to = serverEnv(locals, 'ENQUIRY_NOTIFY_TO');
   if (!to) return false;
@@ -81,12 +80,6 @@ export async function sendStaffAlert(
              <div style="color:#6b6862;font-size:12px;text-transform:uppercase;letter-spacing:.14em">Message</div>
              <div style="color:#12110f;font-size:14px;line-height:1.65;margin-top:8px;white-space:pre-wrap">${esc(data.message)}</div>
            </div>`
-        : ''
-    }
-    ${
-      attachmentUrl
-        ? `<div style="margin-top:18px"><a href="${attachmentUrl}" style="color:#b08d3c;font-size:14px">Download attached drawing</a>
-           <div style="color:#9b978e;font-size:11px;margin-top:6px">Link expires in 7 days — the file stays in the admin console.</div></div>`
         : ''
     }
     <div style="margin-top:22px">

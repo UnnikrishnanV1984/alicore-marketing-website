@@ -63,7 +63,6 @@ export const nav = [
   { label: 'FRP', href: '/frp', anchor: '#frp', id: 'frp' },
   { label: 'Projects', href: '/projects', anchor: '#projects', id: 'projects' },
   { label: 'Custom Solutions', href: '/custom-solutions', anchor: '#custom', id: 'custom' },
-  { label: 'Manufacturing', href: '/manufacturing', anchor: '#manufacturing', id: 'manufacturing' },
   { label: 'Contact', href: '/contact', anchor: '#contact', id: 'contact' },
 ] as const;
 

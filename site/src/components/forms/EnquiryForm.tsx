@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { enquirySchema, ATTACHMENT_ACCEPT_ATTR, ATTACHMENT_MAX_BYTES } from '../../lib/schema';
+import { enquirySchema } from '../../lib/schema';
 import { productOptions } from '../../content/products';
 
 type Props = {
@@ -10,7 +10,7 @@ type Props = {
 };
 
 type FieldErrors = Partial<Record<string, string>>;
-type Status = 'idle' | 'uploading' | 'submitting' | 'sent' | 'error';
+type Status = 'idle' | 'submitting' | 'sent' | 'error';
 
 declare global {
   interface Window {
@@ -30,6 +30,14 @@ const FIELDS = [
   { id: 'quantity', label: 'Estimated Quantity', required: false, placeholder: 'sq.ft / nos.', type: 'text', autoComplete: 'off' },
 ] as const;
 
+/**
+ * Quote enquiry form.
+ *
+ * There is deliberately no file upload: the mockup has none, and routes
+ * drawings to WhatsApp instead ("Have drawings or reference images? Send them
+ * to us on WhatsApp"). The requirements brief does list an upload field, but
+ * the client chose the mockup's approach.
+ */
 export default function EnquiryForm({
   turnstileSiteKey,
   whatsappHref,
@@ -40,8 +48,6 @@ export default function EnquiryForm({
   const [errors, setErrors] = useState<FieldErrors>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [reference, setReference] = useState<string | null>(null);
-  const [file, setFile] = useState<File | null>(null);
-  const [uploadPct, setUploadPct] = useState(0);
 
   const formRef = useRef<HTMLFormElement>(null);
   const turnstileRef = useRef<HTMLDivElement>(null);
@@ -95,45 +101,12 @@ export default function EnquiryForm({
     };
   }
 
-  /**
-   * Attachments go straight from the browser to storage using a short-lived
-   * signed URL. Routing a 25MB CAD file through a Worker would blow both the
-   * body limit and the CPU budget -- see plan section 4.
-   */
-  async function uploadAttachment(f: File): Promise<string> {
-    const res = await fetch('/api/upload-url', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ filename: f.name, size: f.size, contentType: f.type }),
-    });
-    if (!res.ok) throw new Error('Could not prepare the file upload.');
-    const { signedUrl, path } = (await res.json()) as { signedUrl: string; path: string };
-
-    await new Promise<void>((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-      xhr.open('PUT', signedUrl, true);
-      if (f.type) xhr.setRequestHeader('content-type', f.type);
-      xhr.upload.onprogress = (e) => {
-        if (e.lengthComputable) setUploadPct(Math.round((e.loaded / e.total) * 100));
-      };
-      xhr.onload = () =>
-        xhr.status >= 200 && xhr.status < 300
-          ? resolve()
-          : reject(new Error('The file upload did not complete.'));
-      xhr.onerror = () => reject(new Error('The file upload did not complete.'));
-      xhr.send(f);
-    });
-
-    return path;
-  }
-
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setFormError(null);
     setErrors({});
 
-    const raw = readForm();
-    const parsed = enquirySchema.safeParse({ ...raw, attachmentPath: '', turnstileToken: '' });
+    const parsed = enquirySchema.safeParse({ ...readForm(), turnstileToken: '' });
 
     if (!parsed.success) {
       const next: FieldErrors = {};
@@ -149,32 +122,23 @@ export default function EnquiryForm({
     }
 
     try {
-      let attachmentPath = '';
-      if (file) {
-        setStatus('uploading');
-        attachmentPath = await uploadAttachment(file);
-      }
-
       setStatus('submitting');
       const token =
-        (formRef.current?.querySelector<HTMLInputElement>(
-          '[name="cf-turnstile-response"]',
-        )?.value) ?? '';
+        formRef.current?.querySelector<HTMLInputElement>('[name="cf-turnstile-response"]')?.value ??
+        '';
 
       const res = await fetch('/api/enquiry', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ ...parsed.data, attachmentPath, turnstileToken: token }),
+        body: JSON.stringify({ ...parsed.data, turnstileToken: token }),
       });
 
       const body = (await res.json().catch(() => ({}))) as { ref?: string; error?: string };
-
       if (!res.ok) throw new Error(body.error || 'We could not submit your enquiry.');
 
       setReference(body.ref ?? null);
       setStatus('sent');
       formRef.current?.reset();
-      setFile(null);
     } catch (err) {
       // Fail loudly. A silently dropped lead is the worst outcome here, so we
       // surface the error AND the direct contact routes.
@@ -182,18 +146,6 @@ export default function EnquiryForm({
       setStatus('error');
       if (window.turnstile && widgetId.current) window.turnstile.reset(widgetId.current);
     }
-  }
-
-  function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const f = e.target.files?.[0] ?? null;
-    if (f && f.size > ATTACHMENT_MAX_BYTES) {
-      setErrors((p) => ({ ...p, attachment: 'That file is over 25 MB. Send it on WhatsApp instead.' }));
-      e.target.value = '';
-      setFile(null);
-      return;
-    }
-    setErrors((p) => ({ ...p, attachment: undefined }));
-    setFile(f);
   }
 
   /* --- success panel ---------------------------------------------------- */
@@ -214,7 +166,6 @@ export default function EnquiryForm({
             onClick={() => {
               setStatus('idle');
               setReference(null);
-              setUploadPct(0);
             }}
           >
             Send another
@@ -224,7 +175,7 @@ export default function EnquiryForm({
     );
   }
 
-  const busy = status === 'uploading' || status === 'submitting';
+  const busy = status === 'submitting';
 
   return (
     <div className="al-form">
@@ -270,22 +221,6 @@ export default function EnquiryForm({
           <textarea name="message" rows={3} placeholder="Scope, timeline, finish, references…" />
         </label>
 
-        <label className="al-field al-field--wide">
-          <span className="al-field__label">Upload Drawing / Reference</span>
-          <input
-            type="file"
-            name="attachment"
-            accept={ATTACHMENT_ACCEPT_ATTR}
-            onChange={onFileChange}
-            className="al-field__file"
-          />
-          <span className="al-field__hint">
-            PDF, DWG, DXF, JPG, PNG or ZIP — up to 25 MB.
-            {file && ` Selected: ${file.name}`}
-          </span>
-          {errors.attachment && <span className="al-field__err">{errors.attachment}</span>}
-        </label>
-
         {/* Honeypot. Real people never see or fill this. */}
         <div className="al-hp" aria-hidden="true">
           <label>
@@ -297,8 +232,8 @@ export default function EnquiryForm({
         <div className="al-form__note">
           <span className="al-form__note-mark" aria-hidden="true" />
           <span>
-            Have drawings or reference images? Attach them above, or send them on{' '}
-            <a href={whatsappHref} rel="noopener">
+            Have drawings or reference images? Send them to us on{' '}
+            <a href={whatsappHref} target="_blank" rel="noopener noreferrer">
               WhatsApp
             </a>{' '}
             and we'll match them to your enquiry.
@@ -307,32 +242,21 @@ export default function EnquiryForm({
 
         {turnstileSiteKey && <div ref={turnstileRef} className="al-form__turnstile" />}
 
-        {status === 'uploading' && (
-          <div className="al-form__progress" role="status">
-            Uploading drawing — {uploadPct}%
-          </div>
-        )}
-
         {formError && (
           <div className="al-form__error" ref={statusRef} tabIndex={-1} role="alert">
             <strong>{formError}</strong>
             <span>
               Your enquiry was not saved. Please{' '}
-              <a href={whatsappHref} rel="noopener">
+              <a href={whatsappHref} target="_blank" rel="noopener noreferrer">
                 message us on WhatsApp
               </a>{' '}
-              or call{' '}
-              <a href={phoneHref}>{phoneDisplay}</a> so it doesn't get lost.
+              or call <a href={phoneHref}>{phoneDisplay}</a> so it doesn't get lost.
             </span>
           </div>
         )}
 
         <button type="submit" className="al-form__submit" disabled={busy}>
-          {status === 'uploading'
-            ? 'Uploading…'
-            : status === 'submitting'
-              ? 'Sending…'
-              : 'Request a Quote'}
+          {busy ? 'Sending…' : 'Request a Quote'}
         </button>
 
         <p className="al-form__foot">

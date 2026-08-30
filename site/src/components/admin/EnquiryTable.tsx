@@ -12,7 +12,6 @@ export type AdminEnquiry = {
   product: string | null;
   quantity: string | null;
   message: string | null;
-  attachmentPath: string | null;
   status: string;
   internalNote: string | null;
 };
@@ -187,14 +186,6 @@ export default function EnquiryTable({ initial }: { initial: AdminEnquiry[] }) {
                 <div className="al-cell__strong">{r.location || 'Location not given'}</div>
                 {r.quantity && <div className="al-cell__sub">Qty — {r.quantity}</div>}
                 <div className="al-cell__ref">{r.ref}</div>
-                {r.attachmentPath && (
-                  <a
-                    className="al-cell__file"
-                    href={`/api/admin/enquiries?attachment=${encodeURIComponent(r.attachmentPath)}`}
-                  >
-                    ↓ Drawing
-                  </a>
-                )}
               </div>
 
               <div>

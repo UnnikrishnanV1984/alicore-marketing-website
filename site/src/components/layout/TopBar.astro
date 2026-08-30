@@ -14,7 +14,7 @@ import { site, contact } from '../../content/site';
     <span class="al-topbar__tagline">{site.tagline}</span>
     <div class="al-topbar__actions">
       <a href={contact.phoneHref}>Call {contact.phoneDisplay}</a>
-      <a href={contact.whatsappHref} rel="noopener">WhatsApp</a>
+      <a href={contact.whatsappHref} target="_blank" rel="noopener noreferrer">WhatsApp</a>
       <span class="al-topbar__domain">{site.domain}</span>
     </div>
   </div>

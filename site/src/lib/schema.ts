@@ -5,8 +5,8 @@ import { productOptions } from '../content/products';
  * Enquiry validation. ONE schema, used by both the React form and the
  * /api/enquiry endpoint, so client and server can never drift.
  *
- * Field set and order are fixed by the quote-enquiry-conventions skill and
- * confirmed by the mockup's input ids.
+ * Eight fields, matching the mockup's input ids. There is no attachment field:
+ * the mockup carries no upload control and routes drawings to WhatsApp.
  */
 
 const trimmed = (max: number) => z.string().trim().max(max);
@@ -38,9 +38,6 @@ export const enquirySchema = z.object({
   // 8. Message
   message: trimmed(4000).optional().or(z.literal('')),
 
-  // 9. Upload Drawing / Reference -- storage key from the signed-URL upload.
-  attachmentPath: trimmed(400).optional().or(z.literal('')),
-
   // Anti-spam. Must be empty; bots fill it in.
   website: z.literal('').optional(),
 
@@ -55,18 +52,3 @@ export function makeRef(now: number = Date.now()): string {
   return `ENQ-${now.toString(36).toUpperCase()}`;
 }
 
-export const ATTACHMENT_MAX_BYTES = 25 * 1024 * 1024; // 25 MB
-
-export const ATTACHMENT_ACCEPT = [
-  'application/pdf',
-  'image/jpeg',
-  'image/png',
-  'image/webp',
-  'application/acad',
-  'image/vnd.dwg',
-  'application/dxf',
-  'image/vnd.dxf',
-  'application/zip',
-] as const;
-
-export const ATTACHMENT_ACCEPT_ATTR = '.pdf,.jpg,.jpeg,.png,.webp,.dwg,.dxf,.zip';
