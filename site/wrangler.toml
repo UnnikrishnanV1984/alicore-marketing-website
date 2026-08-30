@@ -3,6 +3,13 @@ main = "./dist/_worker.js/index.js"
 compatibility_date = "2026-08-01"
 compatibility_flags = ["nodejs_compat"]
 
+# Serve on <name>.<subdomain>.workers.dev while alicore.in is not yet delegated
+# to Cloudflare. Every page carries meta robots=noindex on a workers.dev host
+# (see layouts/Base.astro) so the staging URL cannot compete with the real
+# domain later. To attach the domain, add a routes entry and set
+# PUBLIC_SITE_URL to https://www.alicore.in, then rebuild.
+workers_dev = true
+
 [assets]
 directory = "./dist"
 binding = "ASSETS"
@@ -23,18 +30,28 @@ enabled = true
 #   wrangler secret put RESEND_API_KEY
 #   wrangler secret put ENQUIRY_NOTIFY_TO
 #   wrangler secret put IP_HASH_SALT
+#   wrangler secret put GITHUB_DISPATCH_TOKEN
 #   wrangler secret put CF_ZONE_ID
 #   wrangler secret put CF_PURGE_TOKEN
+#
+# GITHUB_REPO is not secret and can live in [vars] below.
 #
 # PUBLIC_* values are inlined at build time from .env / CI environment, so they
 # belong in the build environment rather than in secrets.
 # ---------------------------------------------------------------------------
 
+# Non-secret configuration for the admin Publish button. The token that goes
+# with these is a secret and is set with `wrangler secret put`.
+[vars]
+GITHUB_REPO = "UnnikrishnanV1984/alicore-marketing-website"
+GITHUB_WORKFLOW = "deploy.yml"
+GITHUB_BRANCH = "main"
+
 # Astro's Cloudflare adapter wires sessions to a KV namespace. The public site
 # does not use sessions (staff auth rides on signed cookies), but the binding
 # must exist or the Worker refuses to boot. Create it once with:
 #   wrangler kv namespace create SESSION
-# then paste the id below.
+# then uncomment this block and paste the id it prints.
 # [[kv_namespaces]]
 # binding = "SESSION"
 # id = "<paste-the-id-here>"

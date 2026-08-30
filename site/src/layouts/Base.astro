@@ -19,6 +19,13 @@ const contact = await loadContact(Astro.locals);
 const canonicalPath = path ?? Astro.url.pathname;
 const canonical = new URL(canonicalPath, site.url).href;
 
+// A workers.dev deploy is staging and must stay out of the index, or it will
+// compete with www.alicore.in for identical copy once that goes live. The
+// meta tag, not robots.txt, is what actually de-indexes: a disallowed page can
+// still be indexed from a link, and the crawler never sees the directive.
+// robots.txt therefore permits crawling on staging so this tag is read.
+const isStaging = /\.workers\.dev$/i.test(new URL(site.url).hostname);
+
 // Sitewide Organization node. Deliberately carries no rating, certification or
 // award properties -- none of that is verified. See the brand guidelines.
 const organization: Record<string, unknown> = {
@@ -44,6 +51,7 @@ const graph = [organization, ...jsonLd];
     <title>{meta.title}</title>
     <meta name="description" content={meta.description} />
     <link rel="canonical" href={canonical} />
+    {isStaging && <meta name="robots" content="noindex, nofollow" />}
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Alicore" />

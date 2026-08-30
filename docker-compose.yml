@@ -55,5 +55,11 @@ services:
       CF_ZONE_ID: ${CF_ZONE_ID:-}
       CF_PURGE_TOKEN: ${CF_PURGE_TOKEN:-}
       CF_DEPLOY_HOOK: ${CF_DEPLOY_HOOK:-}
+      # Publish button. Deploy hooks are a Cloudflare Pages feature; this site
+      # is a Worker built by GitHub Actions, so the trigger is workflow_dispatch.
+      GITHUB_REPO: ${GITHUB_REPO:-}
+      GITHUB_DISPATCH_TOKEN: ${GITHUB_DISPATCH_TOKEN:-}
+      GITHUB_WORKFLOW: ${GITHUB_WORKFLOW:-}
+      GITHUB_BRANCH: ${GITHUB_BRANCH:-}
 
     restart: unless-stopped
