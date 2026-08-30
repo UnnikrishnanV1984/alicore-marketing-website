@@ -1,0 +1,78 @@
+---
+import Button from '../ui/Button.astro';
+import { contact } from '../../content/site';
+
+/**
+ * Closing conversion band for interior pages. The brief asks for "strong
+ * enquiry/quotation buttons throughout the website" -- this is how every page
+ * that is not /contact ends.
+ */
+interface Props {
+  heading?: string;
+  body?: string;
+  cta?: string;
+}
+
+const {
+  heading = 'Discuss your project with our team.',
+  body = 'Share drawings, dimensions or a design concept and we will come back with the right manufacturing approach.',
+  cta = 'Request a Quote',
+} = Astro.props;
+---
+
+<section class="al-cta-band">
+  <div class="al-container al-cta-band__inner">
+    <div>
+      <h2 class="al-cta-band__title al-balance">{heading}</h2>
+      <p class="al-cta-band__body">{body}</p>
+    </div>
+    <div class="al-cta-band__actions">
+      <Button href="/contact" variant="ink">{cta}</Button>
+      <Button href={contact.whatsappHref} variant="outline" rel="noopener">WhatsApp Us</Button>
+    </div>
+  </div>
+</section>
+
+<style>
+  .al-cta-band {
+    padding-block: clamp(56px, 7vw, 96px);
+    background: var(--color-panel);
+    border-top: 1px solid var(--color-rule);
+  }
+
+  .al-cta-band__inner {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: clamp(28px, 4vw, 64px);
+    align-items: center;
+  }
+
+  .al-cta-band__title {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(26px, 3.2vw, 40px);
+    line-height: 1.1;
+    max-width: 20ch;
+  }
+
+  .al-cta-band__body {
+    margin-top: 16px;
+    font-size: 15.5px;
+    line-height: 1.7;
+    color: var(--color-on-light-60);
+    max-width: 52ch;
+  }
+
+  .al-cta-band__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    justify-content: flex-start;
+  }
+
+  @media (min-width: 900px) {
+    .al-cta-band__actions {
+      justify-content: flex-end;
+    }
+  }
+</style>

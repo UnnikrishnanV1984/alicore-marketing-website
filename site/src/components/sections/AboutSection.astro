@@ -1,0 +1,122 @@
+---
+import Eyebrow from '../ui/Eyebrow.astro';
+import Button from '../ui/Button.astro';
+import SlotImage from '../ui/SlotImage.astro';
+import { capabilities } from '../../content/site';
+import { about } from '../../content/sections';
+import type { SlotImage as SlotImageType } from '../../lib/media';
+
+interface Props {
+  image?: SlotImageType;
+  /** h2 on the home page; the /about page supplies its own h1. */
+  headingLevel?: 'h1' | 'h2';
+  showCta?: boolean;
+}
+
+const { image, headingLevel = 'h2', showCta = true } = Astro.props;
+const Heading = headingLevel;
+---
+
+<section id="about" class="al-section">
+  <div class="al-container al-about">
+    <div>
+      <Eyebrow label="Who We Are" />
+      <Heading class="al-about__title al-balance">
+        Built for Architecture. Designed for Possibility.
+      </Heading>
+      <div class="al-about__figure">
+        <SlotImage
+          slot="alicore-about"
+          placeholder="Close-up: GFRC surface texture / finished panel"
+          image={image}
+          ratio="4/3"
+          sizes="(max-width: 900px) 100vw, 42vw"
+        />
+      </div>
+    </div>
+
+    <div>
+      <p class="al-about__lead">{about.lead}</p>
+      {about.body.slice(0, 2).map((p) => <p class="al-about__body">{p}</p>)}
+
+      {showCta && <Button href="/about" variant="outline" size="sm" class="al-about__cta">Discover Alicore</Button>}
+
+      <div class="al-hairline-grid al-about__caps">
+        {
+          capabilities.map((c) => (
+            <div class="al-cap">
+              <div class="al-cap__k">{c.k}</div>
+              <div class="al-cap__v">{c.v}</div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .al-about {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: clamp(40px, 6vw, 90px);
+    align-items: start;
+  }
+
+  .al-about__title {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(30px, 3.8vw, 50px);
+    line-height: 1.08;
+    letter-spacing: -0.01em;
+    margin-top: 20px;
+    max-width: 20ch;
+  }
+
+  .al-about__figure {
+    margin-top: 34px;
+  }
+
+  .al-about__lead {
+    font-size: 17px;
+    line-height: 1.7;
+    color: var(--color-on-light-72);
+    max-width: 54ch;
+  }
+
+  .al-about__body {
+    font-size: 16px;
+    line-height: 1.75;
+    color: var(--color-on-light-60);
+    max-width: 54ch;
+    margin-top: 18px;
+  }
+
+  .al-about__cta {
+    margin-top: 32px;
+  }
+
+  .al-about__caps {
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    margin-top: 44px;
+  }
+
+  .al-cap {
+    background: var(--color-bg);
+    padding: 24px;
+  }
+
+  .al-cap__k {
+    font-family: var(--font-display);
+    font-size: 16px;
+    letter-spacing: 0.02em;
+    color: var(--color-ink);
+  }
+
+  .al-cap__v {
+    font-size: 13px;
+    color: var(--color-on-light-55);
+    margin-top: 8px;
+    line-height: 1.5;
+  }
+</style>

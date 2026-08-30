@@ -1,0 +1,216 @@
+---
+import {
+  site,
+  contact,
+  social,
+  footerQuickLinks,
+  footerProductLinks,
+  PLACEHOLDER_EMAIL,
+  PLACEHOLDER_ADDRESS,
+} from '../../content/site';
+
+const hasEmail = contact.emailDisplay !== PLACEHOLDER_EMAIL;
+const hasAddress = contact.addressDisplay !== PLACEHOLDER_ADDRESS;
+const liveSocial = social.filter((s) => s.href);
+---
+
+<footer class="al-footer">
+  <div class="al-container">
+    <div class="al-footer__grid">
+      <div>
+        <span class="al-footer__lockup">{site.nameLockup}</span>
+        <span class="al-footer__tagline">{site.tagline}</span>
+        <p class="al-footer__strap">{site.strapline}</p>
+      </div>
+
+      <div>
+        <h2 class="al-footer__head">Quick Links</h2>
+        <div class="al-footer__links">
+          {footerQuickLinks.map((l) => <a href={l.href}>{l.label}</a>)}
+        </div>
+      </div>
+
+      <div>
+        <h2 class="al-footer__head">Products</h2>
+        <div class="al-footer__links">
+          {footerProductLinks.map((l) => <a href={l.href}>{l.label}</a>)}
+        </div>
+      </div>
+
+      <div>
+        <h2 class="al-footer__head">Contact</h2>
+        <div class="al-footer__links">
+          <a href={contact.phoneHref}>{contact.phoneDisplay}</a>
+          <a href={contact.whatsappHref} rel="noopener">WhatsApp Us</a>
+          {
+            hasEmail ? (
+              <a href={contact.emailHref}>{contact.emailDisplay}</a>
+            ) : (
+              /* Placeholder, not a mailto: -- never invent an address. */
+              <span class="al-footer__pending">{contact.emailDisplay}</span>
+            )
+          }
+          {
+            hasAddress ? (
+              <span>{contact.addressDisplay}</span>
+            ) : (
+              <span class="al-footer__pending">{contact.addressDisplay}</span>
+            )
+          }
+          <span class="al-footer__domain">{site.domain}</span>
+        </div>
+
+        {
+          liveSocial.length > 0 && (
+            <div class="al-footer__social">
+              {liveSocial.map((s) => (
+                <a href={s.href} rel="noopener me" target="_blank">
+                  {s.label}
+                </a>
+              ))}
+            </div>
+          )
+        }
+      </div>
+    </div>
+
+    <div class="al-footer__base">
+      <span>© {site.copyrightYear} Alicore. All Rights Reserved.</span>
+      <span class="al-footer__base-right">
+        <span>GFRC · FRP · Precast · Facade Solutions</span>
+        <a href="/admin" class="al-footer__staff" rel="nofollow">Staff Login</a>
+      </span>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .al-footer {
+    background: var(--color-footer);
+    color: rgb(246 244 239 / 0.6);
+    padding-block: clamp(56px, 7vw, 90px) 28px;
+  }
+
+  .al-footer__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: clamp(32px, 4vw, 56px);
+    padding-bottom: 52px;
+    border-bottom: 1px solid var(--color-rule-dark-soft);
+  }
+
+  .al-footer__lockup {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: 0.34em;
+    color: var(--color-on-dark);
+  }
+
+  .al-footer__tagline {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-gold);
+    margin-top: 10px;
+    line-height: 1.6;
+  }
+
+  .al-footer__strap {
+    font-size: 14px;
+    line-height: 1.7;
+    margin-top: 20px;
+    max-width: 32ch;
+  }
+
+  .al-footer__head {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-gold);
+    font-weight: 400;
+  }
+
+  .al-footer__links {
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+    margin-top: 20px;
+    font-size: 14.5px;
+  }
+
+  .al-footer__links a {
+    color: rgb(246 244 239 / 0.6);
+    transition: color 0.2s var(--ease-premium);
+    /* Comfortable tap target without visually loosening the list. */
+    padding-block: 2px;
+  }
+
+  .al-footer__links a:hover {
+    color: var(--color-on-dark);
+  }
+
+  /* Awaiting a real value from the client -- rendered, but plainly not a link. */
+  .al-footer__pending {
+    color: rgb(246 244 239 / 0.38);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+  }
+
+  .al-footer__domain {
+    color: rgb(246 244 239 / 0.45);
+  }
+
+  .al-footer__social {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 22px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .al-footer__social a {
+    color: rgb(246 244 239 / 0.6);
+  }
+
+  .al-footer__social a:hover {
+    color: var(--color-gold);
+  }
+
+  .al-footer__base {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 28px;
+    justify-content: space-between;
+    padding-top: 24px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-on-dark-42);
+  }
+
+  .al-footer__base-right {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 24px;
+    align-items: center;
+  }
+
+  .al-footer__staff {
+    color: rgb(246 244 239 / 0.5);
+    border-bottom: 1px solid rgb(246 244 239 / 0.25);
+  }
+
+  .al-footer__staff:hover {
+    color: var(--color-gold);
+  }
+</style>

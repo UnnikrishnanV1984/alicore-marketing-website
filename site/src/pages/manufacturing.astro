@@ -1,0 +1,27 @@
+---
+import Page from '../layouts/Page.astro';
+import PageHero from '../components/ui/PageHero.astro';
+import ManufacturingSection from '../components/sections/ManufacturingSection.astro';
+import CtaBand from '../components/sections/CtaBand.astro';
+import { loadSlotImages } from '../lib/media';
+import { meta } from '../content/seo';
+
+const slots = await loadSlotImages();
+---
+
+<Page meta={meta['/manufacturing']} path="/manufacturing" active="/manufacturing">
+  <PageHero
+    eyebrow="Manufacturing"
+    title="From Design to Reality"
+    lead="Our manufacturing approach combines material expertise, craftsmanship and controlled production processes to transform architectural concepts into finished products."
+    breadcrumb={[{ label: 'Manufacturing', href: '/manufacturing' }]}
+  />
+
+  <ManufacturingSection image={slots.get('alicore-factory')} />
+
+  <CtaBand
+    heading="Planning a project?"
+    body="Talk to us early — material and mould decisions made at design stage are the ones that keep an elevation buildable."
+    cta="Talk to Our Team"
+  />
+</Page>

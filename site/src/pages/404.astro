@@ -1,0 +1,77 @@
+---
+import Page from '../layouts/Page.astro';
+import Button from '../components/ui/Button.astro';
+import Eyebrow from '../components/ui/Eyebrow.astro';
+import { footerQuickLinks } from '../content/site';
+
+const meta = {
+  title: 'Page not found | Alicore',
+  description: 'The page you were looking for is not here. Browse our GFRC and FRP product range.',
+};
+---
+
+<Page meta={meta} path="/404">
+  <section class="al-404">
+    <div class="al-container">
+      <Eyebrow label="Error 404" />
+      <h1 class="al-404__title">This page isn't here.</h1>
+      <p class="al-404__body">
+        The link may be out of date, or the page may have moved. These are the main sections of the
+        site.
+      </p>
+
+      <div class="al-404__links">
+        {footerQuickLinks.map((l) => <a href={l.href}>{l.label}</a>)}
+      </div>
+
+      <div class="al-404__cta">
+        <Button href="/products" variant="ink">View Products</Button>
+        <Button href="/contact" variant="outline">Request a Quote</Button>
+      </div>
+    </div>
+  </section>
+</Page>
+
+<style>
+  .al-404 {
+    padding-block: clamp(80px, 12vw, 160px);
+  }
+
+  .al-404__title {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(34px, 5vw, 64px);
+    line-height: 1.05;
+    margin-top: 20px;
+  }
+
+  .al-404__body {
+    margin-top: 20px;
+    font-size: 16.5px;
+    line-height: 1.7;
+    color: var(--color-on-light-60);
+    max-width: 48ch;
+  }
+
+  .al-404__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 28px;
+    margin-top: 36px;
+    padding-top: 28px;
+    border-top: 1px solid var(--color-rule);
+    font-family: var(--font-display);
+    font-size: 16px;
+  }
+
+  .al-404__links a:hover {
+    color: var(--color-gold-ink);
+  }
+
+  .al-404__cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 40px;
+  }
+</style>

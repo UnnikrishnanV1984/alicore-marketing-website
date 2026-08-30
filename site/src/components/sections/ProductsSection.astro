@@ -1,0 +1,234 @@
+---
+import Eyebrow from '../ui/Eyebrow.astro';
+import Button from '../ui/Button.astro';
+import SlotImage from '../ui/SlotImage.astro';
+import { products, materialTiles } from '../../content/products';
+import type { SlotImage as SlotImageType } from '../../lib/media';
+
+interface Props {
+  slots: Map<string, SlotImageType>;
+  headingLevel?: 'h1' | 'h2';
+  /** Home page links out to /products; the index page has nowhere to go. */
+  showViewAll?: boolean;
+}
+
+const { slots, headingLevel = 'h2', showViewAll = true } = Astro.props;
+const Heading = headingLevel;
+---
+
+<section id="products" class="al-section al-products">
+  <div class="al-container">
+    <div class="al-products__head">
+      <div>
+        <Eyebrow label="Product Range" />
+        <Heading class="al-products__title">Architectural Products</Heading>
+        <p class="al-products__sub">Engineered solutions for modern architecture.</p>
+      </div>
+      {showViewAll && <Button href="/products" variant="outline" size="sm">View All Products</Button>}
+    </div>
+
+    <div class="al-hairline-grid al-products__grid">
+      {
+        materialTiles.map((m) => (
+          <a href={m.href} class="al-material">
+            <span class="al-material__label">{m.label}</span>
+            <span class="al-material__code">{m.code}</span>
+            <span class="al-material__desc">{m.desc}</span>
+            <span class="al-material__cta">{m.cta} →</span>
+          </a>
+        ))
+      }
+
+      {
+        products.map((p) => (
+          <article class="al-product">
+            <div class="al-product__media">
+              <SlotImage
+                slot={p.slot}
+                placeholder={p.shot}
+                image={slots.get(p.slot)}
+                ratio="4/3"
+                sizes="(max-width: 640px) 100vw, (max-width: 1100px) 50vw, 33vw"
+              />
+              <span class="al-product__idx">{p.idx}</span>
+            </div>
+            <div class="al-product__body">
+              <div class="al-product__cat">{p.cat}</div>
+              <h3 class="al-product__name">
+                <a href={`/products/${p.slug}`}>{p.name}</a>
+              </h3>
+              <p class="al-product__desc">{p.desc}</p>
+              <span class="al-product__more">View product →</span>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .al-products {
+    background: var(--color-panel);
+  }
+
+  .al-products__head {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+
+  .al-products__title {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(30px, 3.8vw, 50px);
+    line-height: 1.08;
+    margin-top: 20px;
+  }
+
+  .al-products__sub {
+    margin-top: 16px;
+    font-size: 16px;
+    color: var(--color-on-light-60);
+    max-width: 48ch;
+  }
+
+  .al-products__grid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    margin-top: 52px;
+  }
+
+  /* --- material tiles --------------------------------------------------- */
+  .al-material {
+    background: var(--color-bg);
+    padding: 34px 32px 38px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition:
+      background-color 0.25s var(--ease-premium),
+      color 0.25s var(--ease-premium);
+  }
+
+  .al-material:hover {
+    background: var(--color-ink);
+    color: var(--color-bg);
+  }
+
+  .al-material__label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-gold-ink);
+  }
+
+  .al-material__code {
+    font-family: var(--font-display);
+    font-size: 30px;
+    letter-spacing: 0.1em;
+  }
+
+  .al-material__desc {
+    font-size: 14.5px;
+    line-height: 1.6;
+    opacity: 0.65;
+    max-width: 40ch;
+  }
+
+  .al-material__cta {
+    font-family: var(--font-display);
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 6px;
+  }
+
+  /* --- product cards ---------------------------------------------------- */
+  .al-product {
+    background: var(--color-bg);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .al-product__media {
+    position: relative;
+  }
+
+  .al-product__idx {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: var(--color-ink);
+    color: var(--color-gold);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    padding: 7px 11px;
+    pointer-events: none;
+  }
+
+  .al-product__body {
+    padding: 28px 28px 32px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .al-product__cat {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-gold-ink);
+  }
+
+  .al-product__name {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 22px;
+    line-height: 1.2;
+    margin-top: 12px;
+  }
+
+  /* Stretched link: the whole card is clickable, but the accessible name
+     stays on the heading anchor rather than duplicating into a second link. */
+  .al-product__name a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  .al-product {
+    position: relative;
+  }
+
+  .al-product__name a:hover {
+    color: var(--color-gold-ink);
+  }
+
+  .al-product__desc {
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: var(--color-on-light-60);
+    margin-top: 12px;
+    flex: 1;
+  }
+
+  .al-product__more {
+    margin-top: 24px;
+    padding-top: 18px;
+    border-top: 1px solid var(--color-rule);
+    font-family: var(--font-display);
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-on-light-60);
+  }
+
+  .al-product:hover .al-product__more {
+    color: var(--color-gold-ink);
+  }
+</style>

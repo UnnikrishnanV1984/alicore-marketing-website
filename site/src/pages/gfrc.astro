@@ -1,0 +1,148 @@
+---
+import Page from '../layouts/Page.astro';
+import PageHero from '../components/ui/PageHero.astro';
+import MaterialSection from '../components/sections/MaterialSection.astro';
+import SlotImage from '../components/ui/SlotImage.astro';
+import Eyebrow from '../components/ui/Eyebrow.astro';
+import CtaBand from '../components/sections/CtaBand.astro';
+import { loadSlotImages } from '../lib/media';
+import { gfrc } from '../content/sections';
+import { products } from '../content/products';
+import { meta } from '../content/seo';
+import { site } from '../content/site';
+
+const slots = await loadSlotImages();
+const gfrcProducts = products.filter((p) => p.cat === 'GFRC');
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: site.url },
+      { '@type': 'ListItem', position: 2, name: 'GFRC', item: `${site.url}/gfrc` },
+    ],
+  },
+];
+---
+
+<Page meta={meta['/gfrc']} path="/gfrc" active="/gfrc" jsonLd={jsonLd}>
+  <PageHero
+    eyebrow="Material 01 — GFRC"
+    title="Glass Fiber Reinforced Concrete"
+    lead={gfrc.intro}
+    breadcrumb={[{ label: 'GFRC', href: '/gfrc' }]}
+  />
+
+  <MaterialSection
+    id="gfrc"
+    eyebrow="Why GFRC"
+    heading={gfrc.heading}
+    intro="Concrete's surface and mass, without concrete's weight. That combination is what lets an elevation carry deep modelling, fine profiles and large panel spans without the structure paying for it."
+    points={gfrc.points}
+    cta="Request a Quote"
+    ctaHref="/contact"
+    slot={gfrc.slot}
+    placeholder="GFRC facade / jali screen close-up"
+    image={slots.get(gfrc.slot)}
+    ground="ink"
+    media="left"
+    ctaVariant="gold"
+  />
+
+  <section class="al-section">
+    <div class="al-container">
+      <Eyebrow label="GFRC Range" />
+      <h2 class="al-range__title">GFRC Products</h2>
+      <p class="al-range__sub">
+        Five product families, all manufactured to project drawings rather than to a fixed
+        catalogue.
+      </p>
+
+      <div class="al-hairline-grid al-range__grid">
+        {
+          gfrcProducts.map((p) => (
+            <article class="al-range__card">
+              <div class="al-range__media">
+                <SlotImage
+                  slot={p.slot}
+                  placeholder={p.shot}
+                  image={slots.get(p.slot)}
+                  ratio="4/3"
+                  sizes="(max-width: 640px) 100vw, 33vw"
+                />
+              </div>
+              <div class="al-range__body">
+                <h3>
+                  <a href={`/products/${p.slug}`}>{p.name}</a>
+                </h3>
+                <p>{p.desc}</p>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <CtaBand
+    heading="Have a GFRC requirement?"
+    body="Send us the elevation, the profile section or a reference image and we will advise on the manufacturing approach."
+  />
+</Page>
+
+<style>
+  .al-range__title {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(28px, 3.4vw, 44px);
+    line-height: 1.1;
+    margin-top: 20px;
+  }
+
+  .al-range__sub {
+    margin-top: 16px;
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--color-on-light-60);
+    max-width: 54ch;
+  }
+
+  .al-range__grid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    margin-top: 48px;
+  }
+
+  .al-range__card {
+    background: var(--color-bg);
+    position: relative;
+  }
+
+  .al-range__body {
+    padding: 24px 26px 30px;
+  }
+
+  .al-range__body h3 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 1.25;
+  }
+
+  .al-range__body h3 a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  .al-range__body h3 a:hover {
+    color: var(--color-gold-ink);
+  }
+
+  .al-range__body p {
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: var(--color-on-light-60);
+    margin-top: 10px;
+  }
+</style>

@@ -1,0 +1,197 @@
+---
+import Eyebrow from '../ui/Eyebrow.astro';
+import Button from '../ui/Button.astro';
+import SlotImage from '../ui/SlotImage.astro';
+import { pillars } from '../../content/site';
+import type { SlotImage as SlotImageType } from '../../lib/media';
+
+interface Props {
+  image?: SlotImageType;
+}
+const { image } = Astro.props;
+---
+
+<section id="top" class="al-hero" data-ground="dark">
+  <div class="al-container al-hero__inner">
+    <div>
+      <Eyebrow label="Architectural Products Manufacturer" ground="dark" />
+      <h1 class="al-hero__title al-balance">
+        Architectural Products. Engineered to <span class="al-hero__accent">Elevate</span>.
+      </h1>
+      <p class="al-hero__lead">
+        Premium GFRC and FRP architectural solutions for contemporary buildings, facades and
+        interiors.
+      </p>
+      <p class="al-hero__support">
+        Alicore combines architectural design, engineering and advanced manufacturing to create
+        durable, lightweight and highly customizable architectural elements for residential,
+        commercial, hospitality and large-scale developments.
+      </p>
+      <div class="al-hero__cta">
+        <Button href="/products" variant="gold">Explore Products</Button>
+        <Button href="/contact" variant="outline" ground="dark">Request a Quote</Button>
+      </div>
+    </div>
+
+    <div class="al-hero__figure">
+      <SlotImage
+        slot="alicore-hero"
+        placeholder="Hero photograph — facade with GFRC panels / jali screens"
+        image={image}
+        ratio="4/5"
+        ground="dark"
+        priority
+        sizes="(max-width: 900px) 100vw, 45vw"
+      />
+      <div class="al-hero__scrim" aria-hidden="true"></div>
+    </div>
+  </div>
+
+  <div class="al-hero__pillars">
+    <div class="al-container al-hero__pillars-grid">
+      {
+        pillars.map((p) => (
+          <div class="al-pillar">
+            <span class="al-pillar__n">{p.n}</span>
+            <span class="al-pillar__code">{p.code}</span>
+            <span class="al-pillar__full">{p.full}</span>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .al-hero {
+    position: relative;
+    background: var(--color-ink);
+    color: var(--color-on-dark);
+    min-height: min(880px, 92vh);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow: hidden;
+  }
+
+  .al-hero__inner {
+    position: relative;
+    z-index: 2;
+    padding-block: clamp(56px, 8vh, 110px) clamp(40px, 6vw, 72px);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: clamp(32px, 5vw, 64px);
+    align-items: center;
+  }
+
+  .al-hero__title {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(38px, 6.4vw, 86px);
+    line-height: 1.02;
+    letter-spacing: -0.015em;
+    margin-top: 26px;
+    max-width: 17ch;
+  }
+
+  .al-hero__accent {
+    color: var(--color-gold);
+  }
+
+  .al-hero__lead {
+    margin-top: 26px;
+    max-width: 52ch;
+    font-size: clamp(16px, 1.5vw, 19px);
+    line-height: 1.6;
+    color: rgb(246 244 239 / 0.78);
+    font-weight: 300;
+  }
+
+  .al-hero__support {
+    margin-top: 16px;
+    max-width: 62ch;
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--color-on-dark-55);
+    font-weight: 300;
+  }
+
+  .al-hero__cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 40px;
+  }
+
+  .al-hero__figure {
+    position: relative;
+    min-height: clamp(280px, 42vh, 540px);
+  }
+
+  .al-hero__figure :global(.al-slot) {
+    height: 100%;
+  }
+
+  .al-hero__scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 55%, rgb(18 17 15 / 0.55) 100%);
+    pointer-events: none;
+  }
+
+  /* --- pillar strip ---------------------------------------------------- */
+  .al-hero__pillars {
+    position: relative;
+    z-index: 2;
+    border-top: 1px solid rgb(246 244 239 / 0.16);
+    background: rgb(18 17 15 / 0.55);
+  }
+
+  .al-hero__pillars-grid {
+    padding-block: clamp(28px, 3.5vw, 40px);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: clamp(24px, 3vw, 44px);
+  }
+
+  .al-pillar {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-left: 18px;
+    border-left: 1px solid rgb(246 244 239 / 0.18);
+  }
+
+  .al-pillar__n {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-gold);
+  }
+
+  .al-pillar__code {
+    font-family: var(--font-display);
+    font-size: clamp(19px, 1.7vw, 23px);
+    font-weight: 400;
+    letter-spacing: 0.14em;
+    line-height: 1;
+    color: var(--color-on-dark);
+  }
+
+  .al-pillar__full {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: rgb(246 244 239 / 0.52);
+    line-height: 1.7;
+    max-width: 24ch;
+  }
+
+  @media (max-width: 640px) {
+    .al-hero {
+      min-height: 0;
+    }
+  }
+</style>

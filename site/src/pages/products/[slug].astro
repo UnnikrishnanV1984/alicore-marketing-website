@@ -1,0 +1,225 @@
+---
+import Page from '../../layouts/Page.astro';
+import PageHero from '../../components/ui/PageHero.astro';
+import SlotImage from '../../components/ui/SlotImage.astro';
+import Eyebrow from '../../components/ui/Eyebrow.astro';
+import CtaBand from '../../components/sections/CtaBand.astro';
+import { loadSlotImages } from '../../lib/media';
+import { products } from '../../content/products';
+import { productMeta } from '../../content/seo';
+import { site } from '../../content/site';
+
+export function getStaticPaths() {
+  return products.map((product) => ({
+    params: { slug: product.slug },
+    props: { product },
+  }));
+}
+
+const { product } = Astro.props;
+const slots = await loadSlotImages();
+const related = products.filter((p) => p.slug !== product.slug).slice(0, 3);
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.name,
+    description: product.desc,
+    category: product.cat === 'Custom' ? 'Custom Architectural Elements' : product.cat,
+    brand: { '@type': 'Brand', name: 'Alicore' },
+    manufacturer: { '@type': 'Organization', name: 'Alicore' },
+    // No offers/price and no aggregateRating -- neither is real. Fabricating
+    // either would be structured-data spam and breaches the brief.
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: site.url },
+      { '@type': 'ListItem', position: 2, name: 'Products', item: `${site.url}/products` },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: product.name,
+        item: `${site.url}/products/${product.slug}`,
+      },
+    ],
+  },
+];
+---
+
+<Page
+  meta={productMeta[product.slug]}
+  path={`/products/${product.slug}`}
+  active="/products"
+  jsonLd={jsonLd}
+>
+  <PageHero
+    eyebrow={`${product.cat} — Product ${product.idx}`}
+    title={product.name}
+    lead={product.desc}
+    breadcrumb={[
+      { label: 'Products', href: '/products' },
+      { label: product.name, href: `/products/${product.slug}` },
+    ]}
+  />
+
+  <section class="al-section">
+    <div class="al-container al-pd">
+      <div class="al-pd__media">
+        <SlotImage
+          slot={product.slot}
+          placeholder={product.shot}
+          image={slots.get(product.slot)}
+          ratio="4/3"
+          priority
+          sizes="(max-width: 900px) 100vw, 52vw"
+        />
+      </div>
+
+      <div class="al-pd__body">
+        {product.detail.map((p) => <p class="al-pd__p">{p}</p>)}
+
+        <h2 class="al-pd__sub">Typical applications</h2>
+        <ul class="al-pd__list">
+          {product.applications.map((a) => <li>{a}</li>)}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="al-section al-related">
+    <div class="al-container">
+      <Eyebrow label="Also in the range" />
+      <h2 class="al-related__title">Related products</h2>
+      <div class="al-hairline-grid al-related__grid">
+        {
+          related.map((r) => (
+            <article class="al-related__card">
+              <div>
+                <SlotImage
+                  slot={r.slot}
+                  placeholder={r.shot}
+                  image={slots.get(r.slot)}
+                  ratio="4/3"
+                  sizes="(max-width: 640px) 100vw, 33vw"
+                />
+              </div>
+              <div class="al-related__cardbody">
+                <h3>
+                  <a href={`/products/${r.slug}`}>{r.name}</a>
+                </h3>
+                <p>{r.desc}</p>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <CtaBand
+    heading={`Enquire about ${product.name}.`}
+    body="Send dimensions, drawings or a reference image and we will come back with the right manufacturing approach."
+  />
+</Page>
+
+<style>
+  .al-pd {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: clamp(36px, 5vw, 80px);
+    align-items: start;
+  }
+
+  .al-pd__p {
+    font-size: 16px;
+    line-height: 1.78;
+    color: var(--color-on-light-60);
+    max-width: 60ch;
+  }
+
+  .al-pd__p + .al-pd__p {
+    margin-top: 18px;
+  }
+
+  .al-pd__sub {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 22px;
+    margin-top: 38px;
+  }
+
+  .al-pd__list {
+    list-style: none;
+    margin-top: 18px;
+    border-top: 1px solid var(--color-rule);
+  }
+
+  .al-pd__list li {
+    padding: 15px 0;
+    border-bottom: 1px solid var(--color-rule);
+    display: flex;
+    gap: 14px;
+    align-items: baseline;
+    font-size: 15.5px;
+  }
+
+  .al-pd__list li::before {
+    content: '';
+    width: 5px;
+    height: 5px;
+    background: var(--color-gold-ink);
+    flex: 0 0 auto;
+  }
+
+  .al-related {
+    background: var(--color-panel);
+  }
+
+  .al-related__title {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(26px, 3vw, 38px);
+    margin-top: 20px;
+  }
+
+  .al-related__grid {
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    margin-top: 40px;
+  }
+
+  .al-related__card {
+    background: var(--color-bg);
+    position: relative;
+  }
+
+  .al-related__cardbody {
+    padding: 22px 24px 28px;
+  }
+
+  .al-related__cardbody h3 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 19px;
+    line-height: 1.25;
+  }
+
+  .al-related__cardbody h3 a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  .al-related__cardbody h3 a:hover {
+    color: var(--color-gold-ink);
+  }
+
+  .al-related__cardbody p {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--color-on-light-60);
+    margin-top: 10px;
+  }
+</style>

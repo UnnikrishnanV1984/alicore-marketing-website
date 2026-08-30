@@ -1,0 +1,101 @@
+---
+import Page from '../layouts/Page.astro';
+import PageHero from '../components/ui/PageHero.astro';
+import SlotImage from '../components/ui/SlotImage.astro';
+import WhySection from '../components/sections/WhySection.astro';
+import IndustriesSection from '../components/sections/IndustriesSection.astro';
+import CtaBand from '../components/sections/CtaBand.astro';
+import { loadSlotImages } from '../lib/media';
+import { about } from '../content/sections';
+import { capabilities } from '../content/site';
+import { meta } from '../content/seo';
+
+const slots = await loadSlotImages();
+---
+
+<Page meta={meta['/about']} path="/about" active="/about">
+  <PageHero
+    eyebrow="Who We Are"
+    title="About ALICORE"
+    lead="Built for architecture. Designed for possibility."
+  />
+
+  <section class="al-section">
+    <div class="al-container al-about-page">
+      <div class="al-about-page__body">
+        <p class="al-about-page__lead">{about.lead}</p>
+        {about.body.map((p) => <p>{p}</p>)}
+      </div>
+
+      <aside class="al-about-page__aside">
+        <SlotImage
+          slot="alicore-about"
+          placeholder="Close-up: GFRC surface texture / finished panel"
+          image={slots.get('alicore-about')}
+          ratio="4/5"
+          sizes="(max-width: 900px) 100vw, 38vw"
+        />
+        <div class="al-hairline-grid al-about-page__caps">
+          {
+            capabilities.map((c) => (
+              <div class="al-cap">
+                <div class="al-cap__k">{c.k}</div>
+                <div class="al-cap__v">{c.v}</div>
+              </div>
+            ))
+          }
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <WhySection />
+  <IndustriesSection />
+  <CtaBand />
+</Page>
+
+<style>
+  .al-about-page {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: clamp(40px, 6vw, 90px);
+    align-items: start;
+  }
+
+  .al-about-page__lead {
+    font-size: clamp(19px, 2vw, 24px);
+    line-height: 1.5;
+    color: var(--color-ink);
+    font-weight: 300;
+  }
+
+  .al-about-page__body p + p {
+    margin-top: 20px;
+    font-size: 16px;
+    line-height: 1.78;
+    color: var(--color-on-light-60);
+    max-width: 62ch;
+  }
+
+  .al-about-page__caps {
+    grid-template-columns: 1fr;
+    margin-top: 28px;
+  }
+
+  .al-cap {
+    background: var(--color-bg);
+    padding: 22px 24px;
+  }
+
+  .al-cap__k {
+    font-family: var(--font-display);
+    font-size: 16px;
+  }
+
+  .al-cap__v {
+    font-size: 13px;
+    color: var(--color-on-light-55);
+    margin-top: 8px;
+    line-height: 1.5;
+  }
+</style>

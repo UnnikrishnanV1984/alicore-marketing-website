@@ -1,0 +1,167 @@
+@import 'tailwindcss';
+@import './tokens.css';
+
+/* Self-hosted variable fonts. The mockup loads these from Google Fonts; that
+   costs a render-blocking third-party round trip, so we bundle them instead. */
+@import '@fontsource-variable/jost';
+@import '@fontsource-variable/manrope';
+@import '@fontsource-variable/jetbrains-mono';
+
+/* ---------------------------------------------------------------------------
+   Reset + base. Mirrors the mockup's own reset.
+--------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: var(--al-scroll-offset);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  /* Clear the mobile sticky action bar so the footer is never trapped under it. */
+  padding-bottom: var(--al-mobile-bar);
+}
+
+img,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+input,
+textarea,
+select,
+button {
+  font: inherit;
+  color: inherit;
+}
+
+::selection {
+  background: var(--color-gold);
+  color: var(--color-ink);
+}
+
+/* Visible focus for keyboard users only -- the mockup has none at all, which
+   fails WCAG 2.4.7. */
+:focus-visible {
+  outline: 2px solid var(--color-gold-ink);
+  outline-offset: 3px;
+}
+
+.on-dark :focus-visible,
+[data-ground='dark'] :focus-visible {
+  outline-color: var(--color-gold);
+}
+
+/* ---------------------------------------------------------------------------
+   Primitives used across sections.
+--------------------------------------------------------------------------- */
+
+.al-container {
+  max-width: var(--al-container);
+  margin-inline: auto;
+  padding-inline: var(--spacing-gutter);
+  width: 100%;
+}
+
+.al-section {
+  padding-block: var(--spacing-section);
+}
+
+/* The signature hairline grid: children sit on a tinted ground separated by
+   1px gaps, so the rules read as drawn lines rather than card borders. */
+.al-hairline-grid {
+  display: grid;
+  gap: 1px;
+  background: var(--color-rule);
+  border: 1px solid var(--color-rule);
+}
+
+.al-hairline-grid[data-ground='dark'] {
+  background: var(--color-rule-dark);
+  border-color: var(--color-rule-dark);
+}
+
+/* Balanced headline wrapping, with a graceful fall back. */
+.al-balance {
+  text-wrap: balance;
+}
+
+/* Screen-reader-only, for skip links and icon-button labels. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.al-skip-link {
+  position: absolute;
+  top: -100%;
+  left: var(--spacing-gutter);
+  z-index: 200;
+  background: var(--color-ink);
+  color: var(--color-on-dark);
+  padding: 14px 22px;
+  font-family: var(--font-display);
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.al-skip-link:focus {
+  top: 12px;
+}
+
+/* ---------------------------------------------------------------------------
+   Motion. The brief asks for minimal animation; honour the OS setting fully.
+--------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@keyframes al-rise {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

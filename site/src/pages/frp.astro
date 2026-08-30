@@ -1,0 +1,120 @@
+---
+import Page from '../layouts/Page.astro';
+import PageHero from '../components/ui/PageHero.astro';
+import MaterialSection from '../components/sections/MaterialSection.astro';
+import Eyebrow from '../components/ui/Eyebrow.astro';
+import CtaBand from '../components/sections/CtaBand.astro';
+import { loadSlotImages } from '../lib/media';
+import { frp } from '../content/sections';
+import { productBySlug } from '../content/products';
+import { meta } from '../content/seo';
+import { site } from '../content/site';
+
+const slots = await loadSlotImages();
+const frpProduct = productBySlug('frp-architectural-products');
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: site.url },
+      { '@type': 'ListItem', position: 2, name: 'FRP', item: `${site.url}/frp` },
+    ],
+  },
+];
+---
+
+<Page meta={meta['/frp']} path="/frp" active="/frp" jsonLd={jsonLd}>
+  <PageHero
+    eyebrow="Material 02 — FRP"
+    title="Fiber Reinforced Plastic"
+    lead={frp.intro}
+    breadcrumb={[{ label: 'FRP', href: '/frp' }]}
+  />
+
+  <MaterialSection
+    id="frp"
+    eyebrow="Why FRP"
+    heading={frp.heading}
+    intro="FRP earns its place where weight, corrosion or geometry rule out the alternatives — curved and moulded forms, coastal exposure, and elements that have to be handled and fixed without heavy plant."
+    points={frp.points}
+    cta="Request a Quote"
+    ctaHref="/contact"
+    slot={frp.slot}
+    placeholder="FRP element / moulded component photo"
+    image={slots.get(frp.slot)}
+    ground="ink2"
+    media="right"
+    ctaVariant="gold"
+  />
+
+  {
+    frpProduct && (
+      <section class="al-section">
+        <div class="al-container al-frp-detail">
+          <div>
+            <Eyebrow label="Applications" />
+            <h2 class="al-frp-detail__title">Where FRP is specified</h2>
+          </div>
+          <div>
+            {frpProduct.detail.map((p) => (
+              <p class="al-frp-detail__p">{p}</p>
+            ))}
+            <ul class="al-frp-detail__list">
+              {frpProduct.applications.map((a) => (
+                <li>{a}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <CtaBand
+    heading="Have an FRP requirement?"
+    body="Send the geometry, the exposure conditions and any reference images — we will advise on material and manufacturing approach."
+  />
+</Page>
+
+<style>
+  .al-frp-detail {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: clamp(32px, 5vw, 80px);
+    align-items: start;
+  }
+
+  .al-frp-detail__title {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(26px, 3.2vw, 40px);
+    line-height: 1.1;
+    margin-top: 20px;
+  }
+
+  .al-frp-detail__p {
+    font-size: 16px;
+    line-height: 1.78;
+    color: var(--color-on-light-60);
+    max-width: 60ch;
+  }
+
+  .al-frp-detail__p + .al-frp-detail__p {
+    margin-top: 18px;
+  }
+
+  .al-frp-detail__list {
+    list-style: none;
+    margin-top: 32px;
+    border-top: 1px solid var(--color-rule);
+  }
+
+  .al-frp-detail__list li {
+    padding: 16px 0;
+    border-bottom: 1px solid var(--color-rule);
+    font-family: var(--font-display);
+    font-size: 17px;
+  }
+</style>

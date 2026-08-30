@@ -1,0 +1,400 @@
+---
+import Eyebrow from '../ui/Eyebrow.astro';
+import EnquiryForm from '../forms/EnquiryForm';
+import { contact, PLACEHOLDER_EMAIL } from '../../content/site';
+
+interface Props {
+  headingLevel?: 'h1' | 'h2';
+}
+const { headingLevel = 'h2' } = Astro.props;
+const Heading = headingLevel;
+
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
+const hasEmail = contact.emailDisplay !== PLACEHOLDER_EMAIL;
+
+const directs = [
+  { label: 'Call Us', value: contact.phoneDisplay, href: contact.phoneHref, wide: true },
+  { label: 'WhatsApp Us', value: 'Send project details', href: contact.whatsappHref, wide: false },
+  {
+    label: 'Email Us',
+    value: contact.emailDisplay,
+    href: hasEmail ? contact.emailHref : '',
+    wide: false,
+  },
+];
+---
+
+<section id="contact" class="al-contact" data-ground="dark">
+  <div class="al-container al-contact__grid">
+    <div>
+      <Eyebrow label="Contact" ground="dark" />
+      <Heading class="al-contact__title al-balance">Let's Build Something Remarkable.</Heading>
+      <p class="al-contact__intro">
+        Have an architectural requirement, drawing or project in development? Share your project
+        details with our team and let's explore the right manufacturing solution.
+      </p>
+
+      <div class="al-hairline-grid al-contact__directs" data-ground="dark">
+        {
+          directs.map((d) =>
+            d.href ? (
+              <a href={d.href} class="al-direct" rel="noopener">
+                <span>
+                  <span class="al-direct__label">{d.label}</span>
+                  <span class={`al-direct__value${d.wide ? ' is-wide' : ''}`}>{d.value}</span>
+                </span>
+                <span class="al-direct__arrow" aria-hidden="true">→</span>
+              </a>
+            ) : (
+              /* No verified address supplied yet -- shown, but not a dead mailto. */
+              <div class="al-direct al-direct--pending">
+                <span>
+                  <span class="al-direct__label">{d.label}</span>
+                  <span class="al-direct__value">{d.value}</span>
+                </span>
+              </div>
+            ),
+          )
+        }
+      </div>
+    </div>
+
+    <EnquiryForm
+      client:visible
+      turnstileSiteKey={turnstileSiteKey}
+      whatsappHref={contact.whatsappHref}
+      phoneHref={contact.phoneHref}
+      phoneDisplay={contact.phoneDisplay}
+    />
+  </div>
+</section>
+
+<style>
+  .al-contact {
+    background: var(--color-ink);
+    color: var(--color-on-dark);
+    padding-block: var(--spacing-section);
+  }
+
+  .al-contact__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: clamp(40px, 6vw, 90px);
+    align-items: start;
+  }
+
+  .al-contact__title {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(32px, 4.4vw, 58px);
+    line-height: 1.06;
+    margin-top: 22px;
+    max-width: 18ch;
+  }
+
+  .al-contact__intro {
+    margin-top: 22px;
+    font-size: 16.5px;
+    line-height: 1.7;
+    color: var(--color-on-dark-66);
+    max-width: 48ch;
+    font-weight: 300;
+  }
+
+  .al-contact__directs {
+    margin-top: 40px;
+  }
+
+  .al-direct {
+    background: var(--color-ink);
+    color: var(--color-on-dark);
+    padding: 24px 26px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    transition: background-color 0.25s var(--ease-premium);
+  }
+
+  .al-direct:hover {
+    background: var(--color-ink-3);
+  }
+
+  .al-direct--pending {
+    opacity: 0.62;
+  }
+
+  .al-direct__label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-gold);
+  }
+
+  .al-direct__value {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 22px;
+    letter-spacing: 0.02em;
+    margin-top: 8px;
+  }
+
+  .al-direct__value.is-wide {
+    letter-spacing: 0.06em;
+  }
+
+  .al-direct__arrow {
+    color: rgb(246 244 239 / 0.4);
+  }
+</style>
+
+<!-- Form styles are global: EnquiryForm is a React island and Astro's scoped
+     style hashing does not reach it. -->
+<style is:global>
+  .al-form {
+    background: var(--color-bg);
+    color: var(--color-ink);
+    padding: clamp(28px, 4vw, 48px);
+  }
+
+  .al-form__title {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 15px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .al-form__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 18px 20px;
+    margin-top: 28px;
+  }
+
+  .al-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .al-field--wide {
+    margin-top: 22px;
+  }
+
+  .al-field__label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-on-light-55);
+  }
+
+  .al-field__label abbr {
+    text-decoration: none;
+    color: var(--color-gold-ink);
+  }
+
+  .al-field input,
+  .al-field select,
+  .al-field textarea {
+    border: none;
+    border-bottom: 1px solid rgb(18 17 15 / 0.25);
+    background: none;
+    padding: 10px 0;
+    /* 16px minimum stops iOS zooming the viewport on focus. */
+    font-size: 16px;
+    outline: none;
+    border-radius: 0;
+    width: 100%;
+  }
+
+  .al-field textarea {
+    resize: vertical;
+  }
+
+  .al-field input:focus,
+  .al-field select:focus,
+  .al-field textarea:focus {
+    border-bottom-color: var(--color-gold-ink);
+  }
+
+  .al-field input[aria-invalid='true'] {
+    border-bottom-color: #a8763a;
+  }
+
+  .al-field__err {
+    font-size: 12.5px;
+    color: #8c5a1e;
+    line-height: 1.5;
+  }
+
+  .al-field__hint {
+    font-size: 12.5px;
+    color: var(--color-on-light-55);
+    line-height: 1.5;
+  }
+
+  .al-field__file {
+    padding: 12px 0;
+    font-size: 14px;
+  }
+
+  /* Honeypot -- removed from the accessibility tree and off-screen, never
+     display:none (some bots skip hidden fields). */
+  .al-hp {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  .al-form__note {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    border: 1px solid rgb(18 17 15 / 0.16);
+    background: rgb(18 17 15 / 0.03);
+    padding: 18px 20px;
+    margin-top: 26px;
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: rgb(18 17 15 / 0.65);
+  }
+
+  .al-form__note-mark {
+    width: 6px;
+    height: 6px;
+    background: var(--color-gold);
+    flex: 0 0 auto;
+  }
+
+  .al-form__note a {
+    color: var(--color-gold-ink);
+    border-bottom: 1px solid currentColor;
+  }
+
+  .al-form__turnstile {
+    margin-top: 22px;
+  }
+
+  .al-form__progress {
+    margin-top: 18px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-gold-ink);
+  }
+
+  .al-form__error {
+    margin-top: 22px;
+    border-left: 2px solid #a8763a;
+    padding: 4px 0 4px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 13.5px;
+    line-height: 1.6;
+  }
+
+  .al-form__error a {
+    color: var(--color-gold-ink);
+    border-bottom: 1px solid currentColor;
+  }
+
+  .al-form__submit {
+    width: 100%;
+    margin-top: 28px;
+    background: var(--color-ink);
+    color: var(--color-bg);
+    border: none;
+    padding: 19px 26px;
+    font-family: var(--font-display);
+    font-size: 14px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 0.25s var(--ease-premium);
+  }
+
+  .al-form__submit:hover:not(:disabled) {
+    background: var(--color-gold-ink);
+    color: var(--color-ink);
+  }
+
+  .al-form__submit:disabled {
+    opacity: 0.55;
+    cursor: progress;
+  }
+
+  .al-form__foot {
+    font-size: 12.5px;
+    color: rgb(18 17 15 / 0.5);
+    margin-top: 14px;
+    line-height: 1.6;
+  }
+
+  .al-form__foot a {
+    color: var(--color-gold-ink);
+  }
+
+  /* --- success panel ---------------------------------------------------- */
+  .al-form__done {
+    padding: 60px 0;
+    text-align: center;
+  }
+
+  .al-form__done-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-gold-ink);
+  }
+
+  .al-form__done-title {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 30px;
+    margin-top: 18px;
+  }
+
+  .al-form__done-body {
+    font-size: 15px;
+    color: var(--color-on-light-60);
+    margin-top: 14px;
+    max-width: 36ch;
+    margin-inline: auto;
+    line-height: 1.65;
+  }
+
+  .al-form__ref {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-gold-ink);
+    margin-top: 18px;
+  }
+
+  .al-form__again {
+    margin-top: 28px;
+    border: 1px solid rgb(18 17 15 / 0.2);
+    background: none;
+    padding: 14px 26px;
+    font-family: var(--font-display);
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .al-form__again:hover {
+    background: var(--color-ink);
+    color: var(--color-bg);
+  }
+</style>

@@ -1,0 +1,278 @@
+---
+import '../../styles/global.css';
+import { signIn, setSessionCookies, currentUser } from '../../lib/auth';
+
+export const prerender = false;
+
+let error: string | null = null;
+
+// Already signed in? Go straight through.
+const existing = await currentUser(Astro.locals, Astro.cookies);
+if (existing && Astro.request.method === 'GET') {
+  return Astro.redirect('/admin/enquiries', 302);
+}
+
+if (Astro.request.method === 'POST') {
+  const form = await Astro.request.formData();
+  const email = String(form.get('email') ?? '').trim();
+  const password = String(form.get('password') ?? '');
+  const nextFromForm = String(form.get("next") ?? "/admin/enquiries");
+
+  if (!email || !password) {
+    error = 'Enter your email address and password.';
+  } else {
+    const session = await signIn(Astro.locals, email, password);
+    if (session) {
+      setSessionCookies(Astro.cookies, session.accessToken, session.refreshToken);
+      return Astro.redirect(nextFromForm.startsWith("/admin") ? nextFromForm : "/admin/enquiries", 302);
+    }
+    // Deliberately does not distinguish "no such user" from "wrong password".
+    error = 'Incorrect email or password.';
+  }
+}
+
+const next = Astro.url.searchParams.get('next') ?? '/admin/enquiries';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Alicore — Staff Console</title>
+    <meta name="robots" content="noindex, nofollow" />
+  </head>
+  <body class="al-login">
+    <div class="al-login__aside">
+      <a href="/" class="al-login__brand">
+        <img src="/brand/alicore-badge.jpg" alt="" width="44" height="44" />
+        <span>
+          <span class="al-login__name">ALICORE</span>
+          <span class="al-login__role">Staff Console</span>
+        </span>
+      </a>
+
+      <div>
+        <h1 class="al-login__title">Manage site imagery and project enquiries.</h1>
+        <p class="al-login__body">
+          Sign in to upload photography for every image placement on the website, publish project
+          entries, and review enquiries submitted through the quote form.
+        </p>
+      </div>
+
+      <div class="al-login__foot">Authorised personnel only</div>
+    </div>
+
+    <div class="al-login__panel">
+      <form method="POST" class="al-login__form">
+        <div class="al-login__eyebrow">Sign In</div>
+        <h2 class="al-login__h2">Staff Login</h2>
+
+        <input type="hidden" name="next" value={next} />
+
+        <label class="al-login__field">
+          <span>Email</span>
+          <input type="email" name="email" autocomplete="username" required autofocus />
+        </label>
+
+        <label class="al-login__field">
+          <span>Password</span>
+          <input type="password" name="password" autocomplete="current-password" required />
+        </label>
+
+        {error && <div class="al-login__error" role="alert">{error}</div>}
+
+        <button type="submit" class="al-login__submit">Sign In</button>
+
+        <p class="al-login__note">
+          Staff accounts are created by invitation. If you cannot sign in, ask an administrator to
+          invite your email address from the Supabase dashboard.
+        </p>
+
+        <a href="/" class="al-login__back">← Back to website</a>
+      </form>
+    </div>
+  </body>
+</html>
+
+<style is:global>
+  .al-login {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    background: var(--color-ink);
+    color: var(--color-on-dark);
+    padding-bottom: 0;
+  }
+
+  .al-login__aside {
+    padding: clamp(40px, 6vw, 80px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 40px;
+    background: var(--color-footer);
+  }
+
+  .al-login__brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--color-on-dark);
+  }
+
+  .al-login__brand img {
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .al-login__name {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: 0.32em;
+    line-height: 1;
+  }
+
+  .al-login__role {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 8.5px;
+    letter-spacing: 0.22em;
+    color: var(--color-gold);
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  .al-login__title {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(30px, 3.6vw, 46px);
+    line-height: 1.1;
+    max-width: 20ch;
+    text-wrap: balance;
+  }
+
+  .al-login__body {
+    margin-top: 20px;
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--color-on-dark-55);
+    max-width: 44ch;
+    font-weight: 300;
+  }
+
+  .al-login__foot {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgb(246 244 239 / 0.35);
+  }
+
+  .al-login__panel {
+    padding: clamp(40px, 6vw, 80px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .al-login__form {
+    max-width: 400px;
+    width: 100%;
+  }
+
+  .al-login__eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-gold);
+  }
+
+  .al-login__h2 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 30px;
+    margin-top: 14px;
+  }
+
+  .al-login__field {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    margin-top: 24px;
+  }
+
+  .al-login__field:first-of-type {
+    margin-top: 34px;
+  }
+
+  .al-login__field span {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgb(246 244 239 / 0.5);
+  }
+
+  .al-login__field input {
+    border: none;
+    border-bottom: 1px solid rgb(246 244 239 / 0.28);
+    background: none;
+    padding: 11px 0;
+    font-size: 16px;
+    outline: none;
+    border-radius: 0;
+    color: var(--color-on-dark);
+  }
+
+  .al-login__field input:focus {
+    border-bottom-color: var(--color-gold);
+  }
+
+  .al-login__error {
+    margin-top: 20px;
+    border-left: 2px solid var(--color-gold);
+    padding-left: 14px;
+    font-size: 13.5px;
+    color: rgb(246 244 239 / 0.75);
+  }
+
+  .al-login__submit {
+    width: 100%;
+    margin-top: 34px;
+    background: var(--color-gold);
+    color: var(--color-ink);
+    border: none;
+    padding: 18px 26px;
+    font-family: var(--font-display);
+    font-size: 14px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 0.25s var(--ease-premium);
+  }
+
+  .al-login__submit:hover {
+    background: var(--color-bg);
+  }
+
+  .al-login__note {
+    margin-top: 22px;
+    font-size: 12.5px;
+    line-height: 1.7;
+    color: rgb(246 244 239 / 0.45);
+  }
+
+  .al-login__back {
+    display: inline-block;
+    margin-top: 28px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-gold);
+  }
+</style>

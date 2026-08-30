@@ -1,0 +1,228 @@
+---
+import Eyebrow from '../ui/Eyebrow.astro';
+import { activeCategories, projectImage, type Project } from '../../lib/projects';
+
+interface Props {
+  projects: Project[];
+  headingLevel?: 'h1' | 'h2';
+  locals?: unknown;
+}
+
+const { projects, headingLevel = 'h2', locals } = Astro.props;
+const Heading = headingLevel;
+const categories = ['All', ...activeCategories(projects)];
+---
+
+<section id="projects" class="al-projects" data-ground="dark">
+  <div class="al-container">
+    <Eyebrow label="Projects" ground="dark" />
+    <Heading class="al-projects__title">Architecture in Detail</Heading>
+    <p class="al-projects__sub">From concept to completed architectural elements.</p>
+
+    {
+      projects.length > 0 && categories.length > 2 && (
+        <div class="al-projects__filter" role="group" aria-label="Filter projects by category">
+          {categories.map((c, i) => (
+            <button
+              type="button"
+              class="al-chip"
+              data-cat={c}
+              aria-pressed={i === 0 ? 'true' : 'false'}
+            >
+              {c}
+            </button>
+          ))}
+        </div>
+      )
+    }
+
+    {
+      projects.length === 0 ? (
+        <p class="al-projects__empty">
+          Project photography is being prepared. To discuss a requirement in the meantime, please
+          get in touch.
+        </p>
+      ) : (
+        <div class="al-projects__grid">
+          {projects.map((p) => {
+            const img = projectImage(p, locals);
+            return (
+              <article class="al-proj" data-cat={p.category}>
+                {img ? (
+                  <img
+                    src={img.src}
+                    srcset={img.srcset}
+                    sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 33vw"
+                    alt={p.altText}
+                    loading="lazy"
+                    decoding="async"
+                    class="al-proj__img"
+                  />
+                ) : (
+                  <div class="al-proj__empty" aria-hidden="true" />
+                )}
+                <div class="al-proj__overlay">
+                  <div class="al-proj__cat">{p.category}</div>
+                  <h3 class="al-proj__name">{p.name}</h3>
+                  <div class="al-proj__meta">
+                    <span>Location — {p.location}</span>
+                    {p.material && <span>Material — {p.material}</span>}
+                    {p.product && <span>Product — {p.product}</span>}
+                    {p.application && <span>Application — {p.application}</span>}
+                  </div>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      )
+    }
+  </div>
+</section>
+
+<script>
+  // Category filter. Deliberately not a React island -- it is ~15 lines of DOM
+  // toggling against a list that is already server-rendered, so shipping a
+  // component runtime for it would be pure overhead.
+  (() => {
+    const root = document.getElementById('projects');
+    if (!root) return;
+    const chips = root.querySelectorAll<HTMLButtonElement>('.al-chip');
+    const tiles = root.querySelectorAll<HTMLElement>('.al-proj');
+    if (!chips.length) return;
+
+    chips.forEach((chip) => {
+      chip.addEventListener('click', () => {
+        const cat = chip.dataset.cat;
+        chips.forEach((c) => c.setAttribute('aria-pressed', String(c === chip)));
+        tiles.forEach((t) => {
+          t.hidden = cat !== 'All' && t.dataset.cat !== cat;
+        });
+      });
+    });
+  })();
+</script>
+
+<style>
+  .al-projects {
+    padding-block: var(--spacing-section);
+    background: var(--color-ink);
+    color: var(--color-on-dark);
+  }
+
+  .al-projects__title {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(30px, 3.8vw, 50px);
+    line-height: 1.08;
+    margin-top: 20px;
+  }
+
+  .al-projects__sub {
+    margin-top: 16px;
+    font-size: 16px;
+    color: rgb(246 244 239 / 0.6);
+    max-width: 52ch;
+    font-weight: 300;
+  }
+
+  .al-projects__filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 44px;
+  }
+
+  .al-chip {
+    padding: 12px 20px;
+    border: 1px solid rgb(246 244 239 / 0.25);
+    background: transparent;
+    color: rgb(246 244 239 / 0.75);
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    min-height: 44px;
+    transition:
+      background-color 0.2s var(--ease-premium),
+      color 0.2s var(--ease-premium),
+      border-color 0.2s var(--ease-premium);
+  }
+
+  .al-chip[aria-pressed='true'] {
+    background: var(--color-gold);
+    border-color: var(--color-gold);
+    color: var(--color-ink);
+  }
+
+  .al-projects__empty {
+    margin-top: 44px;
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--color-on-dark-55);
+    max-width: 52ch;
+  }
+
+  .al-projects__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+    margin-top: 36px;
+  }
+
+  .al-proj {
+    position: relative;
+    aspect-ratio: 4/3;
+    background: var(--color-ink-3);
+    overflow: hidden;
+  }
+
+  .al-proj__img,
+  .al-proj__empty {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .al-proj__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      0deg,
+      rgb(18 17 15 / 0.9) 0%,
+      rgb(18 17 15 / 0.15) 55%,
+      transparent 100%
+    );
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 26px;
+    pointer-events: none;
+  }
+
+  .al-proj__cat {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-gold);
+  }
+
+  .al-proj__name {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 22px;
+    margin-top: 10px;
+    color: var(--color-on-dark);
+  }
+
+  .al-proj__meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 6px 18px;
+    margin-top: 14px;
+    font-size: 12.5px;
+    color: rgb(246 244 239 / 0.6);
+  }
+</style>

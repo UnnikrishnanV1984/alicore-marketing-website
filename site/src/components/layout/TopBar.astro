@@ -1,0 +1,81 @@
+---
+import { site, contact } from '../../content/site';
+
+/**
+ * The persistent utility bar above the header. Per the quote-enquiry
+ * conventions skill, phone and WhatsApp must stay visible sitewide.
+ * On narrow screens the domain drops and the tagline truncates -- the two
+ * contact actions are what must survive.
+ */
+---
+
+<div class="al-topbar">
+  <div class="al-container al-topbar__inner">
+    <span class="al-topbar__tagline">{site.tagline}</span>
+    <div class="al-topbar__actions">
+      <a href={contact.phoneHref}>Call {contact.phoneDisplay}</a>
+      <a href={contact.whatsappHref} rel="noopener">WhatsApp</a>
+      <span class="al-topbar__domain">{site.domain}</span>
+    </div>
+  </div>
+</div>
+
+<style>
+  .al-topbar {
+    background: var(--color-ink);
+    color: rgb(246 244 239 / 0.72);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .al-topbar__inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 28px;
+    align-items: center;
+    justify-content: space-between;
+    padding-block: 10px;
+  }
+
+  .al-topbar__tagline {
+    color: var(--color-gold);
+  }
+
+  .al-topbar__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 24px;
+    align-items: center;
+  }
+
+  .al-topbar__actions a {
+    letter-spacing: 0.14em;
+    transition: color 0.2s var(--ease-premium);
+  }
+
+  .al-topbar__actions a:hover {
+    color: var(--color-gold);
+  }
+
+  .al-topbar__domain {
+    color: rgb(246 244 239 / 0.4);
+  }
+
+  @media (max-width: 900px) {
+    .al-topbar__domain {
+      display: none;
+    }
+  }
+
+  @media (max-width: 620px) {
+    /* Keep the two contact actions; the tagline is the expendable half. */
+    .al-topbar__tagline {
+      display: none;
+    }
+    .al-topbar__inner {
+      justify-content: center;
+    }
+  }
+</style>

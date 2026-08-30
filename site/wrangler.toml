@@ -1,0 +1,40 @@
+name = "alicore-site"
+main = "./dist/_worker.js/index.js"
+compatibility_date = "2026-08-01"
+compatibility_flags = ["nodejs_compat"]
+
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+# Astro emits about/index.html and every canonical/internal link is written
+# without a trailing slash. Cloudflare's default ("auto-trailing-slash") would
+# 307 /about -> /about/, costing a hop on every link and making the served URL
+# disagree with the canonical tag. Drop the slash so the two match.
+html_handling = "drop-trailing-slash"
+
+[observability]
+enabled = true
+
+# ---------------------------------------------------------------------------
+# Secrets are NOT set here -- wrangler.toml is committed. Set each one with:
+#
+#   wrangler secret put SUPABASE_SERVICE_ROLE_KEY
+#   wrangler secret put TURNSTILE_SECRET_KEY
+#   wrangler secret put RESEND_API_KEY
+#   wrangler secret put ENQUIRY_NOTIFY_TO
+#   wrangler secret put IP_HASH_SALT
+#   wrangler secret put CF_ZONE_ID
+#   wrangler secret put CF_PURGE_TOKEN
+#
+# PUBLIC_* values are inlined at build time from .env / CI environment, so they
+# belong in the build environment rather than in secrets.
+# ---------------------------------------------------------------------------
+
+# Astro's Cloudflare adapter wires sessions to a KV namespace. The public site
+# does not use sessions (staff auth rides on signed cookies), but the binding
+# must exist or the Worker refuses to boot. Create it once with:
+#   wrangler kv namespace create SESSION
+# then paste the id below.
+# [[kv_namespaces]]
+# binding = "SESSION"
+# id = "<paste-the-id-here>"

@@ -1,0 +1,28 @@
+---
+import Base from './Base.astro';
+import TopBar from '../components/layout/TopBar.astro';
+import Header from '../components/layout/Header.astro';
+import Footer from '../components/layout/Footer.astro';
+import ContactActions from '../components/layout/ContactActions.astro';
+import type { Meta } from '../content/seo';
+
+interface Props {
+  meta?: Meta;
+  path?: string;
+  jsonLd?: Record<string, unknown>[];
+  scrollSpy?: boolean;
+  active?: string;
+}
+
+const { meta, path, jsonLd, scrollSpy = false, active } = Astro.props;
+---
+
+<Base meta={meta} path={path} jsonLd={jsonLd}>
+  <TopBar />
+  <Header scrollSpy={scrollSpy} active={active} />
+  <main id="main">
+    <slot />
+  </main>
+  <Footer />
+  <ContactActions />
+</Base>

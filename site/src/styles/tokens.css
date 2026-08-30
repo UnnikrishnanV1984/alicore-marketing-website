@@ -1,0 +1,78 @@
+/* ---------------------------------------------------------------------------
+   Alicore design tokens.
+
+   Values extracted verbatim from design-mockup/Alicore Home.dc.html <helmet>.
+   These are exact. Do not re-derive them from individual element styles and do
+   not introduce colours outside this file -- see docs/IMPLEMENTATION_PLAN.md s2.
+--------------------------------------------------------------------------- */
+
+@theme {
+  /* --- surfaces ---------------------------------------------------------- */
+  --color-bg: #f6f4ef; /* warm white, page default */
+  --color-panel: #ece8e0; /* light concrete, alternating sections */
+  --color-panel-2: #dad5cb; /* deeper concrete, image placeholder ground */
+  --color-ink: #12110f; /* near-black: primary text AND dark sections */
+  --color-ink-2: #1a1917; /* FRP section ground */
+  --color-ink-3: #1f1d1a; /* project tile ground, hover state on dark */
+  --color-footer: #0c0b0a; /* footer, admin sidebar */
+
+  /* --- accent -----------------------------------------------------------
+     Context dependent, and the mockup never mixes them:
+       gold      -> on DARK grounds
+       gold-ink  -> on LIGHT grounds (contrast-corrected)
+     Sanctioned alternates from the mockup's data-props options list:
+       #C0973F  #B08D3C  #8C8A82  #A8763A
+  ----------------------------------------------------------------------- */
+  --color-gold: #c0973f;
+  --color-gold-ink: #b08d3c;
+  --color-gold-mute: #8c8a82;
+  --color-gold-warm: #a8763a;
+
+  /* --- hairlines ---------------------------------------------------------
+     The "cards" in this design are 1px GAPS over a tinted ground, not boxes.
+  ----------------------------------------------------------------------- */
+  --color-rule: rgb(18 17 15 / 0.14);
+  --color-rule-soft: rgb(18 17 15 / 0.1);
+  --color-rule-dark: rgb(246 244 239 / 0.14);
+  --color-rule-dark-soft: rgb(246 244 239 / 0.12);
+
+  /* --- text on dark ------------------------------------------------------ */
+  --color-on-dark: #f6f4ef;
+  --color-on-dark-80: rgb(246 244 239 / 0.8);
+  --color-on-dark-66: rgb(246 244 239 / 0.66);
+  --color-on-dark-55: rgb(246 244 239 / 0.55);
+  --color-on-dark-42: rgb(246 244 239 / 0.42);
+
+  /* --- text on light ----------------------------------------------------- */
+  --color-on-light-72: rgb(18 17 15 / 0.72);
+  --color-on-light-60: rgb(18 17 15 / 0.6);
+  --color-on-light-55: rgb(18 17 15 / 0.55);
+
+  /* --- type -------------------------------------------------------------- */
+  --font-display: 'Jost Variable', 'Jost', ui-sans-serif, system-ui, sans-serif;
+  --font-body: 'Manrope Variable', 'Manrope', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
+
+  /* --- layout ------------------------------------------------------------ */
+  --spacing-gutter: clamp(20px, 4vw, 48px);
+  --spacing-section: clamp(80px, 10vw, 150px);
+  --spacing-section-sm: clamp(70px, 8vw, 120px);
+
+  /* --- motion ------------------------------------------------------------
+     "Minimal animations. Smooth scrolling. Premium transitions." -- brief.
+  ----------------------------------------------------------------------- */
+  --ease-premium: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+:root {
+  --al-container: 1320px;
+  --al-scroll-offset: 92px;
+  /* Height of the mobile sticky Call/WhatsApp bar. 0 on desktop. */
+  --al-mobile-bar: 0px;
+}
+
+@media (max-width: 767px) {
+  :root {
+    --al-mobile-bar: 60px;
+  }
+}

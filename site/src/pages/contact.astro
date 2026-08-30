@@ -1,0 +1,63 @@
+---
+import Page from '../layouts/Page.astro';
+import ContactSection from '../components/sections/ContactSection.astro';
+import { meta } from '../content/seo';
+import { site, contact, PLACEHOLDER_ADDRESS } from '../content/site';
+
+const hasAddress = contact.addressDisplay !== PLACEHOLDER_ADDRESS;
+
+// ContactPoint only. No PostalAddress node until a real address is supplied --
+// fabricating one would be structured-data spam.
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ContactPage',
+    name: 'Contact Alicore',
+    url: `${site.url}/contact`,
+    mainEntity: {
+      '@type': 'Organization',
+      name: 'Alicore',
+      url: site.url,
+      contactPoint: [
+        {
+          '@type': 'ContactPoint',
+          contactType: 'sales',
+          telephone: contact.phoneHref.replace('tel:', ''),
+          availableLanguage: ['en'],
+        },
+      ],
+    },
+  },
+];
+---
+
+<Page meta={meta['/contact']} path="/contact" active="/contact" jsonLd={jsonLd}>
+  <ContactSection headingLevel="h1" />
+
+  {
+    !hasAddress && (
+      <section class="al-section al-addr">
+        <div class="al-container">
+          <p class="al-addr__note">
+            Our full postal address will be published here shortly. In the meantime, please call or
+            message us on WhatsApp — enquiries are answered the same working day.
+          </p>
+        </div>
+      </section>
+    )
+  }
+</Page>
+
+<style>
+  .al-addr {
+    padding-block: clamp(48px, 6vw, 80px);
+    background: var(--color-panel);
+  }
+
+  .al-addr__note {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--color-on-light-60);
+    max-width: 60ch;
+  }
+</style>

@@ -1,0 +1,70 @@
+---
+import Page from '../layouts/Page.astro';
+import Hero from '../components/sections/Hero.astro';
+import AboutSection from '../components/sections/AboutSection.astro';
+import ProductsSection from '../components/sections/ProductsSection.astro';
+import MaterialSection from '../components/sections/MaterialSection.astro';
+import WhySection from '../components/sections/WhySection.astro';
+import CustomSection from '../components/sections/CustomSection.astro';
+import ProjectsSection from '../components/sections/ProjectsSection.astro';
+import ManufacturingSection from '../components/sections/ManufacturingSection.astro';
+import IndustriesSection from '../components/sections/IndustriesSection.astro';
+import ContactSection from '../components/sections/ContactSection.astro';
+
+import { loadSlotImages } from '../lib/media';
+import { loadPublishedProjects } from '../lib/projects';
+import { gfrc, frp } from '../content/sections';
+import { meta } from '../content/seo';
+
+/**
+ * The long-scroll home page -- every section from the mockup, in order.
+ * Each section's CTA now deep-links to its standalone page as well as
+ * supporting in-page anchors (plan section 3).
+ */
+const [slots, projects] = await Promise.all([loadSlotImages(), loadPublishedProjects()]);
+---
+
+<Page meta={meta['/']} path="/" scrollSpy active="/">
+  <Hero image={slots.get('alicore-hero')} />
+  <AboutSection image={slots.get('alicore-about')} />
+  <ProductsSection slots={slots} />
+
+  <MaterialSection
+    id="gfrc"
+    eyebrow={gfrc.eyebrow}
+    heading={gfrc.heading}
+    intro={gfrc.intro}
+    points={gfrc.points}
+    cta={gfrc.cta}
+    ctaHref="/gfrc"
+    slot={gfrc.slot}
+    placeholder="GFRC facade / jali screen close-up"
+    image={slots.get(gfrc.slot)}
+    ground="ink"
+    media="left"
+    ctaVariant="gold"
+  />
+
+  <MaterialSection
+    id="frp"
+    eyebrow={frp.eyebrow}
+    heading={frp.heading}
+    intro={frp.intro}
+    points={frp.points}
+    cta={frp.cta}
+    ctaHref="/frp"
+    slot={frp.slot}
+    placeholder="FRP element / moulded component photo"
+    image={slots.get(frp.slot)}
+    ground="ink2"
+    media="right"
+    ctaVariant="outline"
+  />
+
+  <WhySection />
+  <CustomSection />
+  <ProjectsSection projects={projects} />
+  <ManufacturingSection image={slots.get('alicore-factory')} />
+  <IndustriesSection />
+  <ContactSection />
+</Page>

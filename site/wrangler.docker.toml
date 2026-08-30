@@ -1,0 +1,26 @@
+# =============================================================================
+# Local container config. NOT used for real deploys — see wrangler.toml.
+#
+# The only difference is the SESSION KV namespace: Astro's Cloudflare adapter
+# always wires sessions to KV, and the Worker refuses to boot without the
+# binding. In `wrangler dev --local` the namespace is simulated on disk, so the
+# id below is a placeholder and never touches a real Cloudflare account.
+# =============================================================================
+
+name = "alicore-site-local"
+main = "./dist/_worker.js/index.js"
+compatibility_date = "2026-08-01"
+compatibility_flags = ["nodejs_compat"]
+
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+# Astro emits about/index.html and every canonical/internal link is written
+# without a trailing slash. Cloudflare's default ("auto-trailing-slash") would
+# 307 /about -> /about/, costing a hop on every link and making the served URL
+# disagree with the canonical tag. Drop the slash so the two match.
+html_handling = "drop-trailing-slash"
+
+[[kv_namespaces]]
+binding = "SESSION"
+id = "local-session-placeholder"

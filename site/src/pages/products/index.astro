@@ -1,0 +1,38 @@
+---
+import Page from '../../layouts/Page.astro';
+import PageHero from '../../components/ui/PageHero.astro';
+import ProductsSection from '../../components/sections/ProductsSection.astro';
+import CtaBand from '../../components/sections/CtaBand.astro';
+import { loadSlotImages } from '../../lib/media';
+import { products } from '../../content/products';
+import { meta } from '../../content/seo';
+import { site } from '../../content/site';
+
+const slots = await loadSlotImages();
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'Alicore architectural products',
+    itemListElement: products.map((p, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: p.name,
+      url: `${site.url}/products/${p.slug}`,
+    })),
+  },
+];
+---
+
+<Page meta={meta['/products']} path="/products" active="/products" jsonLd={jsonLd}>
+  <PageHero
+    eyebrow="Product Range"
+    title="Architectural Products"
+    lead="Engineered solutions for modern architecture — GFRC and FRP elements manufactured to project drawings, dimensions and finish requirements."
+    breadcrumb={[{ label: 'Products', href: '/products' }]}
+  />
+
+  <ProductsSection slots={slots} showViewAll={false} />
+  <CtaBand />
+</Page>

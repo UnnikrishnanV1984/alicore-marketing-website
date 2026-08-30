@@ -1,0 +1,234 @@
+---
+import '../styles/global.css';
+import type { StaffUser } from '../lib/auth';
+
+interface Props {
+  title: string;
+  tab: 'enquiries' | 'media' | 'projects';
+  staff: StaffUser;
+  enquiryCount?: number;
+}
+
+const { title, tab, staff, enquiryCount } = Astro.props;
+
+const tabs = [
+  { id: 'enquiries', href: '/admin/enquiries', label: 'Enquiries' },
+  { id: 'media', href: '/admin/media', label: 'Image Library' },
+  { id: 'projects', href: '/admin/projects', label: 'Projects' },
+] as const;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title} — Alicore Staff Console</title>
+    <meta name="robots" content="noindex, nofollow" />
+  </head>
+  <body class="al-admin">
+    <header class="al-admin__header">
+      <div class="al-admin__bar">
+        <div class="al-admin__brand">
+          <img src="/brand/alicore-badge.jpg" alt="" width="34" height="34" />
+          <span class="al-admin__name">ALICORE</span>
+          <span class="al-admin__role">Staff Console</span>
+        </div>
+
+        <nav class="al-admin__tabs" aria-label="Console sections">
+          {
+            tabs.map((t) => (
+              <a
+                href={t.href}
+                class="al-admin__tab"
+                aria-current={tab === t.id ? 'page' : undefined}
+              >
+                {t.label}
+                {t.id === 'enquiries' && enquiryCount !== undefined && ` · ${enquiryCount}`}
+              </a>
+            ))
+          }
+          <a href="/" class="al-admin__link">View Site</a>
+          <form method="POST" action="/api/admin/logout" class="al-admin__logout">
+            <button type="submit">Sign Out</button>
+          </form>
+        </nav>
+      </div>
+    </header>
+
+    <main class="al-admin__main">
+      <slot />
+    </main>
+
+    <footer class="al-admin__foot">
+      Signed in as {staff.email}
+    </footer>
+  </body>
+</html>
+
+<style is:global>
+  .al-admin {
+    background: var(--color-ink);
+    color: var(--color-on-dark);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 0;
+  }
+
+  .al-admin__header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: rgb(12 11 10 / 0.94);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--color-rule-dark);
+  }
+
+  .al-admin__bar {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 16px clamp(20px, 3vw, 40px);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px 28px;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .al-admin__brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .al-admin__brand img {
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .al-admin__name {
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: 0.3em;
+  }
+
+  .al-admin__role {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-gold);
+    border-left: 1px solid rgb(246 244 239 / 0.2);
+    padding-left: 12px;
+  }
+
+  .al-admin__tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .al-admin__tab {
+    border: 1px solid rgb(246 244 239 / 0.25);
+    color: rgb(246 244 239 / 0.75);
+    padding: 11px 20px;
+    font-family: var(--font-display);
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: all 0.2s var(--ease-premium);
+  }
+
+  .al-admin__tab[aria-current='page'] {
+    background: var(--color-gold);
+    border-color: var(--color-gold);
+    color: var(--color-ink);
+  }
+
+  .al-admin__link,
+  .al-admin__logout button {
+    padding: 11px 8px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgb(246 244 239 / 0.6);
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+
+  .al-admin__logout {
+    display: inline;
+  }
+
+  .al-admin__main {
+    max-width: 1440px;
+    margin: 0 auto;
+    width: 100%;
+    padding: clamp(32px, 4vw, 56px) clamp(20px, 3vw, 40px) 80px;
+    flex: 1;
+  }
+
+  .al-admin__foot {
+    border-top: 1px solid var(--color-rule-dark);
+    padding: 18px clamp(20px, 3vw, 40px);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgb(246 244 239 / 0.35);
+  }
+
+  /* --- shared admin primitives ------------------------------------------ */
+  .al-admin__eyebrow {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-gold);
+  }
+
+  .al-admin__h1 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(26px, 3vw, 38px);
+    margin-top: 14px;
+  }
+
+  .al-admin__intro {
+    margin-top: 16px;
+    font-size: 15px;
+    line-height: 1.7;
+    color: rgb(246 244 239 / 0.6);
+    max-width: 66ch;
+    font-weight: 300;
+  }
+
+  .al-admin__btn {
+    border: 1px solid rgb(246 244 239 / 0.25);
+    background: none;
+    color: var(--color-on-dark);
+    padding: 13px 22px;
+    font-family: var(--font-display);
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s var(--ease-premium);
+  }
+
+  .al-admin__btn:hover:not(:disabled) {
+    background: var(--color-gold);
+    border-color: var(--color-gold);
+    color: var(--color-ink);
+  }
+
+  .al-admin__btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+</style>

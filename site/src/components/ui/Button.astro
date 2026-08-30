@@ -1,0 +1,116 @@
+---
+/**
+ * The three button variants in the mockup. Sharp rectangles, uppercase Jost,
+ * .1em tracking. No radius, no shadow -- see plan section 2.
+ *
+ *   ink     solid near-black, gold on hover        (light grounds)
+ *   gold    solid gold, warm-white on hover        (dark grounds, primary)
+ *   outline hairline border, inverts on hover      (either ground)
+ */
+interface Props {
+  href?: string;
+  variant?: 'ink' | 'gold' | 'outline';
+  ground?: 'light' | 'dark';
+  size?: 'md' | 'sm';
+  class?: string;
+  [key: string]: unknown;
+}
+
+const {
+  href,
+  variant = 'ink',
+  ground = 'light',
+  size = 'md',
+  class: className = '',
+  ...rest
+} = Astro.props;
+
+const Tag = href ? 'a' : 'button';
+const classes = ['al-btn', `al-btn--${variant}`, `al-btn--${ground}`, `al-btn--${size}`, className]
+  .filter(Boolean)
+  .join(' ');
+---
+
+<Tag class={classes} href={href} {...rest}>
+  <slot />
+</Tag>
+
+<style>
+  .al-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    font-family: var(--font-display);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border: 1px solid transparent;
+    cursor: pointer;
+    text-align: center;
+    transition:
+      background-color 0.25s var(--ease-premium),
+      color 0.25s var(--ease-premium),
+      border-color 0.25s var(--ease-premium);
+  }
+
+  .al-btn--md {
+    padding: 16px 30px;
+    font-size: 14px;
+    /* 44px minimum tap target on mobile. */
+    min-height: 48px;
+  }
+
+  .al-btn--sm {
+    padding: 15px 28px;
+    font-size: 13px;
+    min-height: 46px;
+  }
+
+  /* --- solid ink ------------------------------------------------------- */
+  .al-btn--ink {
+    background: var(--color-ink);
+    color: var(--color-bg);
+  }
+  .al-btn--ink:hover {
+    background: var(--color-gold-ink);
+    color: var(--color-ink);
+  }
+
+  /* --- solid gold ------------------------------------------------------ */
+  .al-btn--gold {
+    background: var(--color-gold);
+    color: var(--color-ink);
+  }
+  .al-btn--gold:hover {
+    background: var(--color-bg);
+    color: var(--color-ink);
+  }
+
+  /* --- hairline outline ------------------------------------------------ */
+  .al-btn--outline.al-btn--light {
+    border-color: rgb(18 17 15 / 0.2);
+    color: var(--color-ink);
+  }
+  .al-btn--outline.al-btn--light:hover {
+    background: var(--color-ink);
+    border-color: var(--color-ink);
+    color: var(--color-bg);
+  }
+
+  .al-btn--outline.al-btn--dark {
+    border-color: rgb(246 244 239 / 0.35);
+    color: var(--color-on-dark);
+  }
+  .al-btn--outline.al-btn--dark:hover {
+    border-color: var(--color-on-dark);
+    background: rgb(246 244 239 / 0.07);
+  }
+
+  @media (max-width: 480px) {
+    /* Full-width CTAs on small screens -- the brief asks for a large,
+       unmissable enquiry CTA on mobile. */
+    .al-btn--md {
+      width: 100%;
+    }
+  }
+</style>

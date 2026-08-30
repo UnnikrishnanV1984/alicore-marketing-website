@@ -1,0 +1,65 @@
+---
+import '../styles/global.css';
+import { site, contact } from '../content/site';
+import { defaultMeta, type Meta } from '../content/seo';
+
+interface Props {
+  meta?: Meta;
+  /** Canonical path, e.g. "/gfrc". Defaults to the current URL's pathname. */
+  path?: string;
+  /** Adds JSON-LD beyond the sitewide Organization node. */
+  jsonLd?: Record<string, unknown>[];
+  bodyClass?: string;
+}
+
+const { meta = defaultMeta, path, jsonLd = [], bodyClass = '' } = Astro.props;
+
+const canonicalPath = path ?? Astro.url.pathname;
+const canonical = new URL(canonicalPath, site.url).href;
+
+// Sitewide Organization node. Deliberately carries no rating, certification or
+// award properties -- none of that is verified. See the brand guidelines.
+const organization: Record<string, unknown> = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Alicore',
+  url: site.url,
+  slogan: site.tagline,
+  description:
+    'Architectural products manufacturer specializing in GFRC and FRP panels, jalis, cornices, columns and custom architectural elements.',
+  telephone: contact.phoneHref.replace('tel:', ''),
+};
+if (contact.email) organization.email = contact.email;
+
+const graph = [organization, ...jsonLd];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{meta.title}</title>
+    <meta name="description" content={meta.description} />
+    <link rel="canonical" href={canonical} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Alicore" />
+    <meta property="og:title" content={meta.title} />
+    <meta property="og:description" content={meta.description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={meta.title} />
+    <meta name="twitter:description" content={meta.description} />
+
+    <meta name="theme-color" content="#12110F" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(graph)} />
+    <slot name="head" />
+  </head>
+  <body class={bodyClass}>
+    <a class="al-skip-link" href="#main">Skip to content</a>
+    <slot />
+  </body>
+</html>

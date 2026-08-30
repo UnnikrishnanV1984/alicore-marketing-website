@@ -1,0 +1,64 @@
+---
+import Admin from '../../layouts/Admin.astro';
+import '../../styles/admin.css';
+import MediaLibrary, { type AdminSlot } from '../../components/admin/MediaLibrary';
+import { serviceClient, mediaUrl } from '../../lib/supabase';
+import { slotPath } from '../../lib/media';
+import type { StaffUser } from '../../lib/auth';
+
+export const prerender = false;
+
+const staff = (Astro.locals as Record<string, unknown>).staff as StaffUser;
+
+let slots: AdminSlot[] = [];
+let loadError: string | null = null;
+
+try {
+  const supabase = serviceClient(Astro.locals);
+
+  const [{ data: slotRows, error: slotErr }, { data: assetRows }] = await Promise.all([
+    supabase.from('media_slots').select('*').order('sort_order'),
+    supabase.from('media_assets').select('slot_id, alt_text').eq('is_active', true),
+  ]);
+
+  if (slotErr) throw new Error(slotErr.message);
+
+  const active = new Map((assetRows ?? []).map((a) => [a.slot_id, a.alt_text ?? '']));
+
+  slots = (slotRows ?? []).map((s) => ({
+    id: s.id,
+    groupTitle: s.group_title,
+    title: s.title,
+    placeholder: s.placeholder,
+    hasImage: active.has(s.id),
+    altText: active.get(s.id) ?? '',
+    // Cache-bust the admin preview only; the public site relies on the stable
+    // URL plus an edge purge.
+    previewUrl: active.has(s.id)
+      ? `${mediaUrl(slotPath(s.id, 640), Astro.locals)}?t=${Date.now()}`
+      : null,
+  }));
+} catch (err) {
+  loadError = err instanceof Error ? err.message : 'Could not load the image library.';
+}
+---
+
+<Admin title="Image Library" tab="media" staff={staff}>
+  <div class="al-admin__eyebrow">Website Imagery</div>
+  <h1 class="al-admin__h1">Image Library</h1>
+  <p class="al-admin__intro">
+    Every image placement on the website appears below. Drag a photograph onto a slot — or click to
+    browse — and it fills that position on the live page. Use landscape shots at 2000px wide or
+    larger; they are resized and converted automatically, so upload the best original you have.
+  </p>
+
+  {
+    loadError ? (
+      <div class="al-admin-error" role="alert">
+        {loadError}
+      </div>
+    ) : (
+      <MediaLibrary client:load slots={slots} />
+    )
+  }
+</Admin>

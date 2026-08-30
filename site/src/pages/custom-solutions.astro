@@ -1,0 +1,113 @@
+---
+import Page from '../layouts/Page.astro';
+import PageHero from '../components/ui/PageHero.astro';
+import CustomSection from '../components/sections/CustomSection.astro';
+import CtaBand from '../components/sections/CtaBand.astro';
+import Eyebrow from '../components/ui/Eyebrow.astro';
+import { meta } from '../content/seo';
+---
+
+<Page meta={meta['/custom-solutions']} path="/custom-solutions" active="/custom-solutions">
+  <PageHero
+    eyebrow="Custom Solutions"
+    title="Your Design. Our Manufacturing."
+    lead="Every architectural project is different. Alicore works with architectural drawings, CAD files, reference images and design concepts to develop customized architectural products according to project requirements."
+    breadcrumb={[{ label: 'Custom Solutions', href: '/custom-solutions' }]}
+  />
+
+  <CustomSection />
+
+  <section class="al-section">
+    <div class="al-container al-what">
+      <div>
+        <Eyebrow label="What to send" />
+        <h2 class="al-what__title">Starting an enquiry</h2>
+      </div>
+      <div>
+        <p class="al-what__p">
+          The more that arrives with the first enquiry, the faster we can come back with something
+          useful. None of it is mandatory — a sketch and a dimension is enough to begin a
+          conversation.
+        </p>
+        <ul class="al-what__list">
+          <li>
+            <strong>Drawings or CAD files</strong>
+            <span>Elevations, sections or profile details in PDF, DWG or DXF.</span>
+          </li>
+          <li>
+            <strong>Dimensions and quantities</strong>
+            <span>Panel sizes, running lengths or piece counts, even approximate.</span>
+          </li>
+          <li>
+            <strong>Reference images</strong>
+            <span>Photographs of the effect you are after, from anywhere.</span>
+          </li>
+          <li>
+            <strong>Finish and colour intent</strong>
+            <span>Texture, tone, or a sample you want matched.</span>
+          </li>
+          <li>
+            <strong>Programme</strong>
+            <span>When the elements are needed on site.</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand
+    heading="Have a drawing ready?"
+    body="Attach it to the enquiry form or send it on WhatsApp — we will review it and respond with a manufacturing approach."
+    cta="Discuss Your Project"
+  />
+</Page>
+
+<style>
+  .al-what {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: clamp(32px, 5vw, 80px);
+    align-items: start;
+  }
+
+  .al-what__title {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(26px, 3.2vw, 40px);
+    line-height: 1.1;
+    margin-top: 20px;
+  }
+
+  .al-what__p {
+    font-size: 16px;
+    line-height: 1.78;
+    color: var(--color-on-light-60);
+    max-width: 58ch;
+  }
+
+  .al-what__list {
+    list-style: none;
+    margin-top: 30px;
+    border-top: 1px solid var(--color-rule);
+  }
+
+  .al-what__list li {
+    padding: 18px 0;
+    border-bottom: 1px solid var(--color-rule);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .al-what__list strong {
+    font-family: var(--font-display);
+    font-size: 17px;
+    font-weight: 400;
+  }
+
+  .al-what__list span {
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: var(--color-on-light-60);
+  }
+</style>

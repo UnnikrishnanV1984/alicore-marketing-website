@@ -1,0 +1,70 @@
+---
+import Admin from '../../layouts/Admin.astro';
+import '../../styles/admin.css';
+import ProjectsManager, { type AdminProject } from '../../components/admin/ProjectsManager';
+import { serviceClient } from '../../lib/supabase';
+import { projectCategories } from '../../content/sections';
+import type { StaffUser } from '../../lib/auth';
+
+export const prerender = false;
+
+const staff = (Astro.locals as Record<string, unknown>).staff as StaffUser;
+
+let projects: AdminProject[] = [];
+let slotOptions: { id: string; title: string }[] = [];
+let loadError: string | null = null;
+
+try {
+  const supabase = serviceClient(Astro.locals);
+
+  const [{ data: rows, error }, { data: slots }] = await Promise.all([
+    supabase.from('projects').select('*').order('sort_order'),
+    supabase.from('media_slots').select('id, title').eq('group_title', 'Projects').order('sort_order'),
+  ]);
+
+  if (error) throw new Error(error.message);
+
+  projects = (rows ?? []).map((r) => ({
+    id: r.id,
+    name: r.name,
+    location: r.location,
+    category: r.category,
+    material: r.material ?? '',
+    product: r.product ?? '',
+    application: r.application ?? '',
+    imagePath: r.image_path ?? '',
+    altText: r.alt_text ?? '',
+    isPublished: r.is_published,
+    sortOrder: r.sort_order,
+  }));
+
+  slotOptions = (slots ?? []).map((s) => ({ id: s.id, title: s.title }));
+} catch (err) {
+  loadError = err instanceof Error ? err.message : 'Could not load projects.';
+}
+---
+
+<Admin title="Projects" tab="projects" staff={staff}>
+  <div class="al-admin__eyebrow">Project Gallery</div>
+  <h1 class="al-admin__h1">Projects</h1>
+  <p class="al-admin__intro">
+    Entries published here appear on the website's Projects page and on the home page gallery. Keep
+    the "Coming Soon" placeholders until the client has approved a real project name and location —
+    the brief is explicit that project names, clients and locations must not be invented.
+  </p>
+
+  {
+    loadError ? (
+      <div class="al-admin-error" role="alert">
+        {loadError}
+      </div>
+    ) : (
+      <ProjectsManager
+        client:load
+        initial={projects}
+        categories={projectCategories}
+        slotOptions={slotOptions}
+      />
+    )
+  }
+</Admin>

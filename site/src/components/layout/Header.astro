@@ -1,0 +1,403 @@
+---
+import { site, contact, nav } from '../../content/site';
+
+interface Props {
+  /** On the long-scroll home page the nav highlights by anchor as you scroll. */
+  scrollSpy?: boolean;
+  /** Route to mark active on standalone pages, e.g. "/gfrc". */
+  active?: string;
+}
+
+const { scrollSpy = false, active } = Astro.props;
+---
+
+<header class="al-header" data-scrollspy={scrollSpy ? 'true' : undefined}>
+  <div class="al-container al-header__inner">
+    <a href="/" class="al-brand" aria-label="Alicore — home">
+      <img src="/brand/alicore-monogram.jpg" alt="" width="38" height="38" class="al-brand__mark" />
+      <span class="al-brand__text">
+        <span class="al-brand__name">{site.nameLockup}</span>
+        <span class="al-brand__desc">{site.descriptor}</span>
+      </span>
+    </a>
+
+    <nav class="al-nav" aria-label="Primary">
+      {
+        nav.map((n) => (
+          <a
+            href={n.href}
+            class="al-nav__link"
+            data-nav-id={n.id}
+            aria-current={active === n.href ? 'page' : undefined}
+          >
+            {n.label}
+          </a>
+        ))
+      }
+      <a href="/contact" class="al-nav__cta">Request a Quote</a>
+    </nav>
+
+    <!-- Mobile trigger. Plain button + a ~40-line script rather than a React
+         island: this is on every page, and shipping a component runtime
+         sitewide for a hamburger would cost ~58KB gzip against a "fast
+         loading" requirement. React is reserved for the enquiry form and the
+         admin console, where it earns its weight. -->
+    <button
+      type="button"
+      class="al-burger"
+      id="al-burger"
+      aria-expanded="false"
+      aria-controls="al-mobile-sheet"
+      aria-label="Open menu"
+    >
+      <span class="al-burger__bars" aria-hidden="true"><span></span><span></span></span>
+    </button>
+  </div>
+</header>
+
+<div
+  id="al-mobile-sheet"
+  class="al-sheet"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Site navigation"
+  hidden
+>
+  <nav class="al-sheet__nav">
+    {nav.map((n) => <a href={n.href}>{n.label}</a>)}
+  </nav>
+  <div class="al-sheet__actions">
+    <a class="al-sheet__cta" href="/contact">Request a Quote</a>
+    <div class="al-sheet__direct">
+      <a href={contact.phoneHref}>Call {contact.phoneDisplay}</a>
+      <a href={contact.whatsappHref} rel="noopener">WhatsApp Us</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  // --- mobile sheet -------------------------------------------------------
+  // Dialog conventions the mockup has no equivalent for: Escape closes, focus
+  // is trapped while open, background scroll locks, trigger regains focus.
+  (() => {
+    const burger = document.getElementById('al-burger');
+    const sheet = document.getElementById('al-mobile-sheet');
+    if (!burger || !sheet) return;
+
+    let open = false;
+
+    const focusables = () =>
+      Array.from(sheet.querySelectorAll<HTMLElement>('a[href], button:not([disabled])'));
+
+    const setOpen = (next: boolean) => {
+      open = next;
+      sheet.hidden = !next;
+      burger.setAttribute('aria-expanded', String(next));
+      burger.setAttribute('aria-label', next ? 'Close menu' : 'Open menu');
+      burger.querySelector('.al-burger__bars')?.classList.toggle('is-open', next);
+      document.body.style.overflow = next ? 'hidden' : '';
+      if (next) focusables()[0]?.focus();
+      else burger.focus();
+    };
+
+    burger.addEventListener('click', () => setOpen(!open));
+
+    sheet.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).closest('a')) setOpen(false);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (!open) return;
+
+      if (e.key === 'Escape') {
+        setOpen(false);
+        return;
+      }
+
+      if (e.key !== 'Tab') return;
+      const items = focusables();
+      if (!items.length) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    });
+
+    // Returning to desktop width while the sheet is open would otherwise leave
+    // body scroll locked.
+    window.addEventListener('resize', () => {
+      if (open && window.innerWidth > 1100) setOpen(false);
+    });
+  })();
+
+  // --- scroll spy ---------------------------------------------------------
+  // Only runs on the long-scroll home page. IntersectionObserver rather than
+  // the mockup's 250ms setInterval poll: same result, no timer for the life of
+  // the page.
+  (() => {
+    const header = document.querySelector('[data-scrollspy]');
+    if (!header) return;
+
+    const links = new Map<string, Element>();
+    header.querySelectorAll('[data-nav-id]').forEach((el) => {
+      const id = el.getAttribute('data-nav-id');
+      if (id) links.set(id, el);
+    });
+
+    const sections = Array.from(links.keys())
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => Boolean(el));
+    if (!sections.length) return;
+
+    let current: string | null = null;
+    const setActive = (id: string) => {
+      if (id === current) return;
+      current = id;
+      links.forEach((el, key) => el.toggleAttribute('data-active', key === id));
+    };
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+        if (visible[0]) setActive(visible[0].target.id);
+      },
+      { rootMargin: '-92px 0px -70% 0px', threshold: 0 },
+    );
+
+    sections.forEach((s) => io.observe(s));
+  })();
+</script>
+
+<style>
+  .al-header {
+    position: sticky;
+    top: 0;
+    z-index: 60;
+    background: rgb(246 244 239 / 0.92);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--color-rule-soft);
+  }
+
+  .al-header__inner {
+    display: flex;
+    gap: 14px 28px;
+    align-items: center;
+    justify-content: space-between;
+    padding-block: 14px;
+  }
+
+  /* --- brand ----------------------------------------------------------- */
+  .al-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 0 0 auto;
+  }
+
+  .al-brand__mark {
+    width: 38px;
+    height: 38px;
+    object-fit: cover;
+    object-position: 50% 30%;
+    mix-blend-mode: multiply;
+  }
+
+  .al-brand__text {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .al-brand__name {
+    font-family: var(--font-display);
+    font-size: 19px;
+    font-weight: 500;
+    letter-spacing: 0.34em;
+    line-height: 1;
+  }
+
+  .al-brand__desc {
+    font-family: var(--font-mono);
+    font-size: 8.5px;
+    letter-spacing: 0.24em;
+    color: var(--color-gold-ink);
+    text-transform: uppercase;
+  }
+
+  /* --- desktop nav ----------------------------------------------------- */
+  .al-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 26px;
+    align-items: center;
+    font-family: var(--font-display);
+    font-size: 14px;
+    letter-spacing: 0.06em;
+  }
+
+  .al-nav__link {
+    position: relative;
+    padding: 6px 0 5px;
+    border-bottom: 2px solid transparent;
+    color: rgb(18 17 15 / 0.68);
+    transition:
+      color 0.2s var(--ease-premium),
+      border-color 0.2s var(--ease-premium);
+  }
+
+  .al-nav__link:hover {
+    color: var(--color-ink);
+  }
+
+  .al-nav__link[data-active],
+  .al-nav__link[aria-current='page'] {
+    color: var(--color-ink);
+    border-bottom-color: var(--color-gold-ink);
+  }
+
+  .al-nav__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--color-ink);
+    color: var(--color-bg);
+    padding: 12px 22px;
+    font-family: var(--font-display);
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: background-color 0.25s var(--ease-premium);
+  }
+
+  .al-nav__cta:hover {
+    background: var(--color-gold-ink);
+    color: var(--color-ink);
+  }
+
+  /* --- mobile trigger --------------------------------------------------- */
+  .al-burger {
+    display: none;
+    width: 48px;
+    height: 48px;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    z-index: 105;
+  }
+
+  .al-burger__bars {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 24px;
+  }
+
+  .al-burger__bars span {
+    display: block;
+    height: 1.5px;
+    width: 100%;
+    background: var(--color-ink);
+    transition: transform 0.25s var(--ease-premium);
+  }
+
+  .al-burger__bars.is-open span:first-child {
+    transform: translateY(3.75px) rotate(45deg);
+  }
+
+  .al-burger__bars.is-open span:last-child {
+    transform: translateY(-3.75px) rotate(-45deg);
+  }
+
+  /* Below 1100px the nine-item nav can no longer share a line with the logo. */
+  @media (max-width: 1100px) {
+    .al-nav {
+      display: none;
+    }
+    .al-burger {
+      display: flex;
+    }
+  }
+
+  /* --- sheet ------------------------------------------------------------ */
+  .al-sheet {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: var(--color-ink);
+    color: var(--color-on-dark);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 32px;
+    padding: clamp(88px, 14vh, 128px) var(--spacing-gutter) calc(32px + env(safe-area-inset-bottom));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .al-sheet[hidden] {
+    display: none;
+  }
+
+  .al-sheet__nav {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .al-sheet__nav a {
+    font-family: var(--font-display);
+    font-size: clamp(22px, 6vw, 30px);
+    font-weight: 300;
+    letter-spacing: 0.02em;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--color-rule-dark-soft);
+    color: var(--color-on-dark);
+  }
+
+  .al-sheet__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .al-sheet__cta {
+    display: block;
+    background: var(--color-gold);
+    color: var(--color-ink);
+    text-align: center;
+    padding: 20px 24px;
+    font-family: var(--font-display);
+    font-size: 15px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .al-sheet__direct {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--color-rule-dark);
+    border: 1px solid var(--color-rule-dark);
+  }
+
+  .al-sheet__direct a {
+    background: var(--color-ink);
+    color: var(--color-on-dark);
+    text-align: center;
+    padding: 18px 12px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+</style>

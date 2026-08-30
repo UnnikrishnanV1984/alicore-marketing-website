@@ -1,0 +1,63 @@
+---
+import Admin from '../../layouts/Admin.astro';
+import '../../styles/admin.css';
+import EnquiryTable, { type AdminEnquiry } from '../../components/admin/EnquiryTable';
+import { serviceClient } from '../../lib/supabase';
+import type { StaffUser } from '../../lib/auth';
+
+export const prerender = false;
+
+const staff = (Astro.locals as Record<string, unknown>).staff as StaffUser;
+
+let enquiries: AdminEnquiry[] = [];
+let loadError: string | null = null;
+
+try {
+  const supabase = serviceClient(Astro.locals);
+  const { data, error } = await supabase
+    .from('enquiries')
+    .select(
+      'id, ref, created_at, name, company, phone, email, location, product, quantity, message, attachment_path, status, internal_note',
+    )
+    .order('created_at', { ascending: false })
+    .limit(500);
+
+  if (error) throw new Error(error.message);
+
+  enquiries = (data ?? []).map((r) => ({
+    id: r.id,
+    ref: r.ref,
+    createdAt: r.created_at,
+    name: r.name,
+    company: r.company,
+    phone: r.phone,
+    email: r.email,
+    location: r.location,
+    product: r.product,
+    quantity: r.quantity,
+    message: r.message,
+    attachmentPath: r.attachment_path,
+    status: r.status,
+    internalNote: r.internal_note,
+  }));
+} catch (err) {
+  loadError = err instanceof Error ? err.message : 'Could not load enquiries.';
+}
+
+const openCount = enquiries.filter((e) => e.status !== 'archived').length;
+---
+
+<Admin title="Enquiries" tab="enquiries" staff={staff} enquiryCount={openCount}>
+  <div class="al-admin__eyebrow">Quote Requests</div>
+  <h1 class="al-admin__h1">Enquiries</h1>
+
+  {
+    loadError ? (
+      <div class="al-admin-error" role="alert">
+        Could not load enquiries — {loadError}
+      </div>
+    ) : (
+      <EnquiryTable client:load initial={enquiries} />
+    )
+  }
+</Admin>

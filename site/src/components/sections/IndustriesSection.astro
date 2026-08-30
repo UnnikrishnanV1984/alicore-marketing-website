@@ -1,0 +1,75 @@
+---
+import Eyebrow from '../ui/Eyebrow.astro';
+import { industries } from '../../content/sections';
+
+interface Props {
+  headingLevel?: 'h1' | 'h2';
+}
+const { headingLevel = 'h2' } = Astro.props;
+const Heading = headingLevel;
+---
+
+<section class="al-industries">
+  <div class="al-container">
+    <Eyebrow label="Industries We Serve" />
+    <Heading class="al-industries__title">Solutions Across Architecture</Heading>
+
+    <ul class="al-hairline-grid al-industries__grid">
+      {
+        industries.map((i) => (
+          <li class="al-industry">
+            <span class="al-industry__mark" aria-hidden="true" />
+            <span class="al-industry__label">{i}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .al-industries {
+    padding-block: var(--spacing-section-sm);
+    background: var(--color-panel);
+  }
+
+  .al-industries__title {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(30px, 3.8vw, 50px);
+    line-height: 1.08;
+    margin-top: 20px;
+  }
+
+  .al-industries__grid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    margin-top: 48px;
+    list-style: none;
+  }
+
+  .al-industry {
+    background: var(--color-panel);
+    padding: 26px 24px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: background-color 0.25s var(--ease-premium);
+  }
+
+  .al-industry:hover {
+    background: var(--color-bg);
+  }
+
+  .al-industry__mark {
+    width: 6px;
+    height: 6px;
+    background: var(--color-gold);
+    flex: 0 0 auto;
+  }
+
+  .al-industry__label {
+    font-family: var(--font-display);
+    font-size: 16.5px;
+    letter-spacing: 0.02em;
+  }
+</style>

@@ -1,0 +1,76 @@
+---
+import Eyebrow from '../ui/Eyebrow.astro';
+import { why } from '../../content/sections';
+
+interface Props {
+  headingLevel?: 'h1' | 'h2';
+}
+const { headingLevel = 'h2' } = Astro.props;
+const Heading = headingLevel;
+---
+
+<section class="al-section">
+  <div class="al-container">
+    <Eyebrow label="Why Alicore" />
+    <Heading class="al-why__title">Why Choose Alicore?</Heading>
+
+    <div class="al-hairline-grid al-why__grid">
+      {
+        why.map((w) => (
+          <div class="al-why__card">
+            <div class="al-why__idx">{w.idx}</div>
+            <h3 class="al-why__name">{w.name}</h3>
+            <p class="al-why__desc">{w.desc}</p>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .al-why__title {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(30px, 3.8vw, 50px);
+    line-height: 1.08;
+    margin-top: 20px;
+  }
+
+  .al-why__grid {
+    grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+    margin-top: 52px;
+  }
+
+  .al-why__card {
+    background: var(--color-bg);
+    padding: 40px 34px 44px;
+    transition: background-color 0.3s var(--ease-premium);
+  }
+
+  .al-why__card:hover {
+    background: var(--color-panel);
+  }
+
+  .al-why__idx {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    color: var(--color-gold-ink);
+  }
+
+  .al-why__name {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 21px;
+    margin-top: 20px;
+    line-height: 1.2;
+  }
+
+  .al-why__desc {
+    font-size: 14.5px;
+    line-height: 1.65;
+    color: var(--color-on-light-60);
+    margin-top: 14px;
+  }
+</style>

@@ -1,0 +1,41 @@
+---
+import Page from '../layouts/Page.astro';
+import PageHero from '../components/ui/PageHero.astro';
+import ProjectsSection from '../components/sections/ProjectsSection.astro';
+import CtaBand from '../components/sections/CtaBand.astro';
+import { loadPublishedProjects } from '../lib/projects';
+import { meta } from '../content/seo';
+
+/**
+ * Server-rendered so admin-published projects appear without a rebuild.
+ * One of only two SSR surfaces on the public site -- see the Workers CPU
+ * budget note in plan section 1.
+ */
+export const prerender = false;
+
+const projects = await loadPublishedProjects(Astro.locals);
+
+// Cache at the edge for 5 minutes, and keep serving a stale copy for an hour
+// while revalidating. A low-traffic site should not hit the database on every
+// crawl, and this also absorbs a Supabase cold start.
+Astro.response.headers.set(
+  'cache-control',
+  'public, max-age=0, s-maxage=300, stale-while-revalidate=3600',
+);
+---
+
+<Page meta={meta['/projects']} path="/projects" active="/projects">
+  <PageHero
+    eyebrow="Projects"
+    title="Architecture in Detail"
+    lead="From concept to completed architectural elements, across commercial, residential, hospitality, facade and interior work."
+    breadcrumb={[{ label: 'Projects', href: '/projects' }]}
+  />
+
+  <ProjectsSection projects={projects} locals={Astro.locals} />
+
+  <CtaBand
+    heading="Planning something similar?"
+    body="Tell us what the elevation needs to do and we will advise on the products and manufacturing approach."
+  />
+</Page>

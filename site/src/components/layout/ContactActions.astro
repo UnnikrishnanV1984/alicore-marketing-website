@@ -1,0 +1,112 @@
+---
+import { contact } from '../../content/site';
+
+/**
+ * Two persistent contact affordances:
+ *
+ *   - Desktop: the mockup's fixed circular WhatsApp button, bottom right.
+ *   - Mobile:  a full-width Call / WhatsApp bar pinned to the bottom edge,
+ *              per the brief's "easy WhatsApp button / easy Call button".
+ *
+ * They are mutually exclusive by breakpoint -- the FAB would otherwise sit on
+ * top of the bar (plan section 8).
+ */
+---
+
+<a
+  class="al-fab"
+  href={contact.whatsappHref}
+  rel="noopener"
+  aria-label="Message Alicore on WhatsApp"
+>
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="#e9e5db" aria-hidden="true">
+    <path
+      d="M17.6 6.32A8.86 8.86 0 0 0 3.05 16.94L2 21l4.18-1.03A8.86 8.86 0 0 0 17.6 6.32ZM12 19.53a7.4 7.4 0 0 1-3.77-1.03l-.27-.16-2.8.69.7-2.74-.18-.28A7.42 7.42 0 1 1 12 19.53Zm4.06-5.53c-.22-.11-1.3-.64-1.5-.72s-.35-.11-.5.11-.57.72-.7.87-.26.17-.48.06a6.06 6.06 0 0 1-1.78-1.1 6.68 6.68 0 0 1-1.24-1.54c-.13-.22 0-.34.1-.45.1-.1.22-.26.33-.39a1.5 1.5 0 0 0 .22-.37.4.4 0 0 0 0-.39c-.06-.11-.5-1.2-.68-1.65s-.36-.38-.5-.39h-.43a.82.82 0 0 0-.6.28 2.5 2.5 0 0 0-.78 1.86 4.34 4.34 0 0 0 .91 2.3 9.94 9.94 0 0 0 3.8 3.36c.53.23.94.36 1.26.46a3 3 0 0 0 1.4.09 2.29 2.29 0 0 0 1.5-1.06 1.86 1.86 0 0 0 .13-1.06c-.05-.09-.2-.15-.42-.26Z"
+    ></path>
+  </svg>
+</a>
+
+<div class="al-actionbar">
+  <a href={contact.phoneHref}>
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path
+        d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.24 11.4 11.4 0 0 0 3.6.58 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.4 11.4 0 0 0 .58 3.6 1 1 0 0 1-.25 1Z"
+      ></path>
+    </svg>
+    Call Us
+  </a>
+  <a href={contact.whatsappHref} rel="noopener">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path
+        d="M17.6 6.32A8.86 8.86 0 0 0 3.05 16.94L2 21l4.18-1.03A8.86 8.86 0 0 0 17.6 6.32ZM12 19.53a7.4 7.4 0 0 1-3.77-1.03l-.27-.16-2.8.69.7-2.74-.18-.28A7.42 7.42 0 1 1 12 19.53Z"
+      ></path>
+    </svg>
+    WhatsApp
+  </a>
+</div>
+
+<style>
+  .al-fab {
+    position: fixed;
+    right: 28px;
+    bottom: 28px;
+    z-index: 80;
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    background: #1f2a20;
+    border: 1px solid rgb(250 249 246 / 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 24px rgb(0 0 0 / 0.35);
+    transition: transform 0.2s var(--ease-premium);
+  }
+
+  .al-fab:hover {
+    transform: translateY(-3px);
+  }
+
+  .al-actionbar {
+    display: none;
+  }
+
+  @media (max-width: 767px) {
+    /* The bar replaces the FAB outright rather than stacking with it. */
+    .al-fab {
+      display: none;
+    }
+
+    .al-actionbar {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 80;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: rgb(246 244 239 / 0.16);
+      border-top: 1px solid rgb(246 244 239 / 0.16);
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    .al-actionbar a {
+      background: var(--color-ink);
+      color: var(--color-on-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      min-height: 56px;
+      font-family: var(--font-display);
+      font-size: 14px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .al-actionbar a:last-child {
+      background: #1f2a20;
+    }
+  }
+</style>

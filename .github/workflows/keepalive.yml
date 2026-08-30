@@ -1,0 +1,29 @@
+name: Supabase keepalive
+
+# Supabase pauses free-tier projects after ~7 days with no API traffic. A
+# low-traffic marketing site can easily go a week without an enquiry, which
+# would silently break the contact form. One cheap request a day prevents it.
+# See docs/IMPLEMENTATION_PLAN.md section 1.
+
+on:
+  schedule:
+    - cron: '17 4 * * *' # 04:17 UTC daily -- off the hour to dodge scheduler pileups
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping health endpoint
+        run: |
+          set -euo pipefail
+          code=$(curl -sS -o /tmp/body -w '%{http_code}' \
+            --retry 3 --retry-delay 10 --max-time 30 \
+            "${{ secrets.SITE_URL }}/api/health")
+          echo "HTTP $code"
+          cat /tmp/body
+          echo
+          if [ "$code" != "200" ]; then
+            echo "::error::Health check failed with HTTP $code"
+            exit 1
+          fi

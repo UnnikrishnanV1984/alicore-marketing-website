@@ -1,0 +1,40 @@
+---
+/**
+ * The section eyebrow: a 26px rule followed by a mono uppercase label.
+ * Opens every section in the mockup -- see plan section 2.
+ */
+interface Props {
+  label: string;
+  /** Which ground this sits on. Selects the correct gold. */
+  ground?: 'light' | 'dark';
+  class?: string;
+}
+
+const { label, ground = 'light', class: className = '' } = Astro.props;
+const color = ground === 'dark' ? 'var(--color-gold)' : 'var(--color-gold-ink)';
+---
+
+<div class={`al-eyebrow ${className}`} style={`--eyebrow-color:${color}`}>
+  <span class="al-eyebrow__rule" aria-hidden="true"></span>{label}
+</div>
+
+<style>
+  .al-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--eyebrow-color);
+  }
+
+  .al-eyebrow__rule {
+    width: 26px;
+    height: 1px;
+    background: currentColor;
+    display: inline-block;
+    flex: 0 0 auto;
+  }
+</style>

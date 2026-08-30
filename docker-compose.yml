@@ -1,0 +1,54 @@
+# =============================================================================
+# Local container for the Alicore site.
+#
+#   docker compose up --build       -> http://localhost:4000
+#   docker compose down
+#
+# Runs the real Cloudflare runtime (workerd), so the SSR routes behave exactly
+# as they will in production.
+#
+# Backend variables are all optional. With none set the site runs offline:
+# every page renders, image slots show their art-direction notes, and the
+# enquiry form reports a failure rather than silently dropping a lead.
+# To wire up a real Supabase project, create a `.env` file beside this one --
+# `site/.env.example` lists every variable.
+# =============================================================================
+
+services:
+  site:
+    build:
+      context: ./site
+      dockerfile: Dockerfile
+      args:
+        # PUBLIC_* values are inlined into the bundle at build time, so they are
+        # build args, not runtime env. Change one -> rebuild.
+        PUBLIC_SITE_URL: http://localhost:4000
+        PUBLIC_SUPABASE_URL: ${PUBLIC_SUPABASE_URL:-}
+        PUBLIC_SUPABASE_ANON_KEY: ${PUBLIC_SUPABASE_ANON_KEY:-}
+        PUBLIC_TURNSTILE_SITE_KEY: ${PUBLIC_TURNSTILE_SITE_KEY:-}
+        PUBLIC_PHONE_DISPLAY: ${PUBLIC_PHONE_DISPLAY:-9995 495 395}
+        PUBLIC_PHONE_E164: ${PUBLIC_PHONE_E164:-+919995495395}
+        PUBLIC_WHATSAPP_E164: ${PUBLIC_WHATSAPP_E164:-919995495395}
+        PUBLIC_EMAIL: ${PUBLIC_EMAIL:-}
+        PUBLIC_ADDRESS: ${PUBLIC_ADDRESS:-}
+
+    image: alicore-site:local
+    container_name: alicore-site
+
+    ports:
+      - '4000:4000'
+
+    environment:
+      # Runtime secrets. The entrypoint bridges these into Worker bindings.
+      PUBLIC_SUPABASE_URL: ${PUBLIC_SUPABASE_URL:-}
+      PUBLIC_SUPABASE_ANON_KEY: ${PUBLIC_SUPABASE_ANON_KEY:-}
+      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY:-}
+      TURNSTILE_SECRET_KEY: ${TURNSTILE_SECRET_KEY:-}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      ENQUIRY_NOTIFY_TO: ${ENQUIRY_NOTIFY_TO:-}
+      ENQUIRY_FROM: ${ENQUIRY_FROM:-}
+      IP_HASH_SALT: ${IP_HASH_SALT:-}
+      CF_ZONE_ID: ${CF_ZONE_ID:-}
+      CF_PURGE_TOKEN: ${CF_PURGE_TOKEN:-}
+
+    restart: unless-stopped
