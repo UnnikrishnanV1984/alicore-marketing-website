@@ -31,6 +31,7 @@ both sources or asking whoever built it.
 | Enquiries "Clear all" | One button wiping the queue | — | **Per-row Archive** | An irreversible wipe sitting beside live customer leads. Archive is reversible and keeps the audit trail. |
 | Enquiry failure | `try/catch` that silently reports success | — | **Fails loudly**, with call/WhatsApp fallback | The prototype's silent catch loses a lead and tells the customer it worked. |
 | Staff login | Hardcoded `admin` / `alicore2026` | — | **Supabase Auth** | A prototype affordance; must never reach a deployed environment. |
+| GFRC / FRP section padding | `clamp(56px, 7vw, 110px)` vertical | — | **`clamp(44px, 5.2vw, 88px)`** | At the mockup's value the GFRC section measured 739px, which overflows a 1366x768 laptop once the 73px sticky header is subtracted. Trimmed to 676px so both material sections fit one screen. Horizontal padding unchanged. |
 | Scroll spy | 250ms `setInterval` poll | — | **IntersectionObserver** | Same behaviour, no timer running for the life of the page. |
 
 Anything not listed here follows the mockup.

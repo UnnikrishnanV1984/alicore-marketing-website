@@ -107,8 +107,16 @@ const Heading = headingLevel;
     min-height: clamp(320px, 42vw, 620px);
   }
 
+  /* Fill the column by taking the slot out of flow, NOT with height:100%.
+     A percentage height against a parent that only has min-height resolves to
+     auto, so the <img> fell back to its own intrinsic aspect ratio and object-
+     fit:cover never cropped anything -- a portrait photograph then set the
+     height of the whole section (a 236x420 upload made this 1708px tall on a
+     1920px screen, taller the wider the viewport got). */
   .al-material-sec__media :global(.al-slot) {
-    height: 100%;
+    position: absolute;
+    inset: 0;
+    height: auto;
     aspect-ratio: auto;
   }
 
@@ -124,8 +132,13 @@ const Heading = headingLevel;
     }
   }
 
+  /* Vertical padding is tighter than the mockup's clamp(56px, 7vw, 110px).
+     At the mockup's value the section stood 739px tall, which overflows a
+     1366x768 laptop once the sticky header is subtracted -- the two material
+     sections are the densest on the page and were the only ones that did not
+     fit in a viewport. Horizontal padding is unchanged. */
   .al-material-sec__body {
-    padding: clamp(56px, 7vw, 110px) clamp(24px, 5vw, 80px);
+    padding: clamp(44px, 5.2vw, 88px) clamp(24px, 5vw, 80px);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -153,7 +166,7 @@ const Heading = headingLevel;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
     gap: 12px 28px;
-    margin-top: 34px;
+    margin-top: 28px;
     list-style: none;
   }
 
@@ -176,7 +189,7 @@ const Heading = headingLevel;
 
   .al-material-sec__cta {
     align-self: flex-start;
-    margin-top: 40px;
+    margin-top: 32px;
   }
 
   @media (max-width: 480px) {
