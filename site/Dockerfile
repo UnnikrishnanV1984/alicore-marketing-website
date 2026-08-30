@@ -40,7 +40,15 @@ ENV PUBLIC_SITE_URL=$PUBLIC_SITE_URL \
     PUBLIC_ADDRESS=$PUBLIC_ADDRESS
 
 COPY . .
-RUN npm run build
+
+# The build bakes live content -- which image slots are filled, the project
+# list, contact details -- out of Supabase. Docker cannot see that: uploading a
+# photograph changes nothing in the build context, so `compose up --build`
+# reuses this cached layer and serves a stale dist/ in which the new images
+# simply do not exist. Passing a fresh CONTENT_REV busts only this layer; the
+# npm ci above stays cached, so the rebuild is fast.
+ARG CONTENT_REV=0
+RUN echo "content revision: $CONTENT_REV" && npm run build
 
 # --- run ---------------------------------------------------------------------
 FROM node:22-bookworm-slim AS run

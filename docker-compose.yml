@@ -31,6 +31,10 @@ services:
         PUBLIC_WHATSAPP_E164: ${PUBLIC_WHATSAPP_E164:-919995495395}
         PUBLIC_EMAIL: ${PUBLIC_EMAIL:-}
         PUBLIC_ADDRESS: ${PUBLIC_ADDRESS:-}
+        # Bump to re-bake content uploaded through the admin console. See the
+        # comment in site/Dockerfile -- without this, `--build` is a no-op after
+        # an image upload because nothing in the build context changed.
+        CONTENT_REV: ${CONTENT_REV:-0}
 
     image: alicore-site:local
     container_name: alicore-site

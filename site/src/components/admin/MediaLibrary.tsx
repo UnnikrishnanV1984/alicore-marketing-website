@@ -54,6 +54,18 @@ export default function MediaLibrary({ slots }: { slots: AdminSlot[] }) {
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [dragging, setDragging] = useState<string | null>(null);
+  const [publishing, setPublishing] = useState(false);
+  const [notice, setNotice] = useState<string | null>(null);
+  /**
+   * A slot that goes from empty to filled changes the page's STRUCTURE -- an
+   * <img> replaces the art-direction block -- so it only reaches the public
+   * site after a rebuild. Replacing an existing photograph does not: the paths
+   * are stable, so the upload alone is enough.
+   *
+   * Without this flag the first upload is silent: the tile updates, the site
+   * does not, and there is nothing on screen to explain the gap.
+   */
+  const [needsPublish, setNeedsPublish] = useState(false);
 
   const groups = Array.from(new Set(state.map((s) => s.groupTitle)));
 
@@ -87,6 +99,11 @@ export default function MediaLibrary({ slots }: { slots: AdminSlot[] }) {
       setState((prev) =>
         prev.map((s) => (s.id === slot.id ? { ...s, hasImage: true, previewUrl: preview } : s)),
       );
+
+      if (!slot.hasImage) {
+        setNeedsPublish(true);
+        setNotice(null);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Upload failed.');
     } finally {
@@ -107,6 +124,23 @@ export default function MediaLibrary({ slots }: { slots: AdminSlot[] }) {
     }
   }
 
+  async function publish() {
+    setPublishing(true);
+    setError(null);
+    setNotice(null);
+    try {
+      const res = await fetch('/api/admin/publish', { method: 'POST' });
+      const body = (await res.json().catch(() => ({}))) as { error?: string };
+      if (!res.ok) throw new Error(body.error ?? 'Could not start the rebuild.');
+      setNeedsPublish(false);
+      setNotice('Rebuild started. The new photographs appear on the site in about a minute.');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Could not start the rebuild.');
+    } finally {
+      setPublishing(false);
+    }
+  }
+
   const filled = state.filter((s) => s.hasImage).length;
 
   return (
@@ -117,6 +151,15 @@ export default function MediaLibrary({ slots }: { slots: AdminSlot[] }) {
       </div>
 
       {error && <div className="al-admin-error" role="alert">{error}</div>}
+      {notice && <div className="al-set__notice" role="status">{notice}</div>}
+
+      {needsPublish && (
+        <div className="al-set__notice" role="status">
+          A photograph has been added to a placement that was empty. Press{' '}
+          <strong>Publish</strong> below to put it on the public site — replacing a photograph
+          that was already there goes live on its own, but filling an empty placement does not.
+        </div>
+      )}
 
       {groups.map((group) => (
         <section className="al-media__group" key={group}>
@@ -180,6 +223,23 @@ export default function MediaLibrary({ slots }: { slots: AdminSlot[] }) {
           </div>
         </section>
       ))}
+
+      <div className="al-toolbar">
+        <button
+          type="button"
+          className="al-admin__btn"
+          onClick={publish}
+          disabled={publishing}
+          title="Rebuild the public site"
+        >
+          {publishing ? 'Starting…' : 'Publish to the live site'}
+        </button>
+        <span className="al-toolbar__note">
+          {needsPublish
+            ? 'A newly filled placement is waiting to be published.'
+            : 'Everything here is already on the site.'}
+        </span>
+      </div>
     </>
   );
 }
