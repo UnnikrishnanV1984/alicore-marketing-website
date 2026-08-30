@@ -16,7 +16,7 @@ interface Props {
   points: readonly string[];
   cta: string;
   ctaHref: string;
-  slot: string;
+  slotId: string;
   placeholder: string;
   image?: SlotImageType;
   /** 'ink' = #12110F (GFRC), 'ink2' = #1A1917 (FRP) */
@@ -35,7 +35,7 @@ const {
   points,
   cta,
   ctaHref,
-  slot,
+  slotId,
   placeholder,
   image,
   ground = 'ink',
@@ -51,7 +51,7 @@ const Heading = headingLevel;
   <div class={`al-material-sec__grid al-material-sec__grid--${media}`}>
     <div class="al-material-sec__media">
       <SlotImage
-        slot={slot}
+        slot={slotId}
         placeholder={placeholder}
         image={image}
         ratio="1/1"
