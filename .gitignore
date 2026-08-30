@@ -1,0 +1,19 @@
+# Docker Compose reads .env from this directory, and it holds the Supabase
+# service-role key. That key bypasses row-level security entirely, so it must
+# never reach the repository.
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Wrangler writes runtime secrets here.
+.dev.vars
+
+node_modules/
+dist/
+.astro/
+.wrangler/
+
+.DS_Store
+Thumbs.db
+*.log
