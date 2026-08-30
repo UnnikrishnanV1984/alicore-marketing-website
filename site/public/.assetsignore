@@ -1,0 +1,10 @@
+# Copied verbatim into dist/, where Cloudflare reads it.
+#
+# dist/ is both the static-asset directory and the place Astro writes the
+# server bundle, so without this wrangler refuses to deploy: it will not upload
+# a _worker.js directory as a public asset, and it is right not to -- that is
+# server-side code, and it would be served to anyone who asked for it.
+#
+# _routes.json is Cloudflare's own routing manifest and is likewise not a page.
+_worker.js
+_routes.json

@@ -49,9 +49,9 @@ GITHUB_BRANCH = "main"
 
 # Astro's Cloudflare adapter wires sessions to a KV namespace. The public site
 # does not use sessions (staff auth rides on signed cookies), but the binding
-# must exist or the Worker refuses to boot. Create it once with:
-#   wrangler kv namespace create SESSION
-# then uncomment this block and paste the id it prints.
-# [[kv_namespaces]]
-# binding = "SESSION"
-# id = "<paste-the-id-here>"
+# must exist or the Worker refuses to boot. The namespace is named
+# alicore-site-SESSION in the account; the binding stays SESSION, which is the
+# name the adapter looks for. The id is an identifier, not a credential.
+[[kv_namespaces]]
+binding = "SESSION"
+id = "25c6fe7b0d124c3d9fd717c134d9b6cc"
