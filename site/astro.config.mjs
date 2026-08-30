@@ -26,6 +26,12 @@ export default defineConfig({
   vite: {
     plugins: [tailwind()],
   },
+  // Canonicals, internal links and the Cloudflare assets config
+  // (html_handling = "drop-trailing-slash") all address pages without a
+  // trailing slash. Astro's sitemap follows this setting, and left at the
+  // default it emitted /about/ -- so every URL we handed a crawler 307'd to a
+  // different URL than the one the page's own canonical tag claimed.
+  trailingSlash: 'never',
   build: {
     inlineStylesheets: 'auto',
   },
