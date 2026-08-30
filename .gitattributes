@@ -1,0 +1,32 @@
+# Normalize text files in the repository.
+* text=auto
+
+# ---------------------------------------------------------------------------
+# Files that are executed inside a Linux container MUST keep LF endings.
+#
+# This repo is developed on Windows with core.autocrlf=true. Without these
+# rules a fresh clone writes docker-entrypoint.sh with CRLF, Docker copies it
+# into the image verbatim, and the container dies on start with
+# "/bin/sh^M: bad interpreter: No such file or directory".
+# ---------------------------------------------------------------------------
+*.sh            text eol=lf
+Dockerfile      text eol=lf
+*.Dockerfile    text eol=lf
+docker-compose.yml text eol=lf
+*.toml          text eol=lf
+
+# Workflows run on Linux runners.
+.github/**/*.yml text eol=lf
+
+# SQL is applied by the Supabase CLI on Linux.
+*.sql           text eol=lf
+
+# Binary assets — never touch.
+*.jpg  binary
+*.jpeg binary
+*.png  binary
+*.webp binary
+*.avif binary
+*.ico  binary
+*.woff binary
+*.woff2 binary
