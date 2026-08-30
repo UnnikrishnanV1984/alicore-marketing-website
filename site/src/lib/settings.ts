@@ -1,5 +1,5 @@
 import { anonClient, serviceClient } from './supabase';
-import { buildEnv, serverEnv } from './env';
+import { buildEnv, serverEnv, hasSupabase } from './env';
 
 /**
  * Admin-editable contact details and social links.
@@ -9,8 +9,17 @@ import { buildEnv, serverEnv } from './env';
  *   2. environment variables
  *   3. hardcoded defaults from the mockup
  *
- * Never throws. If the database is unreachable the site still renders with
- * whatever env provides -- the same offline behaviour as the image slots.
+ * The env layer exists ONLY for a build with no database -- a fresh clone, or
+ * a developer who has not wired up Supabase. It is not a place to configure a
+ * real site: staff edit these values in the admin console, and a copy in CI
+ * variables is a second source of truth that silently goes stale.
+ *
+ * Which is why a production build refuses to fall back. If PUBLIC_REQUIRE_DB
+ * is set (the deploy workflow sets it) and the settings row cannot be read,
+ * the build FAILS rather than quietly publishing whatever the fallbacks
+ * happen to say. Shipping last year's phone number under a "successful"
+ * deploy is worse than not deploying: nobody goes looking for a fault, and
+ * every call goes to a dead line.
  *
  * NOTE ON TIMING: public pages are prerendered, so these values are baked in
  * at build time. Editing them in the admin console requires a rebuild before
@@ -99,17 +108,27 @@ export async function loadContact(locals?: unknown): Promise<ResolvedContact> {
   if (cache) return cache;
 
   const base = defaults();
-  const supabase = anonClient(locals);
+  let loaded = false;
+  let failure = '';
 
-  if (supabase) {
-    try {
+  // createClient itself can throw -- a malformed URL, or an environment
+  // missing something supabase-js expects. Constructing it inside the try
+  // keeps every failure on the same path, so it produces the explanatory
+  // error below rather than an unhandled exception from a build step.
+  try {
+    const supabase = anonClient(locals);
+    if (supabase) {
       const { data, error } = await supabase
         .from('site_settings')
         .select('phone_display, phone_e164, whatsapp_e164, email, address, instagram, facebook, linkedin, youtube')
         .eq('id', true)
         .maybeSingle();
 
+      if (error) failure = error.message;
+      else if (!data) failure = 'the site_settings row is missing';
+
       if (!error && data) {
+        loaded = true;
         // A blank column means "not set" and falls back rather than blanking
         // out a working value.
         base.phoneDisplay = data.phone_display || base.phoneDisplay;
@@ -122,9 +141,19 @@ export async function loadContact(locals?: unknown): Promise<ResolvedContact> {
         base.linkedin = data.linkedin || '';
         base.youtube = data.youtube || '';
       }
-    } catch {
-      // Unreachable at build time -> fall back to env. Never fail the build.
     }
+  } catch (err) {
+    failure = err instanceof Error ? err.message : 'the database was unreachable';
+  }
+
+  if (!loaded && buildEnv('PUBLIC_REQUIRE_DB') && hasSupabase()) {
+    throw new Error(
+      `Refusing to build: contact details could not be read from the database ` +
+        `(${failure || 'no reason given'}). These are edited in the admin ` +
+        `console, so falling back here would publish stale phone numbers and ` +
+        `social links under a green deploy. Check that the Supabase project is ` +
+        `awake and PUBLIC_SUPABASE_URL / PUBLIC_SUPABASE_ANON_KEY are correct.`,
+    );
   }
 
   cache = resolve(base);

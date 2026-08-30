@@ -28,6 +28,11 @@ ARG PUBLIC_PHONE_E164=+919995495395
 ARG PUBLIC_WHATSAPP_E164=919995495395
 ARG PUBLIC_EMAIL=
 ARG PUBLIC_ADDRESS=
+# Empty by default: a local build stays lenient so the site still builds with
+# no database wired up. Set to 1 to get CI's behaviour, where an unreadable
+# site_settings row fails the build instead of silently publishing the
+# offline fallback contact details.
+ARG PUBLIC_REQUIRE_DB=
 
 ENV PUBLIC_SITE_URL=$PUBLIC_SITE_URL \
     PUBLIC_SUPABASE_URL=$PUBLIC_SUPABASE_URL \
@@ -37,7 +42,8 @@ ENV PUBLIC_SITE_URL=$PUBLIC_SITE_URL \
     PUBLIC_PHONE_E164=$PUBLIC_PHONE_E164 \
     PUBLIC_WHATSAPP_E164=$PUBLIC_WHATSAPP_E164 \
     PUBLIC_EMAIL=$PUBLIC_EMAIL \
-    PUBLIC_ADDRESS=$PUBLIC_ADDRESS
+    PUBLIC_ADDRESS=$PUBLIC_ADDRESS \
+    PUBLIC_REQUIRE_DB=$PUBLIC_REQUIRE_DB
 
 COPY . .
 

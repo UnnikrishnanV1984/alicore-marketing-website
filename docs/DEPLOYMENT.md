@@ -50,13 +50,16 @@ Add **Zone → Workers Routes: Edit** only when attaching the custom domain.
 |---|---|
 | `PUBLIC_SITE_URL` | `https://alicore-site.<your-subdomain>.workers.dev` |
 | `PUBLIC_SUPABASE_URL` | `https://<ref>.supabase.co` — the project URL, **not** the REST endpoint |
-| `PUBLIC_PHONE_DISPLAY` | `9995 495 395` |
-| `PUBLIC_PHONE_E164` | `+919995495395` |
-| `PUBLIC_WHATSAPP_E164` | `919995495395` |
 
-Leave `PUBLIC_EMAIL` and `PUBLIC_ADDRESS` unset. Those come from the
-`site_settings` table, edited in the admin console; env is only the fallback
-for when the database is unreachable.
+That is the whole list. **Do not add phone, WhatsApp, email, address or social
+links here.** Staff edit those in the admin console and they live in the
+`site_settings` table; a copy in CI variables is a second source of truth that
+goes stale the first time someone changes a number, and the copy would win on
+any build where the database happened to be unreachable.
+
+The deploy workflow sets `PUBLIC_REQUIRE_DB=1` so that build *fails* instead
+of silently publishing the offline fallbacks. A red deploy gets investigated;
+a green deploy serving last year's phone number does not.
 
 > `PUBLIC_SUPABASE_URL` is the one field with a common failure mode. The
 > dashboard shows the REST endpoint (`.../rest/v1/`) next to the project URL,

@@ -36,11 +36,15 @@ jobs:
           PUBLIC_SUPABASE_URL: ${{ vars.PUBLIC_SUPABASE_URL }}
           PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.PUBLIC_SUPABASE_ANON_KEY }}
           PUBLIC_TURNSTILE_SITE_KEY: ${{ vars.PUBLIC_TURNSTILE_SITE_KEY }}
-          PUBLIC_PHONE_DISPLAY: ${{ vars.PUBLIC_PHONE_DISPLAY }}
-          PUBLIC_PHONE_E164: ${{ vars.PUBLIC_PHONE_E164 }}
-          PUBLIC_WHATSAPP_E164: ${{ vars.PUBLIC_WHATSAPP_E164 }}
-          PUBLIC_EMAIL: ${{ vars.PUBLIC_EMAIL }}
-          PUBLIC_ADDRESS: ${{ vars.PUBLIC_ADDRESS }}
+          # Phone, WhatsApp, email, address and social links are NOT set here.
+          # Staff edit them in the admin console and they live in site_settings;
+          # a copy in CI variables would be a second source of truth that goes
+          # stale the first time someone changes a number.
+          #
+          # This makes the build fail rather than fall back to the offline
+          # defaults if that row cannot be read -- publishing a stale phone
+          # number under a green deploy is worse than a failed one.
+          PUBLIC_REQUIRE_DB: '1'
 
       - name: Deploy to Cloudflare
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
