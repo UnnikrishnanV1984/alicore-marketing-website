@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
-import { site, contact } from '../content/site';
+import { site } from '../content/site';
+import { loadContact } from '../lib/settings';
 import { defaultMeta, type Meta } from '../content/seo';
 
 interface Props {
@@ -14,6 +15,7 @@ interface Props {
 
 const { meta = defaultMeta, path, jsonLd = [], bodyClass = '' } = Astro.props;
 
+const contact = await loadContact(Astro.locals);
 const canonicalPath = path ?? Astro.url.pathname;
 const canonical = new URL(canonicalPath, site.url).href;
 

@@ -1,5 +1,8 @@
 ---
-import { site, contact } from '../../content/site';
+import { site } from '../../content/site';
+import { loadContact } from '../../lib/settings';
+
+const contact = await loadContact(Astro.locals);
 
 /**
  * The persistent utility bar above the header. Per the quote-enquiry

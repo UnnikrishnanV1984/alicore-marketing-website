@@ -512,3 +512,107 @@
     padding-bottom: 0;
   }
 }
+
+/* --- settings ----------------------------------------------------------- */
+.al-set__notice {
+  margin-top: 20px;
+  border-left: 2px solid var(--color-gold);
+  padding: 10px 0 10px 14px;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: rgb(246 244 239 / 0.8);
+}
+
+.al-set__group {
+  margin-top: 44px;
+}
+
+.al-set__grouphead {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  align-items: baseline;
+  border-bottom: 1px solid var(--color-rule-dark);
+  padding-bottom: 14px;
+}
+
+.al-set__grouphead h2 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 21px;
+  letter-spacing: 0.02em;
+}
+
+/* States the reader needs before editing: whether a change is live at once or
+   waits for a rebuild. */
+.al-set__flag {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgb(246 244 239 / 0.45);
+  border: 1px solid rgb(246 244 239 / 0.2);
+  padding: 5px 9px;
+}
+
+.al-set__flag.is-live {
+  color: var(--color-gold);
+  border-color: var(--color-gold);
+}
+
+.al-set__note {
+  margin-top: 16px;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: rgb(246 244 239 / 0.55);
+  max-width: 66ch;
+}
+
+.al-set__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 22px 24px;
+  margin-top: 24px;
+}
+
+.al-set__field {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.al-set__field--wide {
+  grid-column: 1 / -1;
+}
+
+.al-set__label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgb(246 244 239 / 0.55);
+}
+
+.al-set__field input {
+  background: rgb(246 244 239 / 0.04);
+  border: 1px solid var(--color-rule-dark-soft);
+  color: var(--color-on-dark);
+  font-size: 15px;
+  padding: 11px 12px;
+  border-radius: 0;
+}
+
+.al-set__field input:focus {
+  outline: none;
+  border-color: var(--color-gold);
+}
+
+.al-set__field input[aria-invalid='true'] {
+  border-color: #cf9a4e;
+}
+
+.al-set__hint {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: rgb(246 244 239 / 0.42);
+}

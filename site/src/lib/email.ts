@@ -54,8 +54,8 @@ export async function sendStaffAlert(
   locals: unknown,
   data: EnquiryInput,
   ref: string,
+  to: string,
 ): Promise<boolean> {
-  const to = serverEnv(locals, 'ENQUIRY_NOTIFY_TO');
   if (!to) return false;
 
   const html = `

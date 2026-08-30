@@ -1,7 +1,7 @@
 ---
 import Eyebrow from '../ui/Eyebrow.astro';
 import EnquiryForm from '../forms/EnquiryForm';
-import { contact, PLACEHOLDER_EMAIL } from '../../content/site';
+import { loadContact } from '../../lib/settings';
 
 interface Props {
   headingLevel?: 'h1' | 'h2';
@@ -10,7 +10,8 @@ const { headingLevel = 'h2' } = Astro.props;
 const Heading = headingLevel;
 
 const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
-const hasEmail = contact.emailDisplay !== PLACEHOLDER_EMAIL;
+const contact = await loadContact(Astro.locals);
+const { hasEmail } = contact;
 
 const directs = [
   { label: 'Call Us', value: contact.phoneDisplay, href: contact.phoneHref, wide: true, newTab: false },

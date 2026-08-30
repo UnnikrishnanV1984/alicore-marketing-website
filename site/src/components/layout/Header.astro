@@ -1,5 +1,8 @@
 ---
-import { site, contact, nav } from '../../content/site';
+import { site, nav } from '../../content/site';
+import { loadContact } from '../../lib/settings';
+
+const contact = await loadContact(Astro.locals);
 
 interface Props {
   /** On the long-scroll home page the nav highlights by anchor as you scroll. */

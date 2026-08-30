@@ -4,7 +4,7 @@ import type { StaffUser } from '../lib/auth';
 
 interface Props {
   title: string;
-  tab: 'enquiries' | 'media' | 'projects';
+  tab: 'enquiries' | 'media' | 'projects' | 'settings';
   staff: StaffUser;
   enquiryCount?: number;
 }
@@ -15,6 +15,7 @@ const tabs = [
   { id: 'enquiries', href: '/admin/enquiries', label: 'Enquiries' },
   { id: 'media', href: '/admin/media', label: 'Image Library' },
   { id: 'projects', href: '/admin/projects', label: 'Projects' },
+  { id: 'settings', href: '/admin/settings', label: 'Settings' },
 ] as const;
 ---
 

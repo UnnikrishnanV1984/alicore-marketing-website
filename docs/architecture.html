@@ -361,7 +361,7 @@
           <g font-family="JetBrains Mono, monospace" font-size="9.5" fill="var(--ink-40)" letter-spacing="1.2" text-anchor="middle">
             <text x="242" y="416">14 of 16 routes</text>
             <text x="477" y="416">1 route</text>
-            <text x="712" y="416">9 handlers + admin</text>
+            <text x="712" y="416">11 handlers</text>
           </g>
           <line x1="135" y1="428" x2="820" y2="428" stroke="currentColor" stroke-opacity="0.14"/>
           <text x="477" y="444" font-family="Manrope, sans-serif" font-size="10" fill="var(--ink-40)" text-anchor="middle">Cloudflare Workers &mdash; workerd runtime, ~10 ms CPU per invocation on the free plan</text>
@@ -389,9 +389,9 @@
     <p class="eyebrow">Timing</p>
     <h2>The database is also read at build time</h2>
     <p>
-      This is the part that surprises people. Static pages still show admin-managed photography and
-      project tiles &mdash; because <code>astro build</code> queries Supabase and bakes the results
-      into the HTML. That has consequences for how content updates propagate.
+      This is the part that surprises people. Static pages still show admin-managed photography, project
+      tiles and contact details &mdash; because <code>astro build</code> queries Supabase and bakes
+      the results into the HTML. That has consequences for how content updates propagate.
     </p>
 
     <figure>
@@ -563,7 +563,7 @@
     <p class="eyebrow">Data</p>
     <h2>Every table, and who touches it</h2>
     <p>
-      Four tables in Postgres, plus Supabase's own <code>auth.users</code>. Row-level security is on
+      Five tables in Postgres, plus Supabase's own <code>auth.users</code>. Row-level security is on
       for all of them, and no policy grants anonymous access to enquiries &mdash; the browser never
       holds a key that could read one.
     </p>
@@ -616,6 +616,16 @@
               <span class="chip chip--service">service role</span>
             </td>
             <td class="who">Request</td>
+          </tr>
+          <tr>
+            <td class="name">site_settings</td>
+            <td class="who">Settings screen<em>/api/admin/settings &mdash; PATCH</em></td>
+            <td class="who">Header, footer and contact panel on every page<em>loadContact() at build</em>Enquiry alerts<em>/api/enquiry &mdash; request time</em></td>
+            <td>
+              <span class="chip chip--anon">anon</span>
+              <span class="chip chip--service">service role</span>
+            </td>
+            <td class="who">Build <span class="chip chip--build">+</span> request</td>
           </tr>
           <tr>
             <td class="name">auth.users</td>
@@ -701,7 +711,7 @@
         <ul>
           <li>16 prerendered routes<span>home, about, products + 7 details, materials</span></li>
           <li>2 server-rendered<span>/projects and /admin/*</span></li>
-          <li>9 API handlers<span>enquiry, health, admin (6 route files)</span></li>
+          <li>11 API handlers<span>enquiry, health, admin (8 route files)</span></li>
           <li>Middleware<span>auth guard, no-store, noindex</span></li>
           <li>Typed content modules<span>brand copy in version control, not the DB</span></li>
           <li>Zod<span>one schema shared by client and server</span></li>
@@ -712,7 +722,7 @@
         <div class="cell__k">Layer 04 &mdash; Data</div>
         <h3>Supabase &middot; ap-south-1</h3>
         <ul>
-          <li>Postgres<span>4 tables, RLS on all of them</span></li>
+          <li>Postgres<span>5 tables, RLS on all of them</span></li>
           <li>Storage<span>public media + private attachments</span></li>
           <li>Auth<span>email + password, invite only</span></li>
           <li>Mumbai region<span>closest to the audience</span></li>

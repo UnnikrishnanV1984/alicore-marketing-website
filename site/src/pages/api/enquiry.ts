@@ -3,6 +3,7 @@ import { enquirySchema, makeRef } from '../../lib/schema';
 import { serviceClient } from '../../lib/supabase';
 import { verifyTurnstile, hashIp } from '../../lib/turnstile';
 import { sendStaffAlert, sendAcknowledgement } from '../../lib/email';
+import { loadNotifyEmails } from '../../lib/settings';
 
 export const prerender = false;
 
@@ -71,8 +72,10 @@ export const POST: APIRoute = async ({ request, locals, clientAddress }) => {
     );
   }
 
+  const notifyTo = await loadNotifyEmails(locals);
+
   const [staffOk] = await Promise.all([
-    sendStaffAlert(locals, data, ref),
+    sendStaffAlert(locals, data, ref, notifyTo),
     sendAcknowledgement(locals, data, ref),
   ]);
 

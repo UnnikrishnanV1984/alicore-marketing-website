@@ -1,16 +1,11 @@
 /**
- * Sitewide brand constants, contact details and navigation.
+ * Sitewide brand constants and navigation.
  *
- * Contact details read from env so the brief's `[ADD EMAIL]` / `[ADD ADDRESS]`
- * placeholders can be filled without a code change (plan section 11). Where a
- * value is still missing we render the placeholder verbatim rather than
- * inventing one -- CLAUDE.md: "Don't invent contact details."
+ * Contact details and social links are admin-editable and live in
+ * lib/settings.ts -- import `loadContact()` for those.
  */
 
 const env = import.meta.env;
-
-export const PLACEHOLDER_EMAIL = '[ADD EMAIL]';
-export const PLACEHOLDER_ADDRESS = '[ADD ADDRESS]';
 
 export const site = {
   name: 'Alicore',
@@ -22,33 +17,6 @@ export const site = {
   url: env.PUBLIC_SITE_URL || 'https://www.alicore.in',
   copyrightYear: 2026,
 } as const;
-
-export const contact = {
-  phoneDisplay: env.PUBLIC_PHONE_DISPLAY || '9995 495 395',
-  phoneHref: `tel:${env.PUBLIC_PHONE_E164 || '+919995495395'}`,
-  whatsappNumber: env.PUBLIC_WHATSAPP_E164 || '919995495395',
-  /** Prefilled WhatsApp message, per the mockup's FAB title attribute. */
-  whatsappHref: `https://wa.me/${env.PUBLIC_WHATSAPP_E164 || '919995495395'}?text=${encodeURIComponent(
-    'Hello Alicore, I would like to discuss an architectural products requirement.',
-  )}`,
-  email: env.PUBLIC_EMAIL || '',
-  emailDisplay: env.PUBLIC_EMAIL || PLACEHOLDER_EMAIL,
-  emailHref: env.PUBLIC_EMAIL ? `mailto:${env.PUBLIC_EMAIL}` : '',
-  address: env.PUBLIC_ADDRESS || '',
-  addressDisplay: env.PUBLIC_ADDRESS || PLACEHOLDER_ADDRESS,
-} as const;
-
-/**
- * Social links. All four are `href="#"` in the mockup -- until real URLs are
- * supplied these render as plain text, not dead links. A link that goes
- * nowhere is worse than no link.
- */
-export const social: { label: string; href: string }[] = [
-  { label: 'Instagram', href: '' },
-  { label: 'Facebook', href: '' },
-  { label: 'LinkedIn', href: '' },
-  { label: 'YouTube', href: '' },
-];
 
 /**
  * Primary navigation. `anchor` is the in-page target used on the long-scroll

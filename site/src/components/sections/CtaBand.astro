@@ -1,6 +1,8 @@
 ---
 import Button from '../ui/Button.astro';
-import { contact } from '../../content/site';
+import { loadContact } from '../../lib/settings';
+
+const contact = await loadContact(Astro.locals);
 
 /**
  * Closing conversion band for interior pages. The brief asks for "strong

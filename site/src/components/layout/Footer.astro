@@ -1,16 +1,9 @@
 ---
-import {
-  site,
-  contact,
-  social,
-  footerQuickLinks,
-  footerProductLinks,
-  PLACEHOLDER_EMAIL,
-  PLACEHOLDER_ADDRESS,
-} from '../../content/site';
+import { site, footerQuickLinks, footerProductLinks } from '../../content/site';
+import { loadContact } from '../../lib/settings';
 
-const hasEmail = contact.emailDisplay !== PLACEHOLDER_EMAIL;
-const hasAddress = contact.addressDisplay !== PLACEHOLDER_ADDRESS;
+const contact = await loadContact(Astro.locals);
+const { hasEmail, hasAddress, social } = contact;
 
 ---
 

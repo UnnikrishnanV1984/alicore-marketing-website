@@ -1,5 +1,7 @@
 ---
-import { contact } from '../../content/site';
+import { loadContact } from '../../lib/settings';
+
+const contact = await loadContact(Astro.locals);
 
 /**
  * Two persistent contact affordances:

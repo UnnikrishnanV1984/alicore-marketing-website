@@ -1,0 +1,40 @@
+---
+import Admin from '../../layouts/Admin.astro';
+import '../../styles/admin.css';
+import SettingsForm, { type AdminSettings } from '../../components/admin/SettingsForm';
+import { loadSettingsForAdmin } from '../../lib/settings';
+import type { StaffUser } from '../../lib/auth';
+
+export const prerender = false;
+
+const staff = (Astro.locals as Record<string, unknown>).staff as StaffUser;
+
+let settings: AdminSettings | null = null;
+let loadError: string | null = null;
+
+try {
+  settings = await loadSettingsForAdmin(Astro.locals);
+} catch (err) {
+  loadError = err instanceof Error ? err.message : 'Could not load settings.';
+}
+---
+
+<Admin title="Settings" tab="settings" staff={staff}>
+  <div class="al-admin__eyebrow">Contact &amp; Social</div>
+  <h1 class="al-admin__h1">Settings</h1>
+  <p class="al-admin__intro">
+    The phone number, WhatsApp number, email address, postal address and social profiles used
+    across the website. Most of these are built into the pages, so they reach the live site when
+    you press Publish.
+  </p>
+
+  {
+    loadError ? (
+      <div class="al-admin-error" role="alert">
+        {loadError}
+      </div>
+    ) : (
+      settings && <SettingsForm client:load initial={settings} />
+    )
+  }
+</Admin>
