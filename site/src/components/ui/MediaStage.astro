@@ -1,0 +1,273 @@
+---
+import SlotImage from './SlotImage.astro';
+import type { SlotImage as SlotImageType } from '../../lib/media';
+
+/**
+ * A full-bleed photograph with a panel of copy that rises over it.
+ *
+ * The photograph is the subject; the words arrive on top of it as the section
+ * enters view. Used by the GFRC, FRP, About and Manufacturing sections.
+ *
+ * The copy sits in its own panel rather than directly on the photograph. A
+ * bare overlay reads better in a mockup, but legibility would then depend on
+ * every image staff ever upload -- and they upload them without a designer.
+ * One light photograph (the current FRP bathroom shot is a good example) would
+ * make a heading and seven bullets unreadable, with no way for anyone to see
+ * it had happened. The panel keeps contrast fixed no matter what is behind it.
+ */
+interface Props {
+  slotId: string;
+  placeholder: string;
+  image?: SlotImageType;
+  /** Which side the panel sits on at desktop widths. */
+  align?: 'left' | 'right' | 'centre';
+  /** Panel ground: 'ink' is near-black, 'ink2' the slightly lifted variant. */
+  ground?: 'ink' | 'ink2';
+  /** Above the fold: load eagerly rather than lazily. */
+  priority?: boolean;
+  height?: string;
+  class?: string;
+}
+
+const {
+  slotId,
+  placeholder,
+  image,
+  align = 'left',
+  ground = 'ink',
+  priority = false,
+  height = 'clamp(460px, 72vh, 780px)',
+  class: className = '',
+} = Astro.props;
+---
+
+<div class={`al-stage al-stage--${align} ${className}`} style={`--stage-h:${height}`} data-reveal>
+  <div class="al-stage__media">
+    <SlotImage
+      slot={slotId}
+      placeholder={placeholder}
+      image={image}
+      ratio="16/9"
+      ground="dark"
+      priority={priority}
+      sizes="100vw"
+      class="al-stage__slot"
+    />
+    <div class="al-stage__scrim" aria-hidden="true"></div>
+  </div>
+
+  <div class={`al-stage__panel al-stage__panel--${ground}`}>
+    <slot />
+  </div>
+</div>
+
+<style>
+  /* The photograph is a background layer; the panel is the only thing in
+     flow. That is what makes the section self-sizing: an absolutely
+     positioned panel could not push the stage taller, so a long panel
+     overflowed the top and overlapped the section above -- measured at -27px
+     of clearance on a 1366x768 laptop. Now the stage is at least --stage-h
+     tall and grows if the copy needs more. */
+  .al-stage {
+    position: relative;
+    display: grid;
+    align-items: end;
+    min-height: var(--stage-h);
+    padding: clamp(28px, 4vw, 60px) clamp(16px, 4vw, 64px);
+    isolation: isolate;
+  }
+
+  .al-stage__media {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    background: var(--color-ink-2);
+    z-index: 0;
+  }
+
+  /* Fill by taking the slot out of flow. height:100% against a parent with
+     only min-height resolves to auto, which lets the photograph's own aspect
+     ratio set the height of the section -- the bug that made the GFRC and FRP
+     sections 1700px tall. */
+  .al-stage__media :global(.al-slot) {
+    position: absolute;
+    inset: 0;
+    height: auto;
+    aspect-ratio: auto;
+  }
+
+  /* Darkens the photograph enough that a light image cannot wash out the
+     panel's edge, without turning the picture into a background texture. */
+  .al-stage__scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      rgb(18 17 15 / 0.3) 0%,
+      rgb(18 17 15 / 0.12) 40%,
+      rgb(18 17 15 / 0.55) 100%
+    );
+    pointer-events: none;
+  }
+
+  /* --- the panel ------------------------------------------------------- */
+  .al-stage__panel {
+    position: relative;
+    z-index: 2;
+    width: min(560px, 100%);
+    padding: clamp(26px, 3vw, 40px) clamp(22px, 2.6vw, 36px);
+    color: var(--color-on-dark);
+    box-shadow: 0 24px 60px rgb(18 17 15 / 0.34);
+    backdrop-filter: blur(14px);
+  }
+
+  /* The gold rule is a pseudo-element rather than a border so it can wipe in
+     from the left after the panel has settled. */
+  .al-stage__panel::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--color-gold);
+    transform-origin: left center;
+  }
+
+  .al-stage__panel--ink {
+    background: rgb(18 17 15 / 0.9);
+  }
+
+  .al-stage__panel--ink2 {
+    background: rgb(26 25 23 / 0.9);
+  }
+
+  .al-stage--left .al-stage__panel {
+    justify-self: start;
+  }
+
+  .al-stage--right .al-stage__panel {
+    justify-self: end;
+  }
+
+  .al-stage--centre .al-stage__panel {
+    justify-self: center;
+  }
+
+  /* --- the reveal ------------------------------------------------------ */
+  /* Four things move, not one: the photograph settles out of a slow push-in,
+     the panel rises, the gold rule wipes across, then the copy arrives line by
+     line. Staggering is what makes it read as choreography rather than a
+     single element being faded in.
+     
+     Scoped to [data-reveal-ready], set by a script in Base.astro. Without
+     JavaScript the attribute never appears, none of these rules apply, and
+     everything renders in its final state -- a script failure costs the
+     animation, never the content. */
+
+  /* 1. The photograph: a slow push-in that keeps moving after the copy lands,
+        so the section never feels completely still. Scaling down to exactly 1
+        means no edge can ever be exposed. */
+  :global([data-reveal-ready]) .al-stage__media :global(.al-slot) {
+    transform: scale(1.1);
+    transition: transform 2.6s cubic-bezier(0.16, 0.72, 0.24, 1);
+  }
+
+  :global([data-reveal-ready]) .al-stage[data-revealed] .al-stage__media :global(.al-slot) {
+    transform: scale(1);
+  }
+
+  /* 2. The panel. */
+  :global([data-reveal-ready]) .al-stage__panel {
+    opacity: 0;
+    transform: translateY(56px);
+    transition:
+      opacity 1.15s var(--ease-premium),
+      transform 1.15s var(--ease-premium);
+  }
+
+  :global([data-reveal-ready]) .al-stage[data-revealed] .al-stage__panel {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* 3. The gold rule, wiping across once the panel has arrived. */
+  :global([data-reveal-ready]) .al-stage__panel::before {
+    transform: scaleX(0);
+    transition: transform 0.95s var(--ease-premium) 0.55s;
+  }
+
+  :global([data-reveal-ready]) .al-stage[data-revealed] .al-stage__panel::before {
+    transform: scaleX(1);
+  }
+
+  /* 4. The copy, one element after another. :global because the panel's
+        children arrive through a slot and Astro does not scope those. */
+  :global([data-reveal-ready]) .al-stage__panel > :global(*) {
+    opacity: 0;
+    transform: translateY(26px);
+    transition:
+      opacity 0.9s var(--ease-premium),
+      transform 0.9s var(--ease-premium);
+  }
+
+  :global([data-reveal-ready]) .al-stage[data-revealed] .al-stage__panel > :global(*) {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  :global([data-reveal-ready]) .al-stage[data-revealed] .al-stage__panel > :global(:nth-child(1)) { transition-delay: 0.42s; }
+  :global([data-reveal-ready]) .al-stage[data-revealed] .al-stage__panel > :global(:nth-child(2)) { transition-delay: 0.54s; }
+  :global([data-reveal-ready]) .al-stage[data-revealed] .al-stage__panel > :global(:nth-child(3)) { transition-delay: 0.66s; }
+  :global([data-reveal-ready]) .al-stage[data-revealed] .al-stage__panel > :global(:nth-child(4)) { transition-delay: 0.78s; }
+  :global([data-reveal-ready]) .al-stage[data-revealed] .al-stage__panel > :global(:nth-child(5)) { transition-delay: 0.9s; }
+  :global([data-reveal-ready]) .al-stage[data-revealed] .al-stage__panel > :global(:nth-child(n + 6)) { transition-delay: 1.02s; }
+
+  /* An OS-level request for less motion turns all four off. The sequence is
+     decoration; the content must not depend on it. */
+  @media (prefers-reduced-motion: reduce) {
+    :global([data-reveal-ready]) .al-stage__media :global(.al-slot),
+    :global([data-reveal-ready]) .al-stage__panel,
+    :global([data-reveal-ready]) .al-stage__panel::before,
+    :global([data-reveal-ready]) .al-stage__panel > :global(*) {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+
+  /* --- narrow screens --------------------------------------------------- */
+  /* Below 860px the panel stops overlapping. At phone widths an overlay would
+     cover most of the photograph and leave the copy in a cramped column, so
+     the image keeps its full frame and the panel sits beneath it. */
+  @media (max-width: 860px) {
+    .al-stage {
+      display: block;
+      min-height: 0;
+      padding: 0;
+    }
+
+    .al-stage__media {
+      position: relative;
+      inset: auto;
+      min-height: clamp(300px, 46vh, 440px);
+    }
+
+    .al-stage__panel,
+    .al-stage--left .al-stage__panel,
+    .al-stage--right .al-stage__panel,
+    .al-stage--centre .al-stage__panel {
+      width: 100%;
+      box-shadow: none;
+      backdrop-filter: none;
+      padding: clamp(28px, 7vw, 40px) var(--spacing-gutter);
+    }
+
+    .al-stage__panel--ink {
+      background: var(--color-ink);
+    }
+    .al-stage__panel--ink2 {
+      background: var(--color-ink-2);
+    }
+  }
+</style>

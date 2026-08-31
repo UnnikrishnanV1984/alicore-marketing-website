@@ -1,12 +1,13 @@
 ---
 import Eyebrow from '../ui/Eyebrow.astro';
 import Button from '../ui/Button.astro';
-import SlotImage from '../ui/SlotImage.astro';
+import MediaStage from '../ui/MediaStage.astro';
 import type { SlotImage as SlotImageType } from '../../lib/media';
 
 /**
- * Shared by the GFRC and FRP sections. They are the same layout mirrored:
- * GFRC puts the photograph on the left, FRP on the right.
+ * Shared by the GFRC and FRP sections. The photograph is the stage; the copy
+ * rises over it as the section comes into view. GFRC puts the panel left,
+ * FRP right, so the two read as a mirrored pair rather than a repeat.
  */
 interface Props {
   id: string;
@@ -21,7 +22,7 @@ interface Props {
   image?: SlotImageType;
   /** 'ink' = #12110F (GFRC), 'ink2' = #1A1917 (FRP) */
   ground?: 'ink' | 'ink2';
-  /** Which side the photograph sits on. */
+  /** Which side the copy panel sits on. */
   media?: 'left' | 'right';
   ctaVariant?: 'gold' | 'outline';
   headingLevel?: 'h1' | 'h2';
@@ -45,138 +46,85 @@ const {
 } = Astro.props;
 
 const Heading = headingLevel;
+
+// `media` names the side the photograph used to sit on. The photograph is now
+// full width, so the panel takes the opposite side and the mirrored rhythm
+// between GFRC and FRP survives the change.
+const align = media === 'left' ? 'right' : 'left';
 ---
 
-<section id={id} class={`al-material-sec al-material-sec--${ground}`} data-ground="dark">
-  <div class={`al-material-sec__grid al-material-sec__grid--${media}`}>
-    <div class="al-material-sec__media">
-      <SlotImage
-        slot={slotId}
-        placeholder={placeholder}
-        image={image}
-        ratio="1/1"
-        ground="dark"
-        sizes="(max-width: 800px) 100vw, 50vw"
-        class="al-material-sec__slot"
-      />
-    </div>
+<section id={id} class="al-material-sec" data-ground="dark">
+  <MediaStage
+    slotId={slotId}
+    placeholder={placeholder}
+    image={image}
+    align={align}
+    ground={ground}
+  >
+    <Eyebrow label={eyebrow} ground="dark" />
+    <Heading class="al-material-sec__title al-balance">{heading}</Heading>
+    <p class="al-material-sec__intro">{intro}</p>
 
-    <div class="al-material-sec__body">
-      <Eyebrow label={eyebrow} ground="dark" />
-      <Heading class="al-material-sec__title al-balance">{heading}</Heading>
-      <p class="al-material-sec__intro">{intro}</p>
+    <ul class="al-material-sec__points">
+      {
+        points.map((p) => (
+          <li>
+            <span class="al-material-sec__bullet" aria-hidden="true" />
+            {p}
+          </li>
+        ))
+      }
+    </ul>
 
-      <ul class="al-material-sec__points">
-        {
-          points.map((p) => (
-            <li>
-              <span class="al-material-sec__bullet" aria-hidden="true" />
-              {p}
-            </li>
-          ))
-        }
-      </ul>
-
-      <Button href={ctaHref} variant={ctaVariant} ground="dark" class="al-material-sec__cta">
-        {cta}
-      </Button>
-    </div>
-  </div>
+    <Button href={ctaHref} variant={ctaVariant} ground="dark" class="al-material-sec__cta">
+      {cta}
+    </Button>
+  </MediaStage>
 </section>
 
 <style>
   .al-material-sec {
-    color: var(--color-on-dark);
-  }
-
-  .al-material-sec--ink {
     background: var(--color-ink);
-  }
-
-  .al-material-sec--ink2 {
-    background: var(--color-ink-2);
-  }
-
-  .al-material-sec__grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
-  }
-
-  .al-material-sec__media {
-    position: relative;
-    min-height: clamp(320px, 42vw, 620px);
-  }
-
-  /* Fill the column by taking the slot out of flow, NOT with height:100%.
-     A percentage height against a parent that only has min-height resolves to
-     auto, so the <img> fell back to its own intrinsic aspect ratio and object-
-     fit:cover never cropped anything -- a portrait photograph then set the
-     height of the whole section (a 236x420 upload made this 1708px tall on a
-     1920px screen, taller the wider the viewport got). */
-  .al-material-sec__media :global(.al-slot) {
-    position: absolute;
-    inset: 0;
-    height: auto;
-    aspect-ratio: auto;
-  }
-
-  /* Photograph right: reorder without changing DOM order, so the heading is
-     still read first by a screen reader and on mobile. */
-  .al-material-sec__grid--right .al-material-sec__media {
-    order: 2;
-  }
-
-  @media (max-width: 800px) {
-    .al-material-sec__grid--right .al-material-sec__media {
-      order: 0;
-    }
-  }
-
-  /* Vertical padding is tighter than the mockup's clamp(56px, 7vw, 110px).
-     At the mockup's value the section stood 739px tall, which overflows a
-     1366x768 laptop once the sticky header is subtracted -- the two material
-     sections are the densest on the page and were the only ones that did not
-     fit in a viewport. Horizontal padding is unchanged. */
-  .al-material-sec__body {
-    padding: clamp(44px, 5.2vw, 88px) clamp(24px, 5vw, 80px);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    color: var(--color-on-dark);
   }
 
   .al-material-sec__title {
     font-family: var(--font-display);
     font-weight: 400;
-    font-size: clamp(28px, 3.4vw, 46px);
-    line-height: 1.1;
-    margin-top: 20px;
-    max-width: 22ch;
+    /* Smaller than the two-column layout's clamp(28px, 3.4vw, 46px): the panel
+       is a fixed 560px at most, so type that scaled with the viewport would
+       wrap to five or six lines on a wide screen. */
+    font-size: clamp(26px, 2.2vw, 34px);
+    line-height: 1.14;
+    margin-top: 16px;
+    max-width: 20ch;
   }
 
   .al-material-sec__intro {
-    margin-top: 22px;
-    font-size: 16px;
-    line-height: 1.75;
-    color: var(--color-on-dark-66);
-    max-width: 52ch;
+    margin-top: 16px;
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--color-on-dark-80);
     font-weight: 300;
   }
 
+  /* Two columns inside the panel. Seven bullets stacked would make the panel
+     taller than the photograph behind it. */
   .al-material-sec__points {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-    gap: 12px 28px;
-    margin-top: 28px;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 8px 24px;
+    margin-top: 22px;
     list-style: none;
   }
 
   .al-material-sec__points li {
     display: flex;
-    gap: 12px;
+    gap: 10px;
     align-items: baseline;
-    font-size: 14.5px;
+    font-size: 13.5px;
     color: var(--color-on-dark-80);
-    padding-bottom: 12px;
+    padding-bottom: 8px;
     border-bottom: 1px solid var(--color-rule-dark-soft);
   }
 
@@ -189,7 +137,7 @@ const Heading = headingLevel;
 
   .al-material-sec__cta {
     align-self: flex-start;
-    margin-top: 32px;
+    margin-top: 24px;
   }
 
   @media (max-width: 480px) {

@@ -1,6 +1,6 @@
 ---
 import Eyebrow from '../ui/Eyebrow.astro';
-import SlotImage from '../ui/SlotImage.astro';
+import MediaStage from '../ui/MediaStage.astro';
 import { journey, quality } from '../../content/sections';
 import type { SlotImage as SlotImageType } from '../../lib/media';
 
@@ -12,27 +12,27 @@ const { image, headingLevel = 'h2' } = Astro.props;
 const Heading = headingLevel;
 ---
 
-<section id="manufacturing" class="al-section">
-  <div class="al-container al-mfg">
-    <div>
-      <Eyebrow label="Manufacturing" />
-      <Heading class="al-mfg__title">From Design to Reality</Heading>
-      <p class="al-mfg__intro">
-        Our manufacturing approach combines material expertise, craftsmanship and controlled
-        production processes to transform architectural concepts into finished products.
-      </p>
-      <div class="al-mfg__figure">
-        <SlotImage
-          slot="alicore-factory"
-          placeholder="Production floor: GFRC spray / mould work"
-          image={image}
-          ratio="16/10"
-          sizes="(max-width: 900px) 100vw, 45vw"
-        />
-      </div>
-    </div>
+<section id="manufacturing">
+  <!-- Production floor as the stage. The six-step journey stays below: as a
+       numbered sequence it has to be read in order, and a panel floating over
+       a photograph is the wrong place to ask that of anyone. -->
+  <MediaStage
+    slotId="alicore-factory"
+    placeholder="Production floor: GFRC spray / mould work"
+    image={image}
+    align="right"
+    ground="ink2"
+  >
+    <Eyebrow label="Manufacturing" ground="dark" />
+    <Heading class="al-mfg__title al-balance">From Design to Reality</Heading>
+    <p class="al-mfg__intro">
+      Our manufacturing approach combines material expertise, craftsmanship and controlled
+      production processes to transform architectural concepts into finished products.
+    </p>
+  </MediaStage>
 
-    <div>
+  <div class="al-section">
+    <div class="al-container al-mfg__below">
       <ol class="al-journey">
         {
           journey.map((j) => (
@@ -58,31 +58,29 @@ const Heading = headingLevel;
 </section>
 
 <style>
-  .al-mfg {
+  .al-mfg__title {
+    font-family: var(--font-display);
+    font-weight: 400;
+    /* See AboutSection: panel width is fixed, so type must not scale with the
+       viewport or it wraps to five lines on a wide screen. */
+    font-size: clamp(26px, 2.3vw, 36px);
+    line-height: 1.12;
+    margin-top: 16px;
+  }
+
+  .al-mfg__intro {
+    margin-top: 16px;
+    font-size: 15.5px;
+    line-height: 1.7;
+    color: var(--color-on-dark-80);
+    font-weight: 300;
+  }
+
+  .al-mfg__below {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
     gap: clamp(32px, 5vw, 80px);
     align-items: start;
-  }
-
-  .al-mfg__title {
-    font-family: var(--font-display);
-    font-weight: 400;
-    font-size: clamp(30px, 3.8vw, 50px);
-    line-height: 1.08;
-    margin-top: 20px;
-  }
-
-  .al-mfg__intro {
-    margin-top: 22px;
-    font-size: 16px;
-    line-height: 1.75;
-    color: rgb(18 17 15 / 0.65);
-    max-width: 52ch;
-  }
-
-  .al-mfg__figure {
-    margin-top: 36px;
   }
 
   .al-journey {
@@ -120,7 +118,6 @@ const Heading = headingLevel;
   .al-quality {
     border: 1px solid var(--color-rule);
     padding: 34px 32px;
-    margin-top: 44px;
     background: var(--color-panel);
   }
 

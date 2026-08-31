@@ -1,7 +1,7 @@
 ---
 import Eyebrow from '../ui/Eyebrow.astro';
 import Button from '../ui/Button.astro';
-import SlotImage from '../ui/SlotImage.astro';
+import MediaStage from '../ui/MediaStage.astro';
 import { capabilities } from '../../content/site';
 import { about } from '../../content/sections';
 import type { SlotImage as SlotImageType } from '../../lib/media';
@@ -17,29 +17,28 @@ const { image, headingLevel = 'h2', showCta = true } = Astro.props;
 const Heading = headingLevel;
 ---
 
-<section id="about" class="al-section">
-  <div class="al-container al-about">
-    <div>
-      <Eyebrow label="Who We Are" />
-      <Heading class="al-about__title al-balance">
-        Built for Architecture. Designed for Possibility.
-      </Heading>
-      <div class="al-about__figure">
-        <SlotImage
-          slot="alicore-about"
-          placeholder="Close-up: GFRC surface texture / finished panel"
-          image={image}
-          ratio="4/3"
-          sizes="(max-width: 900px) 100vw, 42vw"
-        />
-      </div>
-    </div>
+<section id="about">
+  <!-- The photograph carries the section; the introduction rises over it.
+       The capability tiles stay below in their own band -- four of them inside
+       the panel would make it taller than the image it sits on. -->
+  <MediaStage
+    slotId="alicore-about"
+    placeholder="Close-up: GFRC surface texture / finished panel"
+    image={image}
+    align="left"
+    ground="ink"
+  >
+    <Eyebrow label="Who We Are" ground="dark" />
+    <Heading class="al-about__title al-balance">
+      Built for Architecture. Designed for Possibility.
+    </Heading>
+    <p class="al-about__lead">{about.lead}</p>
+    {showCta && <Button href="/about" variant="outline" ground="dark" size="sm" class="al-about__cta">Discover Alicore</Button>}
+  </MediaStage>
 
-    <div>
-      <p class="al-about__lead">{about.lead}</p>
+  <div class="al-section al-about__below">
+    <div class="al-container">
       {about.body.slice(0, 2).map((p) => <p class="al-about__body">{p}</p>)}
-
-      {showCta && <Button href="/about" variant="outline" size="sm" class="al-about__cta">Discover Alicore</Button>}
 
       <div class="al-hairline-grid al-about__caps">
         {
@@ -56,44 +55,43 @@ const Heading = headingLevel;
 </section>
 
 <style>
-  .al-about {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-    gap: clamp(40px, 6vw, 90px);
-    align-items: start;
-  }
-
   .al-about__title {
     font-family: var(--font-display);
     font-weight: 400;
-    font-size: clamp(30px, 3.8vw, 50px);
-    line-height: 1.08;
+    /* Smaller than the old two-column clamp(30px, 3.8vw, 50px): the panel is
+       at most 560px wide, so viewport-scaled type wrapped to five lines. */
+    font-size: clamp(26px, 2.3vw, 36px);
+    line-height: 1.12;
     letter-spacing: -0.01em;
-    margin-top: 20px;
+    margin-top: 16px;
     max-width: 20ch;
   }
 
-  .al-about__figure {
-    margin-top: 34px;
+  .al-about__lead {
+    margin-top: 16px;
+    font-size: 15.5px;
+    line-height: 1.7;
+    color: var(--color-on-dark-80);
+    font-weight: 300;
   }
 
-  .al-about__lead {
-    font-size: 17px;
-    line-height: 1.7;
-    color: var(--color-on-light-72);
-    max-width: 54ch;
+  .al-about__cta {
+    margin-top: 26px;
+  }
+
+  .al-about__below {
+    background: var(--color-panel);
   }
 
   .al-about__body {
     font-size: 16px;
     line-height: 1.75;
     color: var(--color-on-light-60);
-    max-width: 54ch;
-    margin-top: 18px;
+    max-width: 68ch;
   }
 
-  .al-about__cta {
-    margin-top: 32px;
+  .al-about__body + .al-about__body {
+    margin-top: 18px;
   }
 
   .al-about__caps {

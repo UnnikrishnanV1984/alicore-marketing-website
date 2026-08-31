@@ -1,7 +1,8 @@
 ---
 import Page from '../layouts/Page.astro';
 import PageHero from '../components/ui/PageHero.astro';
-import SlotImage from '../components/ui/SlotImage.astro';
+import MediaStage from '../components/ui/MediaStage.astro';
+import Eyebrow from '../components/ui/Eyebrow.astro';
 import WhySection from '../components/sections/WhySection.astro';
 import IndustriesSection from '../components/sections/IndustriesSection.astro';
 import CtaBand from '../components/sections/CtaBand.astro';
@@ -20,21 +21,27 @@ const slots = await loadSlotImages();
     lead="Built for architecture. Designed for possibility."
   />
 
+  <!-- Same treatment as the home page's About section: the photograph is the
+       stage and the introduction rises over it. The full body copy and the
+       capability tiles follow below, where they have room to be read. -->
+  <MediaStage
+    slotId="alicore-about"
+    placeholder="Close-up: GFRC surface texture / finished panel"
+    image={slots.get('alicore-about')}
+    align="left"
+    ground="ink"
+  >
+    <Eyebrow label="Who We Are" ground="dark" />
+    <p class="al-about-page__stagelead">{about.lead}</p>
+  </MediaStage>
+
   <section class="al-section">
     <div class="al-container al-about-page">
       <div class="al-about-page__body">
-        <p class="al-about-page__lead">{about.lead}</p>
         {about.body.map((p) => <p>{p}</p>)}
       </div>
 
       <aside class="al-about-page__aside">
-        <SlotImage
-          slot="alicore-about"
-          placeholder="Close-up: GFRC surface texture / finished panel"
-          image={slots.get('alicore-about')}
-          ratio="4/5"
-          sizes="(max-width: 900px) 100vw, 38vw"
-        />
         <div class="al-hairline-grid al-about-page__caps">
           {
             capabilities.map((c) => (
@@ -62,19 +69,27 @@ const slots = await loadSlotImages();
     align-items: start;
   }
 
-  .al-about-page__lead {
-    font-size: clamp(19px, 2vw, 24px);
-    line-height: 1.5;
-    color: var(--color-ink);
+  /* On the dark panel, not the page ground. */
+  .al-about-page__stagelead {
+    margin-top: 16px;
+    font-size: clamp(17px, 1.6vw, 21px);
+    line-height: 1.55;
+    color: var(--color-on-dark);
     font-weight: 300;
   }
 
-  .al-about-page__body p + p {
-    margin-top: 20px;
+  /* Styles every paragraph, not just `p + p`. The lead used to be the first
+     child, so a `p + p` rule was enough; now that the lead sits on the stage,
+     the first body paragraph is the first child and would have gone unstyled. */
+  .al-about-page__body p {
     font-size: 16px;
     line-height: 1.78;
     color: var(--color-on-light-60);
     max-width: 62ch;
+  }
+
+  .al-about-page__body p + p {
+    margin-top: 20px;
   }
 
   .al-about-page__caps {
