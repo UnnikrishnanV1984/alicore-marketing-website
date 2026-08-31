@@ -1,19 +1,78 @@
 ---
 import Eyebrow from '../ui/Eyebrow.astro';
 import Button from '../ui/Button.astro';
-import SlotImage from '../ui/SlotImage.astro';
 import { pillars } from '../../content/site';
-import type { SlotImage as SlotImageType } from '../../lib/media';
 
-interface Props {
-  image?: SlotImageType;
-}
-const { image } = Astro.props;
+/**
+ * The photographs fill the hero and the copy arrives over them.
+ *
+ * Three full-height COLUMNS rather than one landscape image, because a
+ * full-height column is a portrait frame -- and the supplied photography is
+ * portrait. At 1366px each column is roughly 455x700 (ratio 0.65) against
+ * sources of 736x1104 (0.67), so they land almost exactly, with no upscaling
+ * at 1x. One landscape image would have needed 2.6x upscaling and would have
+ * cropped away 60% of every frame.
+ *
+ * Each column cycles its own three images on a staggered timer, so the wall
+ * never changes all at once.
+ */
+
+const COLUMNS = [
+  { id: 'facade', alt: 'GFRC perforated facade panels on a contemporary building' },
+  { id: 'screen', alt: 'GFRC jali screen used as an architectural partition' },
+  { id: 'detail', alt: 'Detail of a cast architectural surface' },
+] as const;
+
+const FRAMES = [1, 2, 3] as const;
+const src = (id: string, n: number, w: number) => `/hero/${id}-${n}-${w}.webp`;
 ---
 
 <section id="top" class="al-hero" data-ground="dark">
+  <div class="al-hero__stage" aria-hidden="true">
+    {
+      COLUMNS.map((col, ci) => (
+        <div class="al-hero__col" data-hero-col style={`--col-delay:${ci * 1.6}s`}>
+          {FRAMES.map((n) => (
+            <img
+              class={`al-hero__frame${n === 1 ? ' is-on' : ''}`}
+              src={n === 1 ? src(col.id, n, 660) : undefined}
+              data-src={n === 1 ? undefined : src(col.id, n, 660)}
+              srcset={
+                n === 1
+                  ? `${src(col.id, n, 440)} 440w, ${src(col.id, n, 660)} 660w`
+                  : undefined
+              }
+              data-srcset={
+                n === 1
+                  ? undefined
+                  : `${src(col.id, n, 440)} 440w, ${src(col.id, n, 660)} 660w`
+              }
+              sizes="(max-width: 860px) 100vw, 34vw"
+              alt=""
+              width="660"
+              height="990"
+              loading={n === 1 ? 'eager' : 'lazy'}
+              decoding="async"
+              fetchpriority={n === 1 && ci === 0 ? 'high' : 'auto'}
+            />
+          ))}
+        </div>
+      ))
+    }
+  </div>
+
+  <div class="al-hero__scrim" aria-hidden="true"></div>
+
+  <!-- The photographs are decorative: they carry no information the copy does
+       not, and alt text on a rotating backdrop would be read aloud repeatedly.
+       The stage is aria-hidden and this description is what a screen reader
+       gets instead. -->
+  <p class="sr-only">
+    Background: photographs of GFRC facades, jali screens and cast architectural details.
+  </p>
+
   <div class="al-container al-hero__inner">
-    <div>
+    <div class="al-hero__copy" data-hero-copy>
       <Eyebrow label="Architectural Products Manufacturer" ground="dark" />
       <h1 class="al-hero__title al-balance">
         Architectural Products. Engineered to <span class="al-hero__accent">Elevate</span>.
@@ -32,19 +91,6 @@ const { image } = Astro.props;
         <Button href="/contact" variant="outline" ground="dark">Request a Quote</Button>
       </div>
     </div>
-
-    <div class="al-hero__figure">
-      <SlotImage
-        slot="alicore-hero"
-        placeholder="Hero photograph — facade with GFRC panels / jali screens"
-        image={image}
-        ratio="4/5"
-        ground="dark"
-        priority
-        sizes="(max-width: 900px) 100vw, 45vw"
-      />
-      <div class="al-hero__scrim" aria-hidden="true"></div>
-    </div>
   </div>
 
   <div class="al-hero__pillars">
@@ -62,6 +108,69 @@ const { image } = Astro.props;
   </div>
 </section>
 
+<script>
+  // --- hero image cycle ---------------------------------------------------
+  // Only the first frame of each column ships with a src. The rest are fetched
+  // one step ahead of being shown, so the hero costs three images on load
+  // rather than nine -- about 200KB instead of 700KB on a landing page whose
+  // largest contentful paint is one of these very images.
+  (() => {
+    const cols = document.querySelectorAll<HTMLElement>('[data-hero-col]');
+    if (!cols.length) return;
+
+    const copy = document.querySelector<HTMLElement>('[data-hero-copy]');
+    // Reveal the copy on the next frame so the transition has a start state to
+    // animate from; setting it in the same frame as the class would jump.
+    requestAnimationFrame(() => requestAnimationFrame(() => copy?.setAttribute('data-in', '')));
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const HOLD = 6000; // how long a photograph stays before the next fades in
+
+    cols.forEach((col, ci) => {
+      const frames = Array.from(col.querySelectorAll<HTMLImageElement>('.al-hero__frame'));
+      if (frames.length < 2) return;
+
+      let i = 0;
+
+      const load = (el: HTMLImageElement) => {
+        const s = el.dataset.src;
+        if (!s) return;
+        el.srcset = el.dataset.srcset ?? '';
+        el.src = s;
+        delete el.dataset.src;
+      };
+
+      const advance = () => {
+        const next = (i + 1) % frames.length;
+        load(frames[next]);
+        frames[i].classList.remove('is-on');
+        frames[next].classList.add('is-on');
+        i = next;
+        // Fetch the one after this while the current fade plays.
+        load(frames[(next + 1) % frames.length]);
+      };
+
+      // Stagger the columns so the wall never changes all at once.
+      window.setTimeout(() => {
+        load(frames[1]);
+        window.setInterval(advance, HOLD);
+        advance();
+      }, 1800 + ci * 1600);
+    });
+
+    // A tab in the background still runs timers; pausing avoids burning
+    // through the cycle while nobody is watching.
+    let paused = false;
+    document.addEventListener('visibilitychange', () => {
+      paused = document.hidden;
+      document.querySelectorAll<HTMLElement>('[data-hero-col]').forEach((c) => {
+        c.style.animationPlayState = paused ? 'paused' : 'running';
+      });
+    });
+  })();
+</script>
+
 <style>
   .al-hero {
     position: relative;
@@ -72,16 +181,94 @@ const { image } = Astro.props;
     flex-direction: column;
     justify-content: flex-end;
     overflow: hidden;
+    isolation: isolate;
   }
 
+  /* --- the wall of photographs ------------------------------------------ */
+  .al-hero__stage {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    background: var(--color-ink-2);
+  }
+
+  .al-hero__col {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .al-hero__frame {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    /* A slow drift keeps the wall alive between changes. */
+    transform: scale(1.06);
+    transition:
+      opacity 1.6s var(--ease-premium),
+      transform 7s linear;
+  }
+
+  .al-hero__frame.is-on {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  /* Vertical gradient so the copy holds against any photograph, plus a
+     left-weighted wash because the copy sits left on wide screens. */
+  .al-hero__scrim {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background:
+      linear-gradient(90deg, rgb(18 17 15 / 0.86) 0%, rgb(18 17 15 / 0.6) 40%, rgb(18 17 15 / 0.26) 100%),
+      linear-gradient(180deg, rgb(18 17 15 / 0.5) 0%, rgb(18 17 15 / 0.12) 40%, rgb(18 17 15 / 0.78) 100%);
+    pointer-events: none;
+  }
+
+  /* --- the copy --------------------------------------------------------- */
   .al-hero__inner {
     position: relative;
     z-index: 2;
+    width: 100%;
     padding-block: clamp(56px, 8vh, 110px) clamp(40px, 6vw, 72px);
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: clamp(32px, 5vw, 64px);
-    align-items: center;
+  }
+
+  .al-hero__copy {
+    max-width: 640px;
+  }
+
+  /* Each element rises in turn once the page is ready. Scoped to [data-in],
+     which the script sets -- so if the script never runs the copy is simply
+     visible, never stuck at opacity 0. */
+  .al-hero__copy > :global(*) {
+    opacity: 1;
+  }
+
+  .al-hero__copy[data-in] > :global(*) {
+    animation: al-hero-rise 1.1s var(--ease-premium) both;
+  }
+
+  .al-hero__copy[data-in] > :global(:nth-child(1)) { animation-delay: 0.15s; }
+  .al-hero__copy[data-in] > :global(:nth-child(2)) { animation-delay: 0.32s; }
+  .al-hero__copy[data-in] > :global(:nth-child(3)) { animation-delay: 0.49s; }
+  .al-hero__copy[data-in] > :global(:nth-child(4)) { animation-delay: 0.66s; }
+  .al-hero__copy[data-in] > :global(:nth-child(5)) { animation-delay: 0.83s; }
+
+  @keyframes al-hero-rise {
+    from {
+      opacity: 0;
+      transform: translateY(34px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .al-hero__title {
@@ -103,7 +290,7 @@ const { image } = Astro.props;
     max-width: 52ch;
     font-size: clamp(16px, 1.5vw, 19px);
     line-height: 1.6;
-    color: rgb(246 244 239 / 0.78);
+    color: var(--color-on-dark-80);
     font-weight: 300;
   }
 
@@ -123,28 +310,13 @@ const { image } = Astro.props;
     margin-top: 40px;
   }
 
-  .al-hero__figure {
-    position: relative;
-    min-height: clamp(280px, 42vh, 540px);
-  }
-
-  .al-hero__figure :global(.al-slot) {
-    height: 100%;
-  }
-
-  .al-hero__scrim {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, transparent 55%, rgb(18 17 15 / 0.55) 100%);
-    pointer-events: none;
-  }
-
-  /* --- pillar strip ---------------------------------------------------- */
+  /* --- pillar strip ------------------------------------------------------ */
   .al-hero__pillars {
     position: relative;
     z-index: 2;
-    border-top: 1px solid rgb(246 244 239 / 0.16);
-    background: rgb(18 17 15 / 0.55);
+    border-top: 1px solid var(--color-rule-dark);
+    background: rgb(18 17 15 / 0.62);
+    backdrop-filter: blur(10px);
   }
 
   .al-hero__pillars-grid {
@@ -159,39 +331,57 @@ const { image } = Astro.props;
     flex-direction: column;
     gap: 12px;
     padding-left: 18px;
-    border-left: 1px solid rgb(246 244 239 / 0.18);
+    border-left: 1px solid var(--color-rule-dark-soft);
   }
 
   .al-pillar__n {
     font-family: var(--font-mono);
-    font-size: 9.5px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
+    font-size: 11px;
     color: var(--color-gold);
+    letter-spacing: 0.2em;
   }
 
   .al-pillar__code {
     font-family: var(--font-display);
-    font-size: clamp(19px, 1.7vw, 23px);
-    font-weight: 400;
-    letter-spacing: 0.14em;
-    line-height: 1;
-    color: var(--color-on-dark);
+    font-size: 17px;
+    letter-spacing: 0.06em;
   }
 
   .al-pillar__full {
-    font-family: var(--font-mono);
-    font-size: 9.5px;
-    letter-spacing: 0.13em;
-    text-transform: uppercase;
-    color: rgb(246 244 239 / 0.52);
-    line-height: 1.7;
-    max-width: 24ch;
+    font-size: 12.5px;
+    color: var(--color-on-dark-55);
+    line-height: 1.5;
   }
 
-  @media (max-width: 640px) {
-    .al-hero {
-      min-height: 0;
+  /* --- narrow screens ---------------------------------------------------- */
+  /* Three columns at phone width would be 130px slivers. One column, still
+     cycling, keeps the photograph readable. */
+  @media (max-width: 860px) {
+    .al-hero__stage {
+      grid-template-columns: 1fr;
+    }
+
+    .al-hero__col:nth-child(n + 2) {
+      display: none;
+    }
+
+    .al-hero__scrim {
+      background: linear-gradient(
+        180deg,
+        rgb(18 17 15 / 0.62) 0%,
+        rgb(18 17 15 / 0.5) 30%,
+        rgb(18 17 15 / 0.92) 100%
+      );
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .al-hero__frame {
+      transition: none;
+      transform: none;
+    }
+    .al-hero__copy[data-in] > :global(*) {
+      animation: none;
     }
   }
 </style>

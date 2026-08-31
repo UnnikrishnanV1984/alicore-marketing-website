@@ -25,7 +25,7 @@ const [slots, projects] = await Promise.all([loadSlotImages(), loadPublishedProj
 ---
 
 <Page meta={meta['/']} path="/" scrollSpy active="/">
-  <Hero image={slots.get('alicore-hero')} />
+  <Hero />
   <AboutSection image={slots.get('alicore-about')} />
   <ProductsSection slots={slots} />
 
