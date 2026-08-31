@@ -65,6 +65,30 @@ const graph = [organization, ...jsonLd];
     <meta name="theme-color" content="#12110F" />
     <link rel="sitemap" href="/sitemap-index.xml" />
 
+    <!--
+      Arm the scroll-reveal before first paint.
+
+      Set from the end of <body> this arrived AFTER the panels had already
+      painted, so applying opacity:0 animated them from visible to hidden and
+      back: a visible flash on every load. It has to run in <head>.
+
+      The failsafe matters as much as the flag. If the observer at the end of
+      <body> never runs -- blocked, parse error, an engine without
+      IntersectionObserver -- this attribute would leave every panel invisible
+      for good. So arming it also schedules its own undo, cancelled the moment
+      the observer takes over.
+    -->
+    <script is:inline>
+      (() => {
+        const root = document.documentElement;
+        root.setAttribute('data-reveal-ready', '');
+        window.setTimeout(() => {
+          if (window.__alReveal) return;
+          root.removeAttribute('data-reveal-ready');
+        }, 3000);
+      })();
+    </script>
+
     <script is:inline type="application/ld+json" set:html={JSON.stringify(graph)} />
     <slot name="head" />
   </head>
@@ -75,62 +99,71 @@ const graph = [organization, ...jsonLd];
     <!--
       Scroll reveal for [data-reveal] elements.
 
-      The flag is set here rather than in the stylesheet so the hidden starting
-      state only ever exists when the script that clears it is running. If this
-      never executes -- blocked, errored, an old browser -- the attribute is
-      absent, the opacity:0 rules never match, and every panel renders in its
-      final state. An animation is worth having; it is not worth risking the
-      page's content on.
+      The hidden starting state lives behind [data-reveal-ready], armed in
+      <head> and undone automatically if this script never claims it. So a
+      failure here costs the animation, never the content.
     -->
     <script is:inline>
       (() => {
         const els = document.querySelectorAll('[data-reveal]');
+        const revealAll = () => els.forEach((el) => el.setAttribute('data-revealed', ''));
+
+        // Tell the head script's failsafe it is not needed.
+        window.__alReveal = true;
         if (!els.length) return;
 
-        document.documentElement.setAttribute('data-reveal-ready', '');
+        try {
+          // Honour the OS setting: show everything at once, observe nothing.
+          if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return revealAll();
+          if (!('IntersectionObserver' in window)) return revealAll();
 
-        // Honour the OS setting: show everything at once, observe nothing.
-        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-          els.forEach((el) => el.setAttribute('data-revealed', ''));
-          return;
+          // Anything already on screen at load would otherwise finish
+          // animating while the reader is still waiting for the page. On the
+          // standalone pages, where a section sits right under a short page
+          // hero, that made the effect invisible. Hold those briefly.
+          const startedAt = performance.now();
+
+          const io = new IntersectionObserver(
+            (entries) => {
+              for (const entry of entries) {
+                if (!entry.isIntersecting) continue;
+                const el = entry.target;
+                io.unobserve(el); // reveal once, never re-hide
+
+                if (performance.now() - startedAt < 600) {
+                  window.setTimeout(() => el.setAttribute('data-revealed', ''), 480);
+                } else {
+                  el.setAttribute('data-revealed', '');
+                }
+              }
+            },
+            // Fire a little before the element is fully on screen, so the
+            // motion reads as the section arriving rather than a late reaction.
+            { rootMargin: '0px 0px -10% 0px', threshold: 0.1 },
+          );
+
+          els.forEach((el) => io.observe(el));
+
+          // A jump-link lands the browser mid-section with no scroll event to
+          // follow, and a hash present on first load can beat observation
+          // being set up, so nudge the target's own elements directly.
+          const revealHash = () => {
+            const id = location.hash.slice(1);
+            if (!id) return;
+            const target = document.getElementById(id);
+            if (!target) return;
+            target.querySelectorAll('[data-reveal]').forEach((el) => {
+              el.setAttribute('data-revealed', '');
+              io.unobserve(el);
+            });
+          };
+          revealHash();
+          window.addEventListener('hashchange', revealHash);
+        } catch {
+          // Show the content rather than leave it behind an animation that is
+          // never going to run.
+          revealAll();
         }
-
-        if (!('IntersectionObserver' in window)) {
-          els.forEach((el) => el.setAttribute('data-revealed', ''));
-          return;
-        }
-
-        const io = new IntersectionObserver(
-          (entries) => {
-            for (const entry of entries) {
-              if (!entry.isIntersecting) continue;
-              entry.target.setAttribute('data-revealed', '');
-              io.unobserve(entry.target); // reveal once, never re-hide
-            }
-          },
-          // Fire a little before the panel is fully on screen, so the motion
-          // reads as the section arriving rather than as a delayed reaction.
-          { rootMargin: '0px 0px -10% 0px', threshold: 0.1 },
-        );
-
-        els.forEach((el) => io.observe(el));
-
-        // A jump-link lands the browser mid-section with no scroll event to
-        // follow. IntersectionObserver reports on the next frame, but a hash
-        // arriving on first load can beat observation being set up, so nudge
-        // the target's panels directly.
-        const revealHash = () => {
-          const id = location.hash.slice(1);
-          if (!id) return;
-          const target = document.getElementById(id);
-          if (!target) return;
-          target.querySelectorAll('[data-reveal]').forEach((el) => {
-            el.setAttribute('data-revealed', '');
-            io.unobserve(el);
-          });
-        };
-        revealHash();
-        window.addEventListener('hashchange', revealHash);
       })();
     </script>
   </body>

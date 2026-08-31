@@ -56,7 +56,7 @@ const {
     <div class="al-stage__scrim" aria-hidden="true"></div>
   </div>
 
-  <div class={`al-stage__panel al-stage__panel--${ground}`}>
+  <div class={`al-stage__panel al-stage__panel--${ground}`} data-reveal>
     <slot />
   </div>
 </div>
@@ -177,7 +177,11 @@ const {
     transform: scale(1);
   }
 
-  /* 2. The panel. */
+  /* 2. The panel, observed separately from the stage. Below 860px it sits
+        UNDER the photograph rather than over it, so a stage that is 40% into
+        the viewport can have its panel entirely below the fold. Keyed to the
+        stage, the panel finished animating before it was ever on screen --
+        which is exactly what "no animations on mobile" looked like. */
   :global([data-reveal-ready]) .al-stage__panel {
     opacity: 0;
     transform: translateY(56px);
@@ -186,7 +190,7 @@ const {
       transform 1.15s var(--ease-premium);
   }
 
-  :global([data-reveal-ready]) .al-stage[data-revealed] .al-stage__panel {
+  :global([data-reveal-ready]) .al-stage__panel[data-revealed] {
     opacity: 1;
     transform: translateY(0);
   }
@@ -197,7 +201,7 @@ const {
     transition: transform 0.95s var(--ease-premium) 0.55s;
   }
 
-  :global([data-reveal-ready]) .al-stage[data-revealed] .al-stage__panel::before {
+  :global([data-reveal-ready]) .al-stage__panel[data-revealed]::before {
     transform: scaleX(1);
   }
 
@@ -211,17 +215,17 @@ const {
       transform 0.9s var(--ease-premium);
   }
 
-  :global([data-reveal-ready]) .al-stage[data-revealed] .al-stage__panel > :global(*) {
+  :global([data-reveal-ready]) .al-stage__panel[data-revealed] > :global(*) {
     opacity: 1;
     transform: translateY(0);
   }
 
-  :global([data-reveal-ready]) .al-stage[data-revealed] .al-stage__panel > :global(:nth-child(1)) { transition-delay: 0.42s; }
-  :global([data-reveal-ready]) .al-stage[data-revealed] .al-stage__panel > :global(:nth-child(2)) { transition-delay: 0.54s; }
-  :global([data-reveal-ready]) .al-stage[data-revealed] .al-stage__panel > :global(:nth-child(3)) { transition-delay: 0.66s; }
-  :global([data-reveal-ready]) .al-stage[data-revealed] .al-stage__panel > :global(:nth-child(4)) { transition-delay: 0.78s; }
-  :global([data-reveal-ready]) .al-stage[data-revealed] .al-stage__panel > :global(:nth-child(5)) { transition-delay: 0.9s; }
-  :global([data-reveal-ready]) .al-stage[data-revealed] .al-stage__panel > :global(:nth-child(n + 6)) { transition-delay: 1.02s; }
+  :global([data-reveal-ready]) .al-stage__panel[data-revealed] > :global(:nth-child(1)) { transition-delay: 0.42s; }
+  :global([data-reveal-ready]) .al-stage__panel[data-revealed] > :global(:nth-child(2)) { transition-delay: 0.54s; }
+  :global([data-reveal-ready]) .al-stage__panel[data-revealed] > :global(:nth-child(3)) { transition-delay: 0.66s; }
+  :global([data-reveal-ready]) .al-stage__panel[data-revealed] > :global(:nth-child(4)) { transition-delay: 0.78s; }
+  :global([data-reveal-ready]) .al-stage__panel[data-revealed] > :global(:nth-child(5)) { transition-delay: 0.9s; }
+  :global([data-reveal-ready]) .al-stage__panel[data-revealed] > :global(:nth-child(n + 6)) { transition-delay: 1.02s; }
 
   /* An OS-level request for less motion turns all four off. The sequence is
      decoration; the content must not depend on it. */
