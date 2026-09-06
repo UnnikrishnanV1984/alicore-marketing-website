@@ -17,3 +17,6 @@ dist/
 .DS_Store
 Thumbs.db
 *.log
+
+# Machine-specific: points CLAUDE_CONFIG_DIR at a local user profile path.
+.vscode/settings.json
