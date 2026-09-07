@@ -6,7 +6,7 @@ import { products, materialTiles } from '../../content/products';
 import type { SlotImage as SlotImageType } from '../../lib/media';
 
 interface Props {
-  slots: Map<string, SlotImageType>;
+  slots: Map<string, SlotImageType[]>;
   headingLevel?: 'h1' | 'h2';
   /** Home page links out to /products; the index page has nowhere to go. */
   showViewAll?: boolean;
@@ -46,7 +46,7 @@ const Heading = headingLevel;
               <SlotImage
                 slot={p.slot}
                 placeholder={p.shot}
-                image={slots.get(p.slot)}
+                images={slots.get(p.slot)}
                 ratio="4/3"
                 sizes="(max-width: 640px) 100vw, (max-width: 1100px) 50vw, 33vw"
               />

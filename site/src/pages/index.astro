@@ -11,7 +11,7 @@ import ManufacturingSection from '../components/sections/ManufacturingSection.as
 import IndustriesSection from '../components/sections/IndustriesSection.astro';
 import ContactSection from '../components/sections/ContactSection.astro';
 
-import { loadSlotImages } from '../lib/media';
+import { loadSlotImages, loadSlotGalleries } from '../lib/media';
 import { loadPublishedProjects } from '../lib/projects';
 import { gfrc, frp } from '../content/sections';
 import { meta } from '../content/seo';
@@ -21,13 +21,17 @@ import { meta } from '../content/seo';
  * Each section's CTA now deep-links to its standalone page as well as
  * supporting in-page anchors (plan section 3).
  */
-const [slots, projects] = await Promise.all([loadSlotImages(), loadPublishedProjects()]);
+const [slots, galleries, projects] = await Promise.all([
+  loadSlotImages(),
+  loadSlotGalleries(),
+  loadPublishedProjects(),
+]);
 ---
 
 <Page meta={meta['/']} path="/" scrollSpy active="/">
   <Hero />
   <AboutSection image={slots.get('alicore-about')} />
-  <ProductsSection slots={slots} />
+  <ProductsSection slots={galleries} />
 
   <MaterialSection
     id="gfrc"

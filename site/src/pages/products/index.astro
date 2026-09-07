@@ -3,12 +3,12 @@ import Page from '../../layouts/Page.astro';
 import PageHero from '../../components/ui/PageHero.astro';
 import ProductsSection from '../../components/sections/ProductsSection.astro';
 import CtaBand from '../../components/sections/CtaBand.astro';
-import { loadSlotImages } from '../../lib/media';
+import { loadSlotGalleries } from '../../lib/media';
 import { products } from '../../content/products';
 import { meta } from '../../content/seo';
 import { site } from '../../content/site';
 
-const slots = await loadSlotImages();
+const slots = await loadSlotGalleries();
 
 const jsonLd = [
   {

@@ -3,12 +3,15 @@ import Admin from '../../layouts/Admin.astro';
 import '../../styles/admin.css';
 import MediaLibrary, { type AdminSlot } from '../../components/admin/MediaLibrary';
 import { serviceClient, mediaUrl } from '../../lib/supabase';
-import { slotPath } from '../../lib/media';
+import { slotPath, MAX_GALLERY_POSITIONS } from '../../lib/media';
 import type { StaffUser } from '../../lib/auth';
 
 export const prerender = false;
 
 const staff = (Astro.locals as Record<string, unknown>).staff as StaffUser;
+
+/** Only Products slots get a photograph gallery; everything else stays 1-up. */
+const GALLERY_GROUP = 'Products';
 
 let slots: AdminSlot[] = [];
 let loadError: string | null = null;
@@ -18,26 +21,44 @@ try {
 
   const [{ data: slotRows, error: slotErr }, { data: assetRows }] = await Promise.all([
     supabase.from('media_slots').select('*').order('sort_order'),
-    supabase.from('media_assets').select('slot_id, alt_text').eq('is_active', true),
+    supabase.from('media_assets').select('slot_id, position, alt_text').eq('is_active', true),
   ]);
 
   if (slotErr) throw new Error(slotErr.message);
 
-  const active = new Map((assetRows ?? []).map((a) => [a.slot_id, a.alt_text ?? '']));
+  const active = new Map<string, Map<number, string>>();
+  for (const a of assetRows ?? []) {
+    if (!active.has(a.slot_id)) active.set(a.slot_id, new Map());
+    active.get(a.slot_id)!.set(a.position ?? 1, a.alt_text ?? '');
+  }
 
-  slots = (slotRows ?? []).map((s) => ({
-    id: s.id,
-    groupTitle: s.group_title,
-    title: s.title,
-    placeholder: s.placeholder,
-    hasImage: active.has(s.id),
-    altText: active.get(s.id) ?? '',
-    // Cache-bust the admin preview only; the public site relies on the stable
-    // URL plus an edge purge.
-    previewUrl: active.has(s.id)
-      ? `${mediaUrl(slotPath(s.id, 640), Astro.locals)}?t=${Date.now()}`
-      : null,
-  }));
+  slots = (slotRows ?? []).map((s) => {
+    const maxPositions = s.group_title === GALLERY_GROUP ? MAX_GALLERY_POSITIONS : 1;
+    const byPosition = active.get(s.id) ?? new Map<number, string>();
+
+    const images = Array.from({ length: maxPositions }, (_, i) => {
+      const position = i + 1;
+      const hasImage = byPosition.has(position);
+      return {
+        position,
+        hasImage,
+        altText: byPosition.get(position) ?? '',
+        // Cache-bust the admin preview only; the public site relies on the
+        // stable URL plus an edge purge.
+        previewUrl: hasImage
+          ? `${mediaUrl(slotPath(s.id, 640, position), Astro.locals)}?t=${Date.now()}`
+          : null,
+      };
+    });
+
+    return {
+      id: s.id,
+      groupTitle: s.group_title,
+      title: s.title,
+      placeholder: s.placeholder,
+      images,
+    };
+  });
 } catch (err) {
   loadError = err instanceof Error ? err.message : 'Could not load the image library.';
 }
@@ -50,6 +71,8 @@ try {
     Every image placement on the website appears below. Drag a photograph onto a slot — or click to
     browse — and it fills that position on the live page. Use landscape shots at 2000px wide or
     larger; they are resized and converted automatically, so upload the best original you have.
+    Each product in the Products group can carry up to {MAX_GALLERY_POSITIONS} photographs, which
+    the live site cycles through automatically.
   </p>
 
   {

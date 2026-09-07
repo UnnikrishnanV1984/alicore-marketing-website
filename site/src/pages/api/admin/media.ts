@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 import { serviceClient, mediaUrl } from '../../../lib/supabase';
-import { slotPath, VARIANT_WIDTHS } from '../../../lib/media';
+import { slotPath, VARIANT_WIDTHS, MAX_GALLERY_POSITIONS } from '../../../lib/media';
 import { json, requireStaff, isResponse, purgeCloudflare } from '../../../lib/admin-api';
 
 export const prerender = false;
@@ -29,8 +29,12 @@ export const POST: APIRoute = async (context) => {
   const altText = String(form.get('altText') ?? '').slice(0, 300);
   const width = Number(form.get('width') ?? 0) || null;
   const height = Number(form.get('height') ?? 0) || null;
+  const position = Number(form.get('position') ?? 1) || 1;
 
   if (!slotId) return json({ error: 'No slot specified.' }, 400);
+  if (!Number.isInteger(position) || position < 1 || position > MAX_GALLERY_POSITIONS) {
+    return json({ error: `Position must be between 1 and ${MAX_GALLERY_POSITIONS}.` }, 400);
+  }
 
   try {
     const supabase = serviceClient(context.locals);
@@ -50,7 +54,7 @@ export const POST: APIRoute = async (context) => {
       const file = form.get(`variant_${w}`);
       if (!(file instanceof File)) continue;
 
-      const path = slotPath(slotId, w);
+      const path = slotPath(slotId, w, position);
       const { error } = await supabase.storage
         .from('media')
         .upload(path, file, { contentType: 'image/webp', upsert: true, cacheControl: '31536000' });
@@ -65,16 +69,18 @@ export const POST: APIRoute = async (context) => {
       return json({ error: 'No image data was received.' }, 400);
     }
 
-    // Supersede the previous asset rather than deleting it -- the partial
-    // unique index allows exactly one active row per slot.
+    // Supersede the previous asset at this position rather than deleting it --
+    // the partial unique index allows exactly one active row per (slot, position).
     await supabase
       .from('media_assets')
       .update({ is_active: false })
       .eq('slot_id', slotId)
+      .eq('position', position)
       .eq('is_active', true);
 
     const { error: insertError } = await supabase.from('media_assets').insert({
       slot_id: slotId,
+      position,
       variants,
       width,
       height,
@@ -87,10 +93,37 @@ export const POST: APIRoute = async (context) => {
     // Stable paths mean the old file is cached at the edge under the same URL.
     await purgeCloudflare(context.locals, purge);
 
-    return json({ ok: true, slotId });
+    return json({ ok: true, slotId, position });
   } catch (err) {
     console.error('[admin/media] upload failed', err);
     return json({ error: err instanceof Error ? err.message : 'Upload failed.' }, 500);
+  }
+};
+
+/** Remove a photograph from one position, leaving the rest of the gallery intact. */
+export const DELETE: APIRoute = async (context) => {
+  const staff = await requireStaff(context);
+  if (isResponse(staff)) return staff;
+
+  const url = new URL(context.request.url);
+  const slotId = url.searchParams.get('slotId') ?? '';
+  const position = Number(url.searchParams.get('position') ?? 1) || 1;
+
+  if (!slotId) return json({ error: 'No slot specified.' }, 400);
+
+  try {
+    const supabase = serviceClient(context.locals);
+    const { error } = await supabase
+      .from('media_assets')
+      .update({ is_active: false })
+      .eq('slot_id', slotId)
+      .eq('position', position)
+      .eq('is_active', true);
+    if (error) throw new Error(error.message);
+    return json({ ok: true, slotId, position });
+  } catch (err) {
+    console.error('[admin/media] delete failed', err);
+    return json({ error: err instanceof Error ? err.message : 'Could not remove the photograph.' }, 500);
   }
 };
 
@@ -99,13 +132,14 @@ export const PATCH: APIRoute = async (context) => {
   const staff = await requireStaff(context);
   if (isResponse(staff)) return staff;
 
-  let body: { slotId?: string; altText?: string };
+  let body: { slotId?: string; position?: number; altText?: string };
   try {
     body = await context.request.json();
   } catch {
     return json({ error: 'Malformed request.' }, 400);
   }
   if (!body.slotId) return json({ error: 'No slot specified.' }, 400);
+  const position = Number(body.position ?? 1) || 1;
 
   try {
     const supabase = serviceClient(context.locals);
@@ -113,6 +147,7 @@ export const PATCH: APIRoute = async (context) => {
       .from('media_assets')
       .update({ alt_text: (body.altText ?? '').slice(0, 300) })
       .eq('slot_id', body.slotId)
+      .eq('position', position)
       .eq('is_active', true);
     if (error) throw new Error(error.message);
     return json({ ok: true });

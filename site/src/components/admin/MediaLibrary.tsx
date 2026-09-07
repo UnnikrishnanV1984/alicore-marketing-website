@@ -1,13 +1,19 @@
 import { useState } from 'react';
 
+export type AdminSlotImage = {
+  position: number;
+  hasImage: boolean;
+  altText: string;
+  previewUrl: string | null;
+};
+
 export type AdminSlot = {
   id: string;
   groupTitle: string;
   title: string;
   placeholder: string;
-  hasImage: boolean;
-  altText: string;
-  previewUrl: string | null;
+  /** One entry for a single-image slot; up to 5 for a Products-group slot. */
+  images: AdminSlotImage[];
 };
 
 const WIDTHS = [640, 1280, 2000] as const;
@@ -49,6 +55,22 @@ async function makeVariants(file: File): Promise<{ blobs: Map<number, Blob>; w: 
   return result;
 }
 
+function updateImage(
+  slots: AdminSlot[],
+  slotId: string,
+  position: number,
+  patch: Partial<AdminSlotImage>,
+): AdminSlot[] {
+  return slots.map((s) =>
+    s.id !== slotId
+      ? s
+      : {
+          ...s,
+          images: s.images.map((img) => (img.position === position ? { ...img, ...patch } : img)),
+        },
+  );
+}
+
 export default function MediaLibrary({ slots }: { slots: AdminSlot[] }) {
   const [state, setState] = useState(slots);
   const [busy, setBusy] = useState<string | null>(null);
@@ -68,13 +90,15 @@ export default function MediaLibrary({ slots }: { slots: AdminSlot[] }) {
   const [needsPublish, setNeedsPublish] = useState(false);
 
   const groups = Array.from(new Set(state.map((s) => s.groupTitle)));
+  const busyKey = (slotId: string, position: number) => `${slotId}:${position}`;
 
-  async function upload(slot: AdminSlot, file: File) {
+  async function upload(slot: AdminSlot, image: AdminSlotImage, file: File) {
     if (!file.type.startsWith('image/')) {
       setError('That is not an image file.');
       return;
     }
-    setBusy(slot.id);
+    const key = busyKey(slot.id, image.position);
+    setBusy(key);
     setError(null);
 
     try {
@@ -82,7 +106,8 @@ export default function MediaLibrary({ slots }: { slots: AdminSlot[] }) {
 
       const form = new FormData();
       form.append('slotId', slot.id);
-      form.append('altText', slot.altText || '');
+      form.append('position', String(image.position));
+      form.append('altText', image.altText || '');
       form.append('width', String(w));
       form.append('height', String(h));
       for (const [width, blob] of blobs) {
@@ -96,11 +121,10 @@ export default function MediaLibrary({ slots }: { slots: AdminSlot[] }) {
       }
 
       const preview = URL.createObjectURL(blobs.get(640)!);
-      setState((prev) =>
-        prev.map((s) => (s.id === slot.id ? { ...s, hasImage: true, previewUrl: preview } : s)),
-      );
+      const wasEmpty = !image.hasImage;
+      setState((prev) => updateImage(prev, slot.id, image.position, { hasImage: true, previewUrl: preview }));
 
-      if (!slot.hasImage) {
+      if (wasEmpty) {
         setNeedsPublish(true);
         setNotice(null);
       }
@@ -111,13 +135,36 @@ export default function MediaLibrary({ slots }: { slots: AdminSlot[] }) {
     }
   }
 
-  async function saveAlt(slotId: string, altText: string) {
-    setState((prev) => prev.map((s) => (s.id === slotId ? { ...s, altText } : s)));
+  async function removeImage(slot: AdminSlot, image: AdminSlotImage) {
+    const key = busyKey(slot.id, image.position);
+    setBusy(key);
+    setError(null);
+    try {
+      const res = await fetch(
+        `/api/admin/media?slotId=${encodeURIComponent(slot.id)}&position=${image.position}`,
+        { method: 'DELETE' },
+      );
+      if (!res.ok) {
+        const b = (await res.json().catch(() => ({}))) as { error?: string };
+        throw new Error(b.error ?? 'Could not remove the photograph.');
+      }
+      setState((prev) => updateImage(prev, slot.id, image.position, { hasImage: false, previewUrl: null }));
+      setNeedsPublish(true);
+      setNotice(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Could not remove the photograph.');
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function saveAlt(slotId: string, position: number, altText: string) {
+    setState((prev) => updateImage(prev, slotId, position, { altText }));
     try {
       await fetch('/api/admin/media', {
         method: 'PATCH',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ slotId, altText }),
+        body: JSON.stringify({ slotId, position, altText }),
       });
     } catch {
       setError('Could not save the description.');
@@ -141,13 +188,15 @@ export default function MediaLibrary({ slots }: { slots: AdminSlot[] }) {
     }
   }
 
-  const filled = state.filter((s) => s.hasImage).length;
+  const totalPlacements = state.reduce((n, s) => n + s.images.length, 0);
+  const filledPlacements = state.reduce((n, s) => n + s.images.filter((i) => i.hasImage).length, 0);
 
   return (
     <>
       <div className="al-media__progress">
-        <strong>{filled}</strong> of <strong>{state.length}</strong> placements have a photograph.
-        {filled < state.length && ' Empty slots show an art-direction note on the live site.'}
+        <strong>{filledPlacements}</strong> of <strong>{totalPlacements}</strong> placements have a
+        photograph.
+        {filledPlacements < totalPlacements && ' Empty placements show an art-direction note on the live site.'}
       </div>
 
       {error && <div className="al-admin-error" role="alert">{error}</div>}
@@ -155,9 +204,9 @@ export default function MediaLibrary({ slots }: { slots: AdminSlot[] }) {
 
       {needsPublish && (
         <div className="al-set__notice" role="status">
-          A photograph has been added to a placement that was empty. Press{' '}
+          A photograph was added to or removed from a placement that was empty or full. Press{' '}
           <strong>Publish</strong> below to put it on the public site — replacing a photograph
-          that was already there goes live on its own, but filling an empty placement does not.
+          that was already there goes live on its own, but filling or emptying a placement does not.
         </div>
       )}
 
@@ -165,59 +214,91 @@ export default function MediaLibrary({ slots }: { slots: AdminSlot[] }) {
         <section className="al-media__group" key={group}>
           <div className="al-media__grouphead">
             <h2>{group}</h2>
-            <span>{state.filter((s) => s.groupTitle === group && s.hasImage).length} / {state.filter((s) => s.groupTitle === group).length} filled</span>
+            <span>
+              {state.filter((s) => s.groupTitle === group).reduce((n, s) => n + s.images.filter((i) => i.hasImage).length, 0)} /{' '}
+              {state.filter((s) => s.groupTitle === group).reduce((n, s) => n + s.images.length, 0)} filled
+            </span>
           </div>
 
-          <div className="al-media__grid">
+          <div className="al-media__products">
             {state
               .filter((s) => s.groupTitle === group)
               .map((slot) => (
-                <div className="al-media__item" key={slot.id}>
-                  <label
-                    className={`al-media__drop${dragging === slot.id ? ' is-dragging' : ''}${
-                      busy === slot.id ? ' is-busy' : ''
-                    }`}
-                    onDragOver={(e) => {
-                      e.preventDefault();
-                      setDragging(slot.id);
-                    }}
-                    onDragLeave={() => setDragging(null)}
-                    onDrop={(e) => {
-                      e.preventDefault();
-                      setDragging(null);
-                      const f = e.dataTransfer.files?.[0];
-                      if (f) upload(slot, f);
-                    }}
-                  >
-                    <input
-                      type="file"
-                      accept="image/*"
-                      hidden
-                      onChange={(e) => {
-                        const f = e.target.files?.[0];
-                        if (f) upload(slot, f);
-                        e.target.value = '';
-                      }}
-                    />
-                    {slot.previewUrl ? (
-                      <img src={slot.previewUrl} alt="" />
-                    ) : (
-                      <span className="al-media__note">{slot.placeholder}</span>
-                    )}
-                    {busy === slot.id && <span className="al-media__busy">Processing…</span>}
-                  </label>
+                <div className="al-media__product" key={slot.id}>
+                  <div className="al-media__producthead">
+                    <div className="al-media__title">{slot.title}</div>
+                    <div className="al-media__id">{slot.id}</div>
+                  </div>
 
-                  <div className="al-media__title">{slot.title}</div>
-                  <div className="al-media__id">{slot.id}</div>
+                  <div className="al-media__grid">
+                    {slot.images.map((image) => {
+                      const key = busyKey(slot.id, image.position);
+                      return (
+                        <div className="al-media__item" key={key}>
+                          <label
+                            className={`al-media__drop${dragging === key ? ' is-dragging' : ''}${
+                              busy === key ? ' is-busy' : ''
+                            }`}
+                            onDragOver={(e) => {
+                              e.preventDefault();
+                              setDragging(key);
+                            }}
+                            onDragLeave={() => setDragging(null)}
+                            onDrop={(e) => {
+                              e.preventDefault();
+                              setDragging(null);
+                              const f = e.dataTransfer.files?.[0];
+                              if (f) upload(slot, image, f);
+                            }}
+                          >
+                            <input
+                              type="file"
+                              accept="image/*"
+                              hidden
+                              onChange={(e) => {
+                                const f = e.target.files?.[0];
+                                if (f) upload(slot, image, f);
+                                e.target.value = '';
+                              }}
+                            />
+                            {image.previewUrl ? (
+                              <img src={image.previewUrl} alt="" />
+                            ) : (
+                              <span className="al-media__note">
+                                {slot.images.length > 1 ? `Photo ${image.position}` : slot.placeholder}
+                              </span>
+                            )}
+                            {busy === key && <span className="al-media__busy">Processing…</span>}
+                          </label>
 
-                  <input
-                    className="al-media__alt"
-                    defaultValue={slot.altText}
-                    placeholder="Describe this image (for accessibility and SEO)"
-                    onBlur={(e) => {
-                      if (e.target.value !== slot.altText) saveAlt(slot.id, e.target.value);
-                    }}
-                  />
+                          {slot.images.length > 1 && (
+                            <div className="al-media__posrow">
+                              <span>Photo {image.position}</span>
+                              {image.hasImage && (
+                                <button
+                                  type="button"
+                                  className="al-media__remove"
+                                  onClick={() => removeImage(slot, image)}
+                                  disabled={busy === key}
+                                >
+                                  Remove
+                                </button>
+                              )}
+                            </div>
+                          )}
+
+                          <input
+                            className="al-media__alt"
+                            defaultValue={image.altText}
+                            placeholder="Describe this image (for accessibility and SEO)"
+                            onBlur={(e) => {
+                              if (e.target.value !== image.altText) saveAlt(slot.id, image.position, e.target.value);
+                            }}
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               ))}
           </div>
@@ -236,7 +317,7 @@ export default function MediaLibrary({ slots }: { slots: AdminSlot[] }) {
         </button>
         <span className="al-toolbar__note">
           {needsPublish
-            ? 'A newly filled placement is waiting to be published.'
+            ? 'A newly filled or emptied placement is waiting to be published.'
             : 'Everything here is already on the site.'}
         </span>
       </div>

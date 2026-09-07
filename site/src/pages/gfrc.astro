@@ -5,13 +5,13 @@ import MaterialSection from '../components/sections/MaterialSection.astro';
 import SlotImage from '../components/ui/SlotImage.astro';
 import Eyebrow from '../components/ui/Eyebrow.astro';
 import CtaBand from '../components/sections/CtaBand.astro';
-import { loadSlotImages } from '../lib/media';
+import { loadSlotImages, loadSlotGalleries } from '../lib/media';
 import { gfrc } from '../content/sections';
 import { products } from '../content/products';
 import { meta } from '../content/seo';
 import { site } from '../content/site';
 
-const slots = await loadSlotImages();
+const [slots, galleries] = await Promise.all([loadSlotImages(), loadSlotGalleries()]);
 const gfrcProducts = products.filter((p) => p.cat === 'GFRC');
 
 const jsonLd = [
@@ -67,7 +67,7 @@ const jsonLd = [
                 <SlotImage
                   slot={p.slot}
                   placeholder={p.shot}
-                  image={slots.get(p.slot)}
+                  images={galleries.get(p.slot)}
                   ratio="4/3"
                   sizes="(max-width: 640px) 100vw, 33vw"
                 />

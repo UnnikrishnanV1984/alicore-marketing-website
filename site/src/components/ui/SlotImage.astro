@@ -16,6 +16,13 @@ interface Props {
   /** Art-direction note from media_slots.placeholder. */
   placeholder: string;
   image?: SlotImage;
+  /**
+   * A slot's full photograph set (up to 5), ordered by position. When more
+   * than one is present the slot cycles through them with a crossfade instead
+   * of rendering a single static <img>. Takes precedence over `image` --
+   * pass whichever one the caller loaded.
+   */
+  images?: SlotImage[];
   /** CSS aspect-ratio, e.g. "4/3". Reserves space so CLS stays at 0. */
   ratio?: string;
   /** Above-the-fold images load eagerly and get fetchpriority=high. */
@@ -29,6 +36,7 @@ const {
   slot,
   placeholder,
   image,
+  images,
   ratio = '4/3',
   priority = false,
   sizes = '(max-width: 768px) 100vw, 50vw',
@@ -36,7 +44,11 @@ const {
   class: className = '',
 } = Astro.props;
 
-const alt = image?.alt ?? '';
+const list = images && images.length > 0 ? images : image ? [image] : [];
+const isGallery = list.length > 1;
+/** Seconds each photograph holds before crossfading to the next. */
+const HOLD_SECONDS = 4.5;
+const duration = list.length * HOLD_SECONDS;
 ---
 
 <div
@@ -45,23 +57,44 @@ const alt = image?.alt ?? '';
   data-slot={slot}
 >
   {
-    image ? (
-      <img
-        src={image.fallback}
-        srcset={srcSet(image)}
-        sizes={sizes}
-        alt={alt}
-        width={image.width ?? undefined}
-        height={image.height ?? undefined}
-        loading={priority ? 'eager' : 'lazy'}
-        decoding={priority ? 'sync' : 'async'}
-        fetchpriority={priority ? 'high' : 'auto'}
-      />
-    ) : (
+    list.length === 0 ? (
       <div class="al-slot__empty">
         <span class="al-slot__mark" aria-hidden="true" />
         <span class="al-slot__note">{placeholder}</span>
       </div>
+    ) : isGallery ? (
+      <div
+        class="al-slot__gallery"
+        style={`--al-cycle-duration:${duration}s;--al-cycle-name:al-slot-cycle-${list.length}`}
+      >
+        {list.map((img, i) => (
+          <img
+            class="al-slot__cycle"
+            style={`--al-cycle-delay:${i * HOLD_SECONDS}s`}
+            src={img.fallback}
+            srcset={srcSet(img)}
+            sizes={sizes}
+            alt={img.alt}
+            width={img.width ?? undefined}
+            height={img.height ?? undefined}
+            loading={priority && i === 0 ? 'eager' : 'lazy'}
+            decoding={priority && i === 0 ? 'sync' : 'async'}
+            fetchpriority={priority && i === 0 ? 'high' : 'auto'}
+          />
+        ))}
+      </div>
+    ) : (
+      <img
+        src={list[0].fallback}
+        srcset={srcSet(list[0])}
+        sizes={sizes}
+        alt={list[0].alt}
+        width={list[0].width ?? undefined}
+        height={list[0].height ?? undefined}
+        loading={priority ? 'eager' : 'lazy'}
+        decoding={priority ? 'sync' : 'async'}
+        fetchpriority={priority ? 'high' : 'auto'}
+      />
     )
   }
 </div>
@@ -82,6 +115,73 @@ const alt = image?.alt ?? '';
     width: 100%;
     height: 100%;
     object-fit: cover;
+  }
+
+  /* --- cycling gallery ---------------------------------------------------
+     Pure-CSS crossfade: every photograph plays the same keyframe timeline,
+     just staggered by its own position (--al-cycle-delay). The percentages
+     below are fractions of the *whole* loop, so they hold regardless of how
+     many photographs are in the set -- with N images the effective on-screen
+     time per image is duration / N either way. */
+  .al-slot__gallery {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .al-slot__cycle {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    animation-name: var(--al-cycle-name, al-slot-cycle-5);
+    animation-duration: var(--al-cycle-duration, 20s);
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    animation-delay: var(--al-cycle-delay, 0s);
+  }
+
+  /* One keyframe set per photograph count (2-5, the admin-enforced max).
+     Each holds fully opaque for most of its 1/N share of the loop and fades
+     at the edges, so pacing stays even whether a category has 2 photographs
+     or 5 -- a single keyframe tuned for one N would race or stall for the
+     others. */
+  @keyframes al-slot-cycle-2 {
+    0%, 100% { opacity: 0; }
+    6% { opacity: 1; }
+    44% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+  @keyframes al-slot-cycle-3 {
+    0%, 100% { opacity: 0; }
+    5% { opacity: 1; }
+    28% { opacity: 1; }
+    33% { opacity: 0; }
+  }
+  @keyframes al-slot-cycle-4 {
+    0%, 100% { opacity: 0; }
+    4% { opacity: 1; }
+    21% { opacity: 1; }
+    25% { opacity: 0; }
+  }
+  @keyframes al-slot-cycle-5 {
+    0%, 100% { opacity: 0; }
+    4% { opacity: 1; }
+    16% { opacity: 1; }
+    20% { opacity: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .al-slot__cycle {
+      animation: none;
+      opacity: 0;
+    }
+    /* With motion disabled, hold the first photograph in the set still. */
+    .al-slot__cycle:first-child {
+      opacity: 1;
+    }
   }
 
   .al-slot__empty {

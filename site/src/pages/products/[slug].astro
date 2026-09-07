@@ -4,7 +4,7 @@ import PageHero from '../../components/ui/PageHero.astro';
 import SlotImage from '../../components/ui/SlotImage.astro';
 import Eyebrow from '../../components/ui/Eyebrow.astro';
 import CtaBand from '../../components/sections/CtaBand.astro';
-import { loadSlotImages } from '../../lib/media';
+import { loadSlotGalleries } from '../../lib/media';
 import { products } from '../../content/products';
 import { productMeta } from '../../content/seo';
 import { site } from '../../content/site';
@@ -17,7 +17,7 @@ export function getStaticPaths() {
 }
 
 const { product } = Astro.props;
-const slots = await loadSlotImages();
+const slots = await loadSlotGalleries();
 const related = products.filter((p) => p.slug !== product.slug).slice(0, 3);
 
 const jsonLd = [
@@ -71,7 +71,7 @@ const jsonLd = [
         <SlotImage
           slot={product.slot}
           placeholder={product.shot}
-          image={slots.get(product.slot)}
+          images={slots.get(product.slot)}
           ratio="4/3"
           priority
           sizes="(max-width: 900px) 100vw, 52vw"
@@ -101,7 +101,7 @@ const jsonLd = [
                 <SlotImage
                   slot={r.slot}
                   placeholder={r.shot}
-                  image={slots.get(r.slot)}
+                  images={slots.get(r.slot)}
                   ratio="4/3"
                   sizes="(max-width: 640px) 100vw, 33vw"
                 />
