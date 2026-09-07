@@ -14,6 +14,8 @@ export type AdminSlot = {
   placeholder: string;
   /** One entry for a single-image slot; up to 5 for a Products-group slot. */
   images: AdminSlotImage[];
+  /** Set only for a Projects-group slot backed by a row in `projects`. */
+  project: { id: string; isPublished: boolean } | null;
 };
 
 const WIDTHS = [640, 1280, 2000] as const;
@@ -173,6 +175,38 @@ export default function MediaLibrary({ slots }: { slots: AdminSlot[] }) {
     }
   }
 
+  async function toggleProjectVisibility(slot: AdminSlot) {
+    if (!slot.project) return;
+    const next = !slot.project.isPublished;
+    const key = `project:${slot.project.id}`;
+    setBusy(key);
+    setError(null);
+    try {
+      const res = await fetch('/api/admin/project-visibility', {
+        method: 'PATCH',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ id: slot.project.id, isPublished: next }),
+      });
+      if (!res.ok) {
+        const b = (await res.json().catch(() => ({}))) as { error?: string };
+        throw new Error(b.error ?? 'Could not change visibility.');
+      }
+      setState((prev) =>
+        prev.map((s) => (s.id === slot.id ? { ...s, project: { ...s.project!, isPublished: next } } : s)),
+      );
+      // The standalone /projects page is server-rendered and picks this up
+      // immediately, but the home page's Projects section is prerendered --
+      // same asymmetry as everywhere else a rebuild-required change meets a
+      // live one.
+      setNeedsPublish(true);
+      setNotice(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Could not change visibility.');
+    } finally {
+      setBusy(null);
+    }
+  }
+
   async function saveAlt(slotId: string, position: number, altText: string) {
     setState((prev) => updateImage(prev, slotId, position, { altText }));
     try {
@@ -249,14 +283,31 @@ export default function MediaLibrary({ slots }: { slots: AdminSlot[] }) {
             </span>
           </div>
 
-          <div className="al-media__products">
+          <div className={`al-media__products${group === 'Projects' ? ' al-media__products--row' : ''}`}>
             {state
               .filter((s) => s.groupTitle === group)
               .map((slot) => (
                 <div className="al-media__product" key={slot.id}>
                   <div className="al-media__producthead">
-                    <div className="al-media__title">{slot.title}</div>
-                    <div className="al-media__id">{slot.id}</div>
+                    <div>
+                      <div className="al-media__title">{slot.title}</div>
+                      <div className="al-media__id">{slot.id}</div>
+                    </div>
+                    {slot.project && (
+                      <button
+                        type="button"
+                        className={`al-media__vis${slot.project.isPublished ? ' is-on' : ''}`}
+                        onClick={() => toggleProjectVisibility(slot)}
+                        disabled={busy === `project:${slot.project.id}`}
+                        title={
+                          slot.project.isPublished
+                            ? 'Visible on the public site — click to hide'
+                            : 'Hidden from the public site — click to show'
+                        }
+                      >
+                        {slot.project.isPublished ? 'Visible' : 'Hidden'}
+                      </button>
+                    )}
                   </div>
 
                   <div className="al-media__grid">

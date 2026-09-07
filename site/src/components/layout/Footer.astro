@@ -4,6 +4,7 @@ import { loadContact } from '../../lib/settings';
 
 const contact = await loadContact(Astro.locals);
 const { hasEmail, hasAddress, social } = contact;
+const quickLinks = footerQuickLinks.filter((l) => l.href !== '/projects' || contact.showProjects);
 
 ---
 
@@ -19,7 +20,7 @@ const { hasEmail, hasAddress, social } = contact;
       <div>
         <h2 class="al-footer__head">Quick Links</h2>
         <div class="al-footer__links">
-          {footerQuickLinks.map((l) => <a href={l.href}>{l.label}</a>)}
+          {quickLinks.map((l) => <a href={l.href}>{l.label}</a>)}
         </div>
       </div>
 

@@ -38,6 +38,7 @@ const settingsSchema = z.object({
   facebook: optionalUrl,
   linkedin: optionalUrl,
   youtube: optionalUrl,
+  showProjects: z.boolean(),
   notifyEmails: z
     .string()
     .trim()
@@ -78,6 +79,7 @@ export const PATCH: APIRoute = async (context) => {
         facebook: d.facebook,
         linkedin: d.linkedin,
         youtube: d.youtube,
+        show_projects: d.showProjects,
         notify_emails: d.notifyEmails,
         updated_by: staff.id,
       })

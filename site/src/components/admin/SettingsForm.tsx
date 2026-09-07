@@ -10,11 +10,14 @@ export type AdminSettings = {
   facebook: string;
   linkedin: string;
   youtube: string;
+  showProjects: boolean;
   notifyEmails: string;
 };
 
+type StringKey = Exclude<keyof AdminSettings, 'showProjects'>;
+
 type Field = {
-  key: keyof AdminSettings;
+  key: StringKey;
   label: string;
   hint: string;
   placeholder: string;
@@ -149,6 +152,28 @@ export default function SettingsForm({ initial }: { initial: AdminSettings }) {
           that goes nowhere.
         </p>
         <div className="al-set__grid">{SOCIAL.map(renderField)}</div>
+      </section>
+
+      <section className="al-set__group">
+        <div className="al-set__grouphead">
+          <h2>Site sections</h2>
+          <span className="al-set__flag">Built into the pages — needs Publish</span>
+        </div>
+        <label className="al-set__check">
+          <input
+            type="checkbox"
+            checked={values.showProjects}
+            onChange={(e) => {
+              setValues((p) => ({ ...p, showProjects: e.target.checked }));
+              setNotice(null);
+            }}
+          />
+          <span>
+            Show the Projects section — the home page section, the header and footer links, and
+            the standalone /projects page. Individual projects are shown or hidden separately, in
+            the Image Library's Projects group or the Projects tab.
+          </span>
+        </label>
       </section>
 
       <section className="al-set__group">

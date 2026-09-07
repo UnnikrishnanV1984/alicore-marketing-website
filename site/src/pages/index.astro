@@ -13,6 +13,7 @@ import ContactSection from '../components/sections/ContactSection.astro';
 
 import { loadSlotImages, loadSlotGalleries } from '../lib/media';
 import { loadPublishedProjects } from '../lib/projects';
+import { loadContact } from '../lib/settings';
 import { gfrc, frp } from '../content/sections';
 import { meta } from '../content/seo';
 
@@ -21,10 +22,11 @@ import { meta } from '../content/seo';
  * Each section's CTA now deep-links to its standalone page as well as
  * supporting in-page anchors (plan section 3).
  */
-const [slots, galleries, projects] = await Promise.all([
+const [slots, galleries, projects, contact] = await Promise.all([
   loadSlotImages(),
   loadSlotGalleries(),
   loadPublishedProjects(),
+  loadContact(Astro.locals),
 ]);
 ---
 
@@ -67,7 +69,7 @@ const [slots, galleries, projects] = await Promise.all([
 
   <WhySection />
   <CustomSection />
-  <ProjectsSection projects={projects} />
+  {contact.showProjects && <ProjectsSection projects={projects} />}
   <ManufacturingSection image={slots.get('alicore-factory')} />
   <IndustriesSection />
   <ContactSection />

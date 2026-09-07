@@ -12,6 +12,7 @@ interface Props {
 }
 
 const { scrollSpy = false, active } = Astro.props;
+const visibleNav = nav.filter((n) => n.id !== 'projects' || contact.showProjects);
 ---
 
 <header class="al-header" data-scrollspy={scrollSpy ? 'true' : undefined}>
@@ -26,7 +27,7 @@ const { scrollSpy = false, active } = Astro.props;
 
     <nav class="al-nav" aria-label="Primary">
       {
-        nav.map((n) => (
+        visibleNav.map((n) => (
           <a
             href={n.href}
             class="al-nav__link"
@@ -67,7 +68,7 @@ const { scrollSpy = false, active } = Astro.props;
   hidden
 >
   <nav class="al-sheet__nav">
-    {nav.map((n) => <a href={n.href}>{n.label}</a>)}
+    {visibleNav.map((n) => <a href={n.href}>{n.label}</a>)}
   </nav>
   <div class="al-sheet__actions">
     <a class="al-sheet__cta" href="/contact">Request a Quote</a>

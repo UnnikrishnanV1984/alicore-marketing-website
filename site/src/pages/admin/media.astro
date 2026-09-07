@@ -19,10 +19,12 @@ let loadError: string | null = null;
 try {
   const supabase = serviceClient(Astro.locals);
 
-  const [{ data: slotRows, error: slotErr }, { data: assetRows }] = await Promise.all([
-    supabase.from('media_slots').select('*').order('sort_order'),
-    supabase.from('media_assets').select('slot_id, position, alt_text').eq('is_active', true),
-  ]);
+  const [{ data: slotRows, error: slotErr }, { data: assetRows }, { data: projectRows }] =
+    await Promise.all([
+      supabase.from('media_slots').select('*').order('sort_order'),
+      supabase.from('media_assets').select('slot_id, position, alt_text').eq('is_active', true),
+      supabase.from('projects').select('id, image_path, is_published').not('image_path', 'is', null),
+    ]);
 
   if (slotErr) throw new Error(slotErr.message);
 
@@ -31,6 +33,10 @@ try {
     if (!active.has(a.slot_id)) active.set(a.slot_id, new Map());
     active.get(a.slot_id)!.set(a.position ?? 1, a.alt_text ?? '');
   }
+
+  // One project per slot, per the seed data (supabase/migrations/0002_seed.sql)
+  // -- the Projects group's "visible on site" toggle rides on this.
+  const projectBySlot = new Map((projectRows ?? []).map((p) => [p.image_path as string, p]));
 
   slots = (slotRows ?? []).map((s) => {
     const maxPositions = s.group_title === GALLERY_GROUP ? MAX_GALLERY_POSITIONS : 1;
@@ -51,12 +57,15 @@ try {
       };
     });
 
+    const project = projectBySlot.get(s.id);
+
     return {
       id: s.id,
       groupTitle: s.group_title,
       title: s.title,
       placeholder: s.placeholder,
       images,
+      project: project ? { id: project.id, isPublished: project.is_published } : null,
     };
   });
 } catch (err) {

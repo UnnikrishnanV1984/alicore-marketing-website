@@ -43,6 +43,8 @@ export type SiteSettings = {
   facebook: string;
   linkedin: string;
   youtube: string;
+  /** Hides the Projects section, its header nav link and footer link sitewide. */
+  showProjects: boolean;
 };
 
 /** Everything a template needs, with hrefs and placeholders already resolved. */
@@ -71,6 +73,7 @@ function defaults(): SiteSettings {
     facebook: '',
     linkedin: '',
     youtube: '',
+    showProjects: true,
   };
 }
 
@@ -120,7 +123,9 @@ export async function loadContact(locals?: unknown): Promise<ResolvedContact> {
     if (supabase) {
       const { data, error } = await supabase
         .from('site_settings')
-        .select('phone_display, phone_e164, whatsapp_e164, email, address, instagram, facebook, linkedin, youtube')
+        .select(
+          'phone_display, phone_e164, whatsapp_e164, email, address, instagram, facebook, linkedin, youtube, show_projects',
+        )
         .eq('id', true)
         .maybeSingle();
 
@@ -140,6 +145,8 @@ export async function loadContact(locals?: unknown): Promise<ResolvedContact> {
         base.facebook = data.facebook || '';
         base.linkedin = data.linkedin || '';
         base.youtube = data.youtube || '';
+        // Nullish, not ||: `false` is a meaningful value here, not "unset".
+        base.showProjects = data.show_projects ?? base.showProjects;
       }
     }
   } catch (err) {
@@ -177,6 +184,7 @@ export async function loadSettingsForAdmin(locals: unknown): Promise<SiteSetting
         facebook: data.facebook ?? '',
         linkedin: data.linkedin ?? '',
         youtube: data.youtube ?? '',
+        showProjects: data.show_projects ?? base.showProjects,
         notifyEmails: data.notify_emails ?? '',
       };
     }

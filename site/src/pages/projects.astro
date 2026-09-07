@@ -4,6 +4,7 @@ import PageHero from '../components/ui/PageHero.astro';
 import ProjectsSection from '../components/sections/ProjectsSection.astro';
 import CtaBand from '../components/sections/CtaBand.astro';
 import { loadPublishedProjects } from '../lib/projects';
+import { loadContact } from '../lib/settings';
 import { meta } from '../content/seo';
 
 /**
@@ -12,6 +13,11 @@ import { meta } from '../content/seo';
  * budget note in plan section 1.
  */
 export const prerender = false;
+
+const contact = await loadContact(Astro.locals);
+if (!contact.showProjects) {
+  return Astro.redirect('/', 302);
+}
 
 const projects = await loadPublishedProjects(Astro.locals);
 
