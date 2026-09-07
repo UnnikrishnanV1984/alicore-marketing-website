@@ -232,6 +232,44 @@
   color: rgb(246 244 239 / 0.45);
 }
 
+/* Image Library's Publish button: floating, top right, so it stays reachable
+   without scrolling back up past a long list of product placements. */
+.al-toolbar--floating {
+  position: fixed;
+  top: clamp(16px, 2.4vw, 28px);
+  right: clamp(16px, 2.4vw, 28px);
+  z-index: 100;
+  margin-top: 0;
+  gap: 0;
+}
+
+.al-toolbar--floating .al-admin__btn {
+  position: relative;
+  box-shadow: 0 10px 30px rgb(12 11 10 / 0.45);
+}
+
+.al-toolbar__dot {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--color-gold);
+  border: 2px solid var(--color-ink);
+}
+
+@media (max-width: 640px) {
+  .al-toolbar--floating {
+    position: static;
+    margin-top: 26px;
+  }
+
+  .al-toolbar--floating .al-admin__btn {
+    width: 100%;
+  }
+}
+
 /* --- empty state -------------------------------------------------------- */
 .al-empty {
   margin-top: 36px;

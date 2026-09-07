@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 export type AdminSlotImage = {
   position: number;
@@ -92,12 +92,26 @@ export default function MediaLibrary({ slots }: { slots: AdminSlot[] }) {
   const groups = Array.from(new Set(state.map((s) => s.groupTitle)));
   const busyKey = (slotId: string, position: number) => `${slotId}:${position}`;
 
+  /**
+   * A second upload landing on the same placement before the first has
+   * finished doesn't just show a flicker -- both write to the same stable
+   * storage path, so whichever finishes last silently overwrites the other.
+   * That is how a good, full-resolution photograph got clobbered by a stray
+   * duplicate drop/select once in production. `busy` (React state) isn't
+   * enough to prevent it: two calls fired back-to-back both read `busy` as
+   * null before either state update commits. This ref is a synchronous lock
+   * that the second call sees immediately.
+   */
+  const uploading = useRef(new Set<string>());
+
   async function upload(slot: AdminSlot, image: AdminSlotImage, file: File) {
     if (!file.type.startsWith('image/')) {
       setError('That is not an image file.');
       return;
     }
     const key = busyKey(slot.id, image.position);
+    if (uploading.current.has(key)) return;
+    uploading.current.add(key);
     setBusy(key);
     setError(null);
 
@@ -131,6 +145,7 @@ export default function MediaLibrary({ slots }: { slots: AdminSlot[] }) {
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Upload failed.');
     } finally {
+      uploading.current.delete(key);
       setBusy(null);
     }
   }
@@ -193,6 +208,19 @@ export default function MediaLibrary({ slots }: { slots: AdminSlot[] }) {
 
   return (
     <>
+      <div className="al-toolbar al-toolbar--floating">
+        <button
+          type="button"
+          className="al-admin__btn"
+          onClick={publish}
+          disabled={publishing}
+          title="Rebuild the public site"
+        >
+          {publishing ? 'Starting…' : 'Publish to the live site'}
+        </button>
+        {needsPublish && <span className="al-toolbar__dot" aria-hidden="true" />}
+      </div>
+
       <div className="al-media__progress">
         <strong>{filledPlacements}</strong> of <strong>{totalPlacements}</strong> placements have a
         photograph.
@@ -205,8 +233,9 @@ export default function MediaLibrary({ slots }: { slots: AdminSlot[] }) {
       {needsPublish && (
         <div className="al-set__notice" role="status">
           A photograph was added to or removed from a placement that was empty or full. Press{' '}
-          <strong>Publish</strong> below to put it on the public site — replacing a photograph
-          that was already there goes live on its own, but filling or emptying a placement does not.
+          <strong>Publish to the live site</strong> (top right) to put it on the public site —
+          replacing a photograph that was already there goes live on its own, but filling or
+          emptying a placement does not.
         </div>
       )}
 
@@ -304,23 +333,6 @@ export default function MediaLibrary({ slots }: { slots: AdminSlot[] }) {
           </div>
         </section>
       ))}
-
-      <div className="al-toolbar">
-        <button
-          type="button"
-          className="al-admin__btn"
-          onClick={publish}
-          disabled={publishing}
-          title="Rebuild the public site"
-        >
-          {publishing ? 'Starting…' : 'Publish to the live site'}
-        </button>
-        <span className="al-toolbar__note">
-          {needsPublish
-            ? 'A newly filled or emptied placement is waiting to be published.'
-            : 'Everything here is already on the site.'}
-        </span>
-      </div>
     </>
   );
 }
