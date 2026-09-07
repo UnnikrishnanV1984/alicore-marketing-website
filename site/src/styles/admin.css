@@ -232,14 +232,20 @@
   color: rgb(246 244 239 / 0.45);
 }
 
-/* Image Library's Publish button: floating, top right, so it stays reachable
-   without scrolling back up past a long list of product placements. */
+/* Image Library's Publish button: right-aligned and stuck to the top of the
+   scrollable content area, so it stays reachable without scrolling back up
+   past a long list of product placements. `sticky` rather than `fixed` --
+   fixed positions relative to the viewport, which put it on top of the
+   page header's own Sign Out link; sticky keeps it inside the content flow,
+   pinned just below the (also sticky) header once you scroll past it. */
 .al-toolbar--floating {
-  position: fixed;
-  top: clamp(16px, 2.4vw, 28px);
-  right: clamp(16px, 2.4vw, 28px);
-  z-index: 100;
+  position: sticky;
+  top: clamp(76px, 9vh, 96px);
+  z-index: 30;
   margin-top: 0;
+  margin-bottom: 26px;
+  display: flex;
+  justify-content: flex-end;
   gap: 0;
 }
 
