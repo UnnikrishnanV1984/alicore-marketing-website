@@ -8,10 +8,11 @@ import type { SlotImage as SlotImageType } from '../../lib/media';
 
 interface Props {
   /**
-   * The alicore-about gallery, ordered by position: [0]=Centre (the original
-   * photo, must render uncropped), [1]=unused, [2]=Right (may crop).
-   * Rendered as two panels: the Right photo on the left, the original photo
-   * on the right, letterboxed rather than cropped.
+   * The alicore-about gallery, ordered by position: [0]=Centre (the main
+   * photo), [1]=unused, [2]=Right (secondary photo). Rendered as two panels,
+   * both cropped to fill (object-fit: cover) since the stage is full-bleed
+   * and its box shape varies with viewport width -- no fixed photo aspect
+   * ratio can fill it edge-to-edge on every screen without cropping.
    */
   images: SlotImageType[];
   /** h2 on the home page; the /about page supplies its own h1. */
@@ -21,7 +22,6 @@ interface Props {
 
 const { images, headingLevel = 'h2', showCta = true } = Astro.props;
 const Heading = headingLevel;
-// Two panels: [right photo] (may crop) then [centre/original photo] (must not crop).
 const ordered = [images[2], images[0]];
 ---
 
@@ -34,7 +34,6 @@ const ordered = [images[2], images[0]];
     placeholder="Close-up: GFRC surface texture / finished panel"
     images={ordered}
     columns={2}
-    fits={['cover', 'contain']}
     align="left"
     ground="ink"
   >
