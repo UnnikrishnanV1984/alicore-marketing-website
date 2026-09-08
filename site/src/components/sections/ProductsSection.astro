@@ -107,17 +107,62 @@ const Heading = headingLevel;
      grid uses, since gold text would nearly disappear against a gold
      ground. */
   .al-material {
-    background: var(--color-gold);
+    position: relative;
+    /* A flat fill of --color-gold reads as mustard, not metal -- a real gold
+       surface has depth: it's lighter where light catches it, darker in the
+       recesses. This is that, as a static diagonal gradient rather than a
+       photographic texture, which would fight the site's flat, restrained
+       surfaces everywhere else. */
+    background: linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--color-gold) 65%, white 35%) 0%,
+      var(--color-gold) 24%,
+      color-mix(in srgb, var(--color-gold) 55%, black 45%) 48%,
+      var(--color-gold) 72%,
+      color-mix(in srgb, var(--color-gold) 70%, white 30%) 100%
+    );
     color: var(--color-ink);
     padding: 34px 32px 38px;
     display: flex;
     flex-direction: column;
     gap: 10px;
-    transition: background-color 0.25s var(--ease-premium);
+    overflow: hidden;
+    isolation: isolate;
+    transition: filter 0.25s var(--ease-premium);
+  }
+
+  /* The reflection: a soft diagonal band of light sitting above the gradient,
+     blended into it rather than laid flat on top -- soft-light keeps it
+     looking like a sheen on the surface instead of a white stripe. Static by
+     default; the sweep on hover is the one motion this tile gets. */
+  .al-material::before {
+    content: '';
+    position: absolute;
+    inset: -20% -40%;
+    background: linear-gradient(
+      115deg,
+      transparent 38%,
+      rgb(255 255 255 / 0.55) 50%,
+      transparent 62%
+    );
+    mix-blend-mode: soft-light;
+    transform: translateX(-16%);
+    transition: transform 0.7s var(--ease-premium);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .al-material:hover::before {
+    transform: translateX(16%);
   }
 
   .al-material:hover {
-    background: var(--color-gold-warm);
+    filter: brightness(1.06);
+  }
+
+  .al-material > * {
+    position: relative;
+    z-index: 1;
   }
 
   .al-material__label {
