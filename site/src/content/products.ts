@@ -185,14 +185,12 @@ export const productBySlug = (slug: string) => products.find((p) => p.slug === s
  */
 export const materialTiles = [
   {
-    label: 'Material 01',
     code: 'GFRC',
     href: '/gfrc',
     desc: 'Glass Fiber Reinforced Concrete — panels, jalis, cornices, columns and custom architectural forms.',
     cta: 'Explore GFRC',
   },
   {
-    label: 'Material 02',
     code: 'FRP',
     href: '/frp',
     desc: 'Fiber Reinforced Plastic — lightweight, corrosion-resistant elements for architectural applications.',

@@ -71,7 +71,7 @@ const src = (id: string, n: number, w: number) => `/hero/${id}-${n}-${w}.webp`;
 
   <div class="al-container al-hero__inner">
     <div class="al-hero__copy" data-hero-copy>
-      <Eyebrow label="Architectural Products Manufacturer" ground="dark" />
+      <Eyebrow label="Architectural Products Manufacturer" ground="light" />
       <h1 class="al-hero__title al-balance">
         Architectural Products. Engineered to <span class="al-hero__accent">Elevate</span>.
       </h1>
@@ -86,7 +86,7 @@ const src = (id: string, n: number, w: number) => `/hero/${id}-${n}-${w}.webp`;
       </p>
       <div class="al-hero__cta">
         <Button href="/products" variant="gold">Explore Products</Button>
-        <Button href="/contact" variant="outline" ground="dark">Request a Quote</Button>
+        <Button href="/contact" variant="outline" ground="light">Request a Quote</Button>
       </div>
     </div>
   </div>
@@ -228,13 +228,16 @@ const src = (id: string, n: number, w: number) => `/hero/${id}-${n}-${w}.webp`;
   /* No full-image scrim: the client wants the photograph wall at full
      brightness. The copy carries its own backdrop instead -- the same
      device MediaStage uses -- so legibility no longer depends on darkening
-     the picture behind it. */
+     the picture behind it. Light rather than dark, per the client: a frosted
+     near-white pane reads as "the words have a place to sit" without hiding
+     the photograph the way a solid dark card did. */
   .al-hero__copy {
     max-width: 640px;
-    background: rgb(18 17 15 / 0.62);
-    backdrop-filter: blur(14px);
+    background: rgb(246 244 239 / 0.82);
+    color: var(--color-ink);
+    backdrop-filter: blur(16px) saturate(1.15);
     padding: clamp(26px, 3vw, 40px) clamp(22px, 2.6vw, 36px);
-    box-shadow: 0 24px 60px rgb(18 17 15 / 0.34);
+    box-shadow: 0 24px 60px rgb(18 17 15 / 0.22);
   }
 
   /* Each element rises in turn once the page is ready. Scoped to [data-in],
@@ -276,7 +279,7 @@ const src = (id: string, n: number, w: number) => `/hero/${id}-${n}-${w}.webp`;
   }
 
   .al-hero__accent {
-    color: var(--color-gold);
+    color: var(--color-gold-ink);
   }
 
   .al-hero__lead {
@@ -284,7 +287,7 @@ const src = (id: string, n: number, w: number) => `/hero/${id}-${n}-${w}.webp`;
     max-width: 52ch;
     font-size: clamp(16px, 1.5vw, 19px);
     line-height: 1.6;
-    color: var(--color-on-dark-80);
+    color: var(--color-on-light-72);
     font-weight: 300;
   }
 
@@ -293,7 +296,7 @@ const src = (id: string, n: number, w: number) => `/hero/${id}-${n}-${w}.webp`;
     max-width: 62ch;
     font-size: 15px;
     line-height: 1.7;
-    color: var(--color-on-dark-55);
+    color: var(--color-on-light-55);
     font-weight: 300;
   }
 

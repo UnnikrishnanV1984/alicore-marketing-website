@@ -20,11 +20,17 @@ interface Props {
   placeholder: string;
   image?: SlotImageType;
   /**
-   * Two (or more) photographs shown side by side instead of one full-bleed
-   * image -- Manufacturing's use case. Takes precedence over `image` when it
-   * has more than one entry.
+   * Photographs shown side by side instead of one full-bleed image --
+   * Manufacturing (2) and About (3). Takes precedence over `image`.
    */
   images?: SlotImageType[];
+  /**
+   * How many side-by-side panels to render. Defaults to 2 for backward
+   * compatibility with Manufacturing's original two-up layout; About passes
+   * 3. Missing positions in `images` render as empty placeholders rather
+   * than collapsing the layout to fewer, narrower columns.
+   */
+  columns?: number;
   /** Which side the panel sits on at desktop widths. */
   align?: 'left' | 'right' | 'centre';
   /** Panel ground: 'ink' is near-black, 'ink2' the slightly lifted variant. */
@@ -47,6 +53,7 @@ const {
   placeholder,
   image,
   images,
+  columns = 2,
   align = 'left',
   ground = 'ink',
   fit = 'cover',
@@ -55,19 +62,19 @@ const {
   class: className = '',
 } = Astro.props;
 
-// `images` (even an empty or partial array) opts into the two-up layout --
-// a caller with only one of the two positions filled still gets a split
-// stage with a placeholder on the empty side, rather than silently
-// collapsing back to a single full-bleed photograph.
+// `images` (even an empty or partial array) opts into the split layout -- a
+// caller with only some positions filled still gets the full column count,
+// with a placeholder on any empty side, rather than silently collapsing to
+// fewer, wider columns.
 const split = images !== undefined;
-const splitPair = split ? [images![0], images![1]] : [];
+const splitPanels = split ? Array.from({ length: columns }, (_, i) => images![i]) : [];
 ---
 
 <div class={`al-stage al-stage--${align} ${className}`} style={`--stage-h:${height}`} data-reveal>
   <div class={`al-stage__media${split ? ' al-stage__media--split' : ''}`}>
     {
       split ? (
-        splitPair.map((img, i) => (
+        splitPanels.map((img, i) => (
           <SlotImage
             slot={`${slotId}-${i + 1}`}
             placeholder={placeholder}
@@ -76,7 +83,7 @@ const splitPair = split ? [images![0], images![1]] : [];
             fit={fit}
             ground="dark"
             priority={priority && i === 0}
-            sizes="50vw"
+            sizes={`${Math.round(100 / columns)}vw`}
             class="al-stage__slot"
           />
         ))
@@ -136,11 +143,14 @@ const splitPair = split ? [images![0], images![1]] : [];
     aspect-ratio: auto;
   }
 
-  /* Two photographs side by side instead of one full-bleed image. More
-     specific than the rule above, so it wins for a split stage: each slot
-     takes half the width and the full height, in flow rather than
-     absolutely filling the stage. A gap and a soft divider keep the pair
-     reading as two frames, not one image cut in half by accident. */
+  /* Two or more photographs side by side instead of one full-bleed image.
+     More specific than the rule above, so it wins for a split stage: each
+     slot takes an equal share of the width and the full height, in flow
+     rather than absolutely filling the stage. `flex: 1 1 0` (zero basis)
+     rather than a hardcoded 50% is what makes this work for any column
+     count -- 2 for Manufacturing, 3 for About -- without a rule per count.
+     A gap keeps the columns reading as separate frames, not one image
+     sliced up by accident. */
   .al-stage__media--split {
     display: flex;
     gap: 2px;
@@ -149,21 +159,28 @@ const splitPair = split ? [images![0], images![1]] : [];
   .al-stage__media--split :global(.al-slot) {
     position: relative;
     inset: auto;
-    flex: 1 1 50%;
-    width: 50%;
+    flex: 1 1 0;
+    min-width: 0;
+    width: auto;
     height: 100%;
     aspect-ratio: auto;
   }
 
-  /* --- the panel ------------------------------------------------------- */
+  /* --- the panel -------------------------------------------------------
+     Light rather than dark, per the client: a frosted near-white pane over
+     the photograph, not a solid dark card. `ground` keeps its two values for
+     the two callers that pass it, but both render the same light material
+     now -- the ink/ink2 distinction was a dark-palette nuance that a light
+     panel doesn't need. */
   .al-stage__panel {
     position: relative;
     z-index: 2;
     width: min(560px, 100%);
     padding: clamp(26px, 3vw, 40px) clamp(22px, 2.6vw, 36px);
-    color: var(--color-on-dark);
-    box-shadow: 0 24px 60px rgb(18 17 15 / 0.34);
-    backdrop-filter: blur(14px);
+    background: rgb(246 244 239 / 0.82);
+    color: var(--color-ink);
+    box-shadow: 0 24px 60px rgb(18 17 15 / 0.22);
+    backdrop-filter: blur(16px) saturate(1.15);
   }
 
   /* The gold rule is a pseudo-element rather than a border so it can wipe in
@@ -175,16 +192,8 @@ const splitPair = split ? [images![0], images![1]] : [];
     left: 0;
     right: 0;
     height: 2px;
-    background: var(--color-gold);
+    background: var(--color-gold-ink);
     transform-origin: left center;
-  }
-
-  .al-stage__panel--ink {
-    background: rgb(18 17 15 / 0.9);
-  }
-
-  .al-stage__panel--ink2 {
-    background: rgb(26 25 23 / 0.9);
   }
 
   .al-stage--left .al-stage__panel {
@@ -313,28 +322,20 @@ const splitPair = split ? [images![0], images![1]] : [];
     .al-stage--right .al-stage__panel,
     .al-stage--centre .al-stage__panel {
       width: 100%;
+      background: var(--color-bg);
       box-shadow: none;
       backdrop-filter: none;
       padding: clamp(28px, 7vw, 40px) var(--spacing-gutter);
     }
-
-    .al-stage__panel--ink {
-      background: var(--color-ink);
-    }
-    .al-stage__panel--ink2 {
-      background: var(--color-ink-2);
-    }
   }
 
-  /* Phones: two narrow slivers read worse than two short, full-width frames. */
+  /* Phones: narrow slivers read worse than short, full-width frames stacked.
+     Switching the flex axis is enough -- flex:1 1 0 on each slot already
+     equal-distributes along whichever axis is active, so no per-count width/
+     height math is needed here either. */
   @media (max-width: 480px) {
     .al-stage__media--split {
       flex-direction: column;
-    }
-
-    .al-stage__media--split :global(.al-slot) {
-      width: 100%;
-      height: 50%;
     }
   }
 </style>

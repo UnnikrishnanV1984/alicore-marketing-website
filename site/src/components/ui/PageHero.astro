@@ -9,11 +9,13 @@ import Eyebrow from './Eyebrow.astro';
 interface Props {
   eyebrow: string;
   title: string;
+  /** Forces a line break after `title`, e.g. "Your Design." / "Our Manufacturing." */
+  titleSecondLine?: string;
   lead?: string;
   breadcrumb?: { label: string; href: string }[];
 }
 
-const { eyebrow, title, lead, breadcrumb = [] } = Astro.props;
+const { eyebrow, title, titleSecondLine, lead, breadcrumb = [] } = Astro.props;
 ---
 
 <section class="al-masthead" data-ground="dark">
@@ -35,7 +37,15 @@ const { eyebrow, title, lead, breadcrumb = [] } = Astro.props;
       )
     }
     <Eyebrow label={eyebrow} ground="dark" />
-    <h1 class="al-masthead__title al-balance">{title}</h1>
+    <h1 class="al-masthead__title al-balance">
+      {title}
+      {titleSecondLine && (
+        <>
+          <br />
+          {titleSecondLine}
+        </>
+      )}
+    </h1>
     {lead && <p class="al-masthead__lead">{lead}</p>}
   </div>
 </section>

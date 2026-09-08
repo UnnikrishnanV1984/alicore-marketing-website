@@ -13,8 +13,16 @@ const staff = (Astro.locals as Record<string, unknown>).staff as StaffUser;
 /** Only Products slots get a photograph gallery; everything else stays 1-up. */
 const GALLERY_GROUP = 'Products';
 
-/** The Manufacturing stage shows two photographs side by side, not a cycle. */
-const SPLIT_SLOTS: Record<string, number> = { 'alicore-factory': 2 };
+/**
+ * Slots that show more than one photograph side by side rather than a single
+ * full-bleed image or a cycle. Value is how many positions to offer.
+ */
+const SPLIT_SLOTS: Record<string, number> = { 'alicore-factory': 2, 'alicore-about': 3 };
+
+/** Friendly names for a split slot's positions, where "Photo N" would be confusing. */
+const SPLIT_LABELS: Record<string, Record<number, string>> = {
+  'alicore-about': { 1: 'Centre', 2: 'Left', 3: 'Right' },
+};
 
 let slots: AdminSlot[] = [];
 let loadError: string | null = null;
@@ -53,6 +61,7 @@ try {
         position,
         hasImage,
         altText: byPosition.get(position) ?? '',
+        label: SPLIT_LABELS[s.id]?.[position],
         // Cache-bust the admin preview only; the public site relies on the
         // stable URL plus an edge purge.
         previewUrl: hasImage
@@ -85,8 +94,8 @@ try {
     browse — and it fills that position on the live page. Use landscape shots at 2000px wide or
     larger; they are resized and converted automatically, so upload the best original you have.
     Each product in the Products group can carry up to {MAX_GALLERY_POSITIONS} photographs, which
-    the live site cycles through automatically. Manufacturing carries two photographs, shown side
-    by side.
+    the live site cycles through automatically. Manufacturing carries two photographs shown side by
+    side, and About carries three (Left, Centre, Right).
   </p>
 
   {

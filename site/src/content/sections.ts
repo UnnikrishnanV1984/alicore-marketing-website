@@ -11,7 +11,7 @@
    -------------------------------------------------------------------------- */
 
 export const gfrc = {
-  eyebrow: 'Material 01 — GFRC',
+  eyebrow: 'GFRC',
   heading: 'GFRC — Strength Meets Architectural Freedom',
   intro:
     'Glass Fiber Reinforced Concrete enables architects and designers to create detailed architectural forms while maintaining a lightweight and durable construction solution.',
@@ -29,7 +29,7 @@ export const gfrc = {
 } as const;
 
 export const frp = {
-  eyebrow: 'Material 02 — FRP',
+  eyebrow: 'FRP',
   heading: 'FRP — Lightweight. Durable. Versatile.',
   intro:
     'Our FRP solutions provide excellent design flexibility and durability for applications where lightweight construction, corrosion resistance and customized shapes are important.',

@@ -6,12 +6,15 @@ import Eyebrow from '../components/ui/Eyebrow.astro';
 import WhySection from '../components/sections/WhySection.astro';
 import IndustriesSection from '../components/sections/IndustriesSection.astro';
 import CtaBand from '../components/sections/CtaBand.astro';
-import { loadSlotImages } from '../lib/media';
+import { loadSlotGalleries } from '../lib/media';
 import { about } from '../content/sections';
 import { capabilities } from '../content/site';
 import { meta } from '../content/seo';
 
-const slots = await loadSlotImages();
+const galleries = await loadSlotGalleries();
+const aboutGallery = galleries.get('alicore-about') ?? [];
+// Reorder position [centre, left, right] to visual [left, centre, right].
+const aboutOrdered = [aboutGallery[1], aboutGallery[0], aboutGallery[2]];
 ---
 
 <Page meta={meta['/about']} path="/about" active="/about">
@@ -27,10 +30,10 @@ const slots = await loadSlotImages();
   <MediaStage
     slotId="alicore-about"
     placeholder="Close-up: GFRC surface texture / finished panel"
-    image={slots.get('alicore-about')}
+    images={aboutOrdered}
+    columns={3}
     align="left"
     ground="ink"
-    fit="contain"
   >
     <Eyebrow label="Who We Are" ground="dark" />
     <p class="al-about-page__stagelead">{about.lead}</p>

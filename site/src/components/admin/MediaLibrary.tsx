@@ -5,6 +5,8 @@ export type AdminSlotImage = {
   hasImage: boolean;
   altText: string;
   previewUrl: string | null;
+  /** Friendly name for a split-layout position, e.g. "Left", where "Photo N" would be confusing. */
+  label?: string;
 };
 
 export type AdminSlot = {
@@ -345,7 +347,9 @@ export default function MediaLibrary({ slots }: { slots: AdminSlot[] }) {
                               <img src={image.previewUrl} alt="" />
                             ) : (
                               <span className="al-media__note">
-                                {slot.images.length > 1 ? `Photo ${image.position}` : slot.placeholder}
+                                {slot.images.length > 1
+                                  ? (image.label ?? `Photo ${image.position}`)
+                                  : slot.placeholder}
                               </span>
                             )}
                             {busy === key && <span className="al-media__busy">Processing…</span>}
@@ -353,7 +357,7 @@ export default function MediaLibrary({ slots }: { slots: AdminSlot[] }) {
 
                           {slot.images.length > 1 && (
                             <div className="al-media__posrow">
-                              <span>Photo {image.position}</span>
+                              <span>{image.label ?? `Photo ${image.position}`}</span>
                               {image.hasImage && (
                                 <button
                                   type="button"

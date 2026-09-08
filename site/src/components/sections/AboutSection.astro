@@ -7,14 +7,22 @@ import { about } from '../../content/sections';
 import type { SlotImage as SlotImageType } from '../../lib/media';
 
 interface Props {
-  image?: SlotImageType;
+  /**
+   * The alicore-about gallery, ordered by position: [0]=Centre (the original
+   * photo), [1]=Left, [2]=Right. Rendered as three panels side by side --
+   * the two new photos cover what used to be empty space either side of a
+   * square photo forced into a wide stage.
+   */
+  images: SlotImageType[];
   /** h2 on the home page; the /about page supplies its own h1. */
   headingLevel?: 'h1' | 'h2';
   showCta?: boolean;
 }
 
-const { image, headingLevel = 'h2', showCta = true } = Astro.props;
+const { images, headingLevel = 'h2', showCta = true } = Astro.props;
 const Heading = headingLevel;
+// Reorder position [centre, left, right] to visual [left, centre, right].
+const ordered = [images[1], images[0], images[2]];
 ---
 
 <section id="about">
@@ -24,17 +32,17 @@ const Heading = headingLevel;
   <MediaStage
     slotId="alicore-about"
     placeholder="Close-up: GFRC surface texture / finished panel"
-    image={image}
+    images={ordered}
+    columns={3}
     align="left"
     ground="ink"
-    fit="contain"
   >
-    <Eyebrow label="Who We Are" ground="dark" />
+    <Eyebrow label="Who We Are" ground="light" />
     <Heading class="al-about__title al-balance">
       Built for Architecture. Designed for Possibility.
     </Heading>
     <p class="al-about__lead">{about.lead}</p>
-    {showCta && <Button href="/about" variant="outline" ground="dark" size="sm" class="al-about__cta">Discover Alicore</Button>}
+    {showCta && <Button href="/about" variant="outline" ground="light" size="sm" class="al-about__cta">Discover Alicore</Button>}
   </MediaStage>
 
   <div class="al-section al-about__below">
@@ -72,7 +80,7 @@ const Heading = headingLevel;
     margin-top: 16px;
     font-size: 15.5px;
     line-height: 1.7;
-    color: var(--color-on-dark-80);
+    color: var(--color-on-light-72);
     font-weight: 300;
   }
 
