@@ -42,6 +42,13 @@ interface Props {
    * of it away.
    */
   fit?: 'cover' | 'contain';
+  /**
+   * Per-panel override of `fit` for a split stage, indexed the same as
+   * `images`. Missing entries fall back to `fit`. About uses this so its
+   * one square, must-not-crop photo can render 'contain' while its
+   * neighbour still crops to fill the frame.
+   */
+  fits?: ('cover' | 'contain')[];
   /** Above the fold: load eagerly rather than lazily. */
   priority?: boolean;
   height?: string;
@@ -57,6 +64,7 @@ const {
   align = 'left',
   ground = 'ink',
   fit = 'cover',
+  fits,
   priority = false,
   height = 'clamp(460px, 72vh, 780px)',
   class: className = '',
@@ -80,7 +88,7 @@ const splitPanels = split ? Array.from({ length: columns }, (_, i) => images![i]
             placeholder={placeholder}
             image={img}
             ratio="16/9"
-            fit={fit}
+            fit={fits?.[i] ?? fit}
             ground="dark"
             priority={priority && i === 0}
             sizes={`${Math.round(100 / columns)}vw`}
@@ -167,20 +175,20 @@ const splitPanels = split ? Array.from({ length: columns }, (_, i) => images![i]
   }
 
   /* --- the panel -------------------------------------------------------
-     Light rather than dark, per the client: a frosted near-white pane over
-     the photograph, not a solid dark card. `ground` keeps its two values for
-     the two callers that pass it, but both render the same light material
-     now -- the ink/ink2 distinction was a dark-palette nuance that a light
-     panel doesn't need. */
+     Dark, per the brand, but very transparent so the photograph behind it
+     stays visible -- the client wants to see the picture, not have it hidden
+     behind a solid card. `ground` keeps its two values for the two callers
+     that pass it; both render the same transparent-dark material now, since
+     the ink/ink2 distinction only mattered when the panel was opaque. */
   .al-stage__panel {
     position: relative;
     z-index: 2;
     width: min(560px, 100%);
     padding: clamp(26px, 3vw, 40px) clamp(22px, 2.6vw, 36px);
-    background: rgb(246 244 239 / 0.82);
-    color: var(--color-ink);
+    background: rgb(18 17 15 / 0.32);
+    color: var(--color-on-dark);
     box-shadow: 0 24px 60px rgb(18 17 15 / 0.22);
-    backdrop-filter: blur(16px) saturate(1.15);
+    backdrop-filter: blur(10px) saturate(1.1);
   }
 
   /* The gold rule is a pseudo-element rather than a border so it can wipe in
@@ -192,7 +200,7 @@ const splitPanels = split ? Array.from({ length: columns }, (_, i) => images![i]
     left: 0;
     right: 0;
     height: 2px;
-    background: var(--color-gold-ink);
+    background: var(--color-gold);
     transform-origin: left center;
   }
 
@@ -322,7 +330,8 @@ const splitPanels = split ? Array.from({ length: columns }, (_, i) => images![i]
     .al-stage--right .al-stage__panel,
     .al-stage--centre .al-stage__panel {
       width: 100%;
-      background: var(--color-bg);
+      background: var(--color-ink);
+      color: var(--color-on-dark);
       box-shadow: none;
       backdrop-filter: none;
       padding: clamp(28px, 7vw, 40px) var(--spacing-gutter);

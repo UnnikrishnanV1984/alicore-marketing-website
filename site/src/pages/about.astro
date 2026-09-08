@@ -13,8 +13,8 @@ import { meta } from '../content/seo';
 
 const galleries = await loadSlotGalleries();
 const aboutGallery = galleries.get('alicore-about') ?? [];
-// Reorder position [centre, left, right] to visual [left, centre, right].
-const aboutOrdered = [aboutGallery[1], aboutGallery[0], aboutGallery[2]];
+// Two panels: [right photo] (may crop) then [centre/original photo] (must not crop).
+const aboutOrdered = [aboutGallery[2], aboutGallery[0]];
 ---
 
 <Page meta={meta['/about']} path="/about" active="/about">
@@ -31,7 +31,8 @@ const aboutOrdered = [aboutGallery[1], aboutGallery[0], aboutGallery[2]];
     slotId="alicore-about"
     placeholder="Close-up: GFRC surface texture / finished panel"
     images={aboutOrdered}
-    columns={3}
+    columns={2}
+    fits={['cover', 'contain']}
     align="left"
     ground="ink"
   >

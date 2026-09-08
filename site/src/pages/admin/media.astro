@@ -21,7 +21,7 @@ const SPLIT_SLOTS: Record<string, number> = { 'alicore-factory': 2, 'alicore-abo
 
 /** Friendly names for a split slot's positions, where "Photo N" would be confusing. */
 const SPLIT_LABELS: Record<string, Record<number, string>> = {
-  'alicore-about': { 1: 'Centre', 2: 'Left', 3: 'Right' },
+  'alicore-about': { 1: 'Right panel (shown uncropped)', 2: 'Unused', 3: 'Left panel (may crop)' },
 };
 
 let slots: AdminSlot[] = [];

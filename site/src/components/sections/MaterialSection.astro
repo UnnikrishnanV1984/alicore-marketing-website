@@ -61,7 +61,7 @@ const align = media === 'left' ? 'right' : 'left';
     align={align}
     ground={ground}
   >
-    <Eyebrow label={eyebrow} ground="light" />
+    <Eyebrow label={eyebrow} ground="dark" />
     <Heading class="al-material-sec__title al-balance">{heading}</Heading>
     <p class="al-material-sec__intro">{intro}</p>
 
@@ -76,7 +76,7 @@ const align = media === 'left' ? 'right' : 'left';
       }
     </ul>
 
-    <Button href={ctaHref} variant={ctaVariant} ground="light" class="al-material-sec__cta">
+    <Button href={ctaHref} variant={ctaVariant} ground="dark" class="al-material-sec__cta">
       {cta}
     </Button>
   </MediaStage>
@@ -104,7 +104,7 @@ const align = media === 'left' ? 'right' : 'left';
     margin-top: 16px;
     font-size: 15px;
     line-height: 1.7;
-    color: var(--color-on-light-72);
+    color: var(--color-on-dark-80);
     font-weight: 300;
   }
 
@@ -123,15 +123,15 @@ const align = media === 'left' ? 'right' : 'left';
     gap: 10px;
     align-items: baseline;
     font-size: 13.5px;
-    color: var(--color-on-light-72);
+    color: var(--color-on-dark-80);
     padding-bottom: 8px;
-    border-bottom: 1px solid var(--color-rule-soft);
+    border-bottom: 1px solid var(--color-rule-dark-soft);
   }
 
   .al-material-sec__bullet {
     width: 5px;
     height: 5px;
-    background: var(--color-gold-ink);
+    background: var(--color-gold);
     flex: 0 0 auto;
   }
 
