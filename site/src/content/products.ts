@@ -196,6 +196,18 @@ export const materialTiles = [
     desc: 'Fiber Reinforced Plastic — lightweight, corrosion-resistant elements for architectural applications.',
     cta: 'Explore FRP',
   },
+  {
+    code: 'Precast',
+    href: '/contact',
+    desc: 'Precast concrete elements cast off-site under controlled conditions, for facades, cladding and structural architectural forms.',
+    cta: 'Enquire About Precast',
+  },
+  {
+    code: 'Facades',
+    href: '/contact',
+    desc: 'Facade systems and cladding developed to the elevation — combining material, module and fixing detail into a single weather-tight envelope.',
+    cta: 'Enquire About Facades',
+  },
 ] as const;
 
 /**
