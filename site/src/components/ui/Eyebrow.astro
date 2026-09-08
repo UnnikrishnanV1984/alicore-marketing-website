@@ -11,7 +11,10 @@ interface Props {
 }
 
 const { label, ground = 'light', class: className = '' } = Astro.props;
-const color = ground === 'dark' ? 'var(--color-gold)' : 'var(--color-gold-ink)';
+// Dark ground now backs a fully transparent overlay panel (over a photo),
+// so gold text -- readable against a solid dark card -- can vanish against a
+// bright photograph. Black reads reliably against any photo underneath.
+const color = ground === 'dark' ? 'var(--color-ink)' : 'var(--color-gold-ink)';
 ---
 
 <div class={`al-eyebrow ${className}`} style={`--eyebrow-color:${color}`}>

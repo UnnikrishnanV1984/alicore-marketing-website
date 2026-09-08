@@ -64,7 +64,7 @@ const WHATSAPP_MESSAGE =
 
 function defaults(): SiteSettings {
   return {
-    phoneDisplay: buildEnv('PUBLIC_PHONE_DISPLAY') || '9995 495 395',
+    phoneDisplay: buildEnv('PUBLIC_PHONE_DISPLAY') || '+91 9995 495 395',
     phoneE164: buildEnv('PUBLIC_PHONE_E164') || '+919995495395',
     whatsappE164: buildEnv('PUBLIC_WHATSAPP_E164') || '919995495395',
     email: buildEnv('PUBLIC_EMAIL') || '',
