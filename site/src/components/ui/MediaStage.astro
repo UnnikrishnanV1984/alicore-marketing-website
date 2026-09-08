@@ -29,6 +29,13 @@ interface Props {
   align?: 'left' | 'right' | 'centre';
   /** Panel ground: 'ink' is near-black, 'ink2' the slightly lifted variant. */
   ground?: 'ink' | 'ink2';
+  /**
+   * 'cover' (default) fills the stage and crops. 'contain' letterboxes a
+   * photo whose own shape doesn't suit a wide 16:9 band -- a square or tall
+   * photo, say -- against the stage's dark ground instead of cropping most
+   * of it away.
+   */
+  fit?: 'cover' | 'contain';
   /** Above the fold: load eagerly rather than lazily. */
   priority?: boolean;
   height?: string;
@@ -42,6 +49,7 @@ const {
   images,
   align = 'left',
   ground = 'ink',
+  fit = 'cover',
   priority = false,
   height = 'clamp(460px, 72vh, 780px)',
   class: className = '',
@@ -65,6 +73,7 @@ const splitPair = split ? [images![0], images![1]] : [];
             placeholder={placeholder}
             image={img}
             ratio="16/9"
+            fit={fit}
             ground="dark"
             priority={priority && i === 0}
             sizes="50vw"
@@ -77,6 +86,7 @@ const splitPair = split ? [images![0], images![1]] : [];
           placeholder={placeholder}
           image={image}
           ratio="16/9"
+          fit={fit}
           ground="dark"
           priority={priority}
           sizes="100vw"
