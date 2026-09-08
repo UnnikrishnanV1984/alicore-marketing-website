@@ -70,7 +70,7 @@ const [slots, galleries, projects, contact] = await Promise.all([
   <WhySection />
   <CustomSection />
   {contact.showProjects && <ProjectsSection projects={projects} />}
-  <ManufacturingSection image={slots.get('alicore-factory')} />
+  <ManufacturingSection images={galleries.get('alicore-factory') ?? []} />
   <IndustriesSection />
   <ContactSection />
 </Page>

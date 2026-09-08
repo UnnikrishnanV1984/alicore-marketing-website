@@ -5,21 +5,23 @@ import { journey, quality } from '../../content/sections';
 import type { SlotImage as SlotImageType } from '../../lib/media';
 
 interface Props {
-  image?: SlotImageType;
+  /** Two photographs, shown side by side. Positions 1 and 2 of alicore-factory. */
+  images: SlotImageType[];
   headingLevel?: 'h1' | 'h2';
 }
-const { image, headingLevel = 'h2' } = Astro.props;
+const { images, headingLevel = 'h2' } = Astro.props;
 const Heading = headingLevel;
 ---
 
 <section id="manufacturing">
-  <!-- Production floor as the stage. The six-step journey stays below: as a
-       numbered sequence it has to be read in order, and a panel floating over
-       a photograph is the wrong place to ask that of anyone. -->
+  <!-- Production floor as the stage, two photographs side by side. The
+       six-step journey stays below: as a numbered sequence it has to be read
+       in order, and a panel floating over a photograph is the wrong place to
+       ask that of anyone. -->
   <MediaStage
     slotId="alicore-factory"
     placeholder="Production floor: GFRC spray / mould work"
-    image={image}
+    images={images}
     align="right"
     ground="ink2"
   >

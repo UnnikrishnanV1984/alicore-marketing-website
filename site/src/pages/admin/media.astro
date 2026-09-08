@@ -13,6 +13,9 @@ const staff = (Astro.locals as Record<string, unknown>).staff as StaffUser;
 /** Only Products slots get a photograph gallery; everything else stays 1-up. */
 const GALLERY_GROUP = 'Products';
 
+/** The Manufacturing stage shows two photographs side by side, not a cycle. */
+const SPLIT_SLOTS: Record<string, number> = { 'alicore-factory': 2 };
+
 let slots: AdminSlot[] = [];
 let loadError: string | null = null;
 
@@ -39,7 +42,8 @@ try {
   const projectBySlot = new Map((projectRows ?? []).map((p) => [p.image_path as string, p]));
 
   slots = (slotRows ?? []).map((s) => {
-    const maxPositions = s.group_title === GALLERY_GROUP ? MAX_GALLERY_POSITIONS : 1;
+    const maxPositions =
+      s.group_title === GALLERY_GROUP ? MAX_GALLERY_POSITIONS : (SPLIT_SLOTS[s.id] ?? 1);
     const byPosition = active.get(s.id) ?? new Map<number, string>();
 
     const images = Array.from({ length: maxPositions }, (_, i) => {
@@ -81,7 +85,8 @@ try {
     browse — and it fills that position on the live page. Use landscape shots at 2000px wide or
     larger; they are resized and converted automatically, so upload the best original you have.
     Each product in the Products group can carry up to {MAX_GALLERY_POSITIONS} photographs, which
-    the live site cycles through automatically.
+    the live site cycles through automatically. Manufacturing carries two photographs, shown side
+    by side.
   </p>
 
   {

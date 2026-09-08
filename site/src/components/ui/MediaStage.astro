@@ -19,6 +19,12 @@ interface Props {
   slotId: string;
   placeholder: string;
   image?: SlotImageType;
+  /**
+   * Two (or more) photographs shown side by side instead of one full-bleed
+   * image -- Manufacturing's use case. Takes precedence over `image` when it
+   * has more than one entry.
+   */
+  images?: SlotImageType[];
   /** Which side the panel sits on at desktop widths. */
   align?: 'left' | 'right' | 'centre';
   /** Panel ground: 'ink' is near-black, 'ink2' the slightly lifted variant. */
@@ -33,26 +39,51 @@ const {
   slotId,
   placeholder,
   image,
+  images,
   align = 'left',
   ground = 'ink',
   priority = false,
   height = 'clamp(460px, 72vh, 780px)',
   class: className = '',
 } = Astro.props;
+
+// `images` (even an empty or partial array) opts into the two-up layout --
+// a caller with only one of the two positions filled still gets a split
+// stage with a placeholder on the empty side, rather than silently
+// collapsing back to a single full-bleed photograph.
+const split = images !== undefined;
+const splitPair = split ? [images![0], images![1]] : [];
 ---
 
 <div class={`al-stage al-stage--${align} ${className}`} style={`--stage-h:${height}`} data-reveal>
-  <div class="al-stage__media">
-    <SlotImage
-      slot={slotId}
-      placeholder={placeholder}
-      image={image}
-      ratio="16/9"
-      ground="dark"
-      priority={priority}
-      sizes="100vw"
-      class="al-stage__slot"
-    />
+  <div class={`al-stage__media${split ? ' al-stage__media--split' : ''}`}>
+    {
+      split ? (
+        splitPair.map((img, i) => (
+          <SlotImage
+            slot={`${slotId}-${i + 1}`}
+            placeholder={placeholder}
+            image={img}
+            ratio="16/9"
+            ground="dark"
+            priority={priority && i === 0}
+            sizes="50vw"
+            class="al-stage__slot"
+          />
+        ))
+      ) : (
+        <SlotImage
+          slot={slotId}
+          placeholder={placeholder}
+          image={image}
+          ratio="16/9"
+          ground="dark"
+          priority={priority}
+          sizes="100vw"
+          class="al-stage__slot"
+        />
+      )
+    }
     <div class="al-stage__scrim" aria-hidden="true"></div>
   </div>
 
@@ -93,6 +124,25 @@ const {
     position: absolute;
     inset: 0;
     height: auto;
+    aspect-ratio: auto;
+  }
+
+  /* Two photographs side by side instead of one full-bleed image. More
+     specific than the rule above, so it wins for a split stage: each slot
+     takes half the width and the full height, in flow rather than
+     absolutely filling the stage. A gap and a soft divider keep the pair
+     reading as two frames, not one image cut in half by accident. */
+  .al-stage__media--split {
+    display: flex;
+    gap: 2px;
+  }
+
+  .al-stage__media--split :global(.al-slot) {
+    position: relative;
+    inset: auto;
+    flex: 1 1 50%;
+    width: 50%;
+    height: 100%;
     aspect-ratio: auto;
   }
 
@@ -257,6 +307,12 @@ const {
       min-height: clamp(300px, 46vh, 440px);
     }
 
+    /* A 50/50 split needs more height than a single photo to read at the
+       same size per frame. */
+    .al-stage__media--split {
+      min-height: clamp(340px, 56vh, 520px);
+    }
+
     .al-stage__panel,
     .al-stage--left .al-stage__panel,
     .al-stage--right .al-stage__panel,
@@ -272,6 +328,18 @@ const {
     }
     .al-stage__panel--ink2 {
       background: var(--color-ink-2);
+    }
+  }
+
+  /* Phones: two narrow slivers read worse than two short, full-width frames. */
+  @media (max-width: 480px) {
+    .al-stage__media--split {
+      flex-direction: column;
+    }
+
+    .al-stage__media--split :global(.al-slot) {
+      width: 100%;
+      height: 50%;
     }
   }
 </style>

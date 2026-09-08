@@ -3,10 +3,10 @@ import Page from '../layouts/Page.astro';
 import PageHero from '../components/ui/PageHero.astro';
 import ManufacturingSection from '../components/sections/ManufacturingSection.astro';
 import CtaBand from '../components/sections/CtaBand.astro';
-import { loadSlotImages } from '../lib/media';
+import { loadSlotGalleries } from '../lib/media';
 import { meta } from '../content/seo';
 
-const slots = await loadSlotImages();
+const galleries = await loadSlotGalleries();
 ---
 
 <Page meta={meta['/manufacturing']} path="/manufacturing" active="/manufacturing">
@@ -17,7 +17,7 @@ const slots = await loadSlotImages();
     breadcrumb={[{ label: 'Manufacturing', href: '/manufacturing' }]}
   />
 
-  <ManufacturingSection image={slots.get('alicore-factory')} />
+  <ManufacturingSection images={galleries.get('alicore-factory') ?? []} />
 
   <CtaBand
     heading="Planning a project?"
