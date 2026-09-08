@@ -61,8 +61,6 @@ const src = (id: string, n: number, w: number) => `/hero/${id}-${n}-${w}.webp`;
     }
   </div>
 
-  <div class="al-hero__scrim" aria-hidden="true"></div>
-
   <!-- The photographs are decorative: they carry no information the copy does
        not, and alt text on a rotating backdrop would be read aloud repeatedly.
        The stage is aria-hidden and this description is what a screen reader
@@ -219,18 +217,6 @@ const src = (id: string, n: number, w: number) => `/hero/${id}-${n}-${w}.webp`;
     transform: scale(1);
   }
 
-  /* Vertical gradient so the copy holds against any photograph, plus a
-     left-weighted wash because the copy sits left on wide screens. */
-  .al-hero__scrim {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    background:
-      linear-gradient(90deg, rgb(18 17 15 / 0.68) 0%, rgb(18 17 15 / 0.44) 40%, rgb(18 17 15 / 0.14) 100%),
-      linear-gradient(180deg, rgb(18 17 15 / 0.34) 0%, rgb(18 17 15 / 0.06) 40%, rgb(18 17 15 / 0.6) 100%);
-    pointer-events: none;
-  }
-
   /* --- the copy --------------------------------------------------------- */
   .al-hero__inner {
     position: relative;
@@ -239,8 +225,16 @@ const src = (id: string, n: number, w: number) => `/hero/${id}-${n}-${w}.webp`;
     padding-block: clamp(56px, 8vh, 110px) clamp(40px, 6vw, 72px);
   }
 
+  /* No full-image scrim: the client wants the photograph wall at full
+     brightness. The copy carries its own backdrop instead -- the same
+     device MediaStage uses -- so legibility no longer depends on darkening
+     the picture behind it. */
   .al-hero__copy {
     max-width: 640px;
+    background: rgb(18 17 15 / 0.62);
+    backdrop-filter: blur(14px);
+    padding: clamp(26px, 3vw, 40px) clamp(22px, 2.6vw, 36px);
+    box-shadow: 0 24px 60px rgb(18 17 15 / 0.34);
   }
 
   /* Each element rises in turn once the page is ready. Scoped to [data-in],
@@ -363,15 +357,6 @@ const src = (id: string, n: number, w: number) => `/hero/${id}-${n}-${w}.webp`;
 
     .al-hero__col:nth-child(n + 2) {
       display: none;
-    }
-
-    .al-hero__scrim {
-      background: linear-gradient(
-        180deg,
-        rgb(18 17 15 / 0.42) 0%,
-        rgb(18 17 15 / 0.3) 30%,
-        rgb(18 17 15 / 0.74) 100%
-      );
     }
   }
 

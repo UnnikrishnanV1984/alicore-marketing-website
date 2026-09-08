@@ -84,7 +84,6 @@ const splitPair = split ? [images![0], images![1]] : [];
         />
       )
     }
-    <div class="al-stage__scrim" aria-hidden="true"></div>
   </div>
 
   <div class={`al-stage__panel al-stage__panel--${ground}`} data-reveal>
@@ -144,20 +143,6 @@ const splitPair = split ? [images![0], images![1]] : [];
     width: 50%;
     height: 100%;
     aspect-ratio: auto;
-  }
-
-  /* Darkens the photograph enough that a light image cannot wash out the
-     panel's edge, without turning the picture into a background texture. */
-  .al-stage__scrim {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      180deg,
-      rgb(18 17 15 / 0.3) 0%,
-      rgb(18 17 15 / 0.12) 40%,
-      rgb(18 17 15 / 0.55) 100%
-    );
-    pointer-events: none;
   }
 
   /* --- the panel ------------------------------------------------------- */

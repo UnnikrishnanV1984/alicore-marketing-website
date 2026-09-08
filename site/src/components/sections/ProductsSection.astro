@@ -100,21 +100,24 @@ const Heading = headingLevel;
     margin-top: 52px;
   }
 
-  /* --- material tiles --------------------------------------------------- */
+  /* --- material tiles ----------------------------------------------------
+     GFRC and FRP -- the only two tiles in this grid -- carry the brand gold
+     permanently rather than on hover, at the client's request. Every text
+     colour here is ink rather than the gold-on-white pairing the rest of the
+     grid uses, since gold text would nearly disappear against a gold
+     ground. */
   .al-material {
-    background: var(--color-bg);
+    background: var(--color-gold);
+    color: var(--color-ink);
     padding: 34px 32px 38px;
     display: flex;
     flex-direction: column;
     gap: 10px;
-    transition:
-      background-color 0.25s var(--ease-premium),
-      color 0.25s var(--ease-premium);
+    transition: background-color 0.25s var(--ease-premium);
   }
 
   .al-material:hover {
-    background: var(--color-ink);
-    color: var(--color-bg);
+    background: var(--color-gold-warm);
   }
 
   .al-material__label {
@@ -122,20 +125,21 @@ const Heading = headingLevel;
     font-size: 10px;
     letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: var(--color-gold-ink);
+    color: var(--color-ink);
+    opacity: 0.7;
   }
 
   .al-material__code {
     font-family: var(--font-display);
     font-size: 30px;
     letter-spacing: 0.1em;
-    color: var(--color-gold-ink);
+    color: var(--color-ink);
   }
 
   .al-material__desc {
     font-size: 14.5px;
     line-height: 1.6;
-    opacity: 0.65;
+    opacity: 0.75;
     max-width: 40ch;
   }
 
