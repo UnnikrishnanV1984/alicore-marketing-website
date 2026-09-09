@@ -7,10 +7,14 @@ interface Props {
   label: string;
   /**
    * Which ground this sits on. Selects the correct colour.
-   *  - 'light' the page ground: gold.
-   *  - 'dark'  a transparent panel over a photograph: black.
+   *  - 'light'  the page ground: gold.
+   *  - 'dark'   a transparent panel over a bright photograph: black.
+   *  - 'shaded' a darkened photograph (Why Choose Alicore): warm white.
+   *             Black measures 1.46:1 there and gold 2.9:1; only the light
+   *             text is readable over a photo that has been dimmed rather
+   *             than lightened.
    */
-  ground?: 'light' | 'dark';
+  ground?: 'light' | 'dark' | 'shaded';
   class?: string;
 }
 
@@ -18,7 +22,12 @@ const { label, ground = 'light', class: className = '' } = Astro.props;
 // Dark ground now backs a fully transparent overlay panel (over a photo),
 // so gold text -- readable against a solid dark card -- can vanish against a
 // bright photograph. Black reads reliably against any photo underneath.
-const color = ground === 'dark' ? 'var(--color-ink)' : 'var(--color-gold-ink)';
+const color =
+  ground === 'shaded'
+    ? 'var(--color-on-dark)'
+    : ground === 'dark'
+      ? 'var(--color-ink)'
+      : 'var(--color-gold-ink)';
 ---
 
 <div class={`al-eyebrow ${className}`} style={`--eyebrow-color:${color}`}>
