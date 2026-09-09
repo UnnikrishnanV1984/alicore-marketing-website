@@ -6,25 +6,29 @@ import type { SlotImage as SlotImageType } from '../../lib/media';
 
 /**
  * "Why Choose Alicore?" -- six reasons on a full-bleed architectural
- * photograph.
+ * photograph, which is meant to be seen rather than washed out.
  *
- * Readability is guaranteed by construction, not by the photograph. Staff
- * swap this image from /admin/media without a designer, so the section is
- * built so that even a solid-black upload still clears WCAG AA:
+ * The photograph carries NO full-height overlay: it renders at its own
+ * brightness, and the only tint anywhere is a gradient across the top third
+ * that the heading sits in. Everything below -- the whole subject of the
+ * picture -- is untouched.
  *
- *   - a warm-white scrim over the photo (0.82 at the top where the heading
- *     sits, easing to 0.55 through the card grid), and
- *   - cards at 0.82 over that, giving a worst-case plate of rgb(226,224,220).
+ * The cards are therefore dark glass rather than a light plate. That is what
+ * makes an untinted photograph survivable: a light card has to out-lighten
+ * whatever is behind it before black type is readable, which is exactly the
+ * whitewash we are trying to avoid, whereas a dark card only has to darken,
+ * and darkening a photograph still shows the photograph. Measured over the
+ * brightest backdrop inside the card rectangle, warm-white type on the glass
+ * reaches 4.7:1 -- the worst case for light text, since light text fails
+ * against bright backdrops, not dark ones.
  *
- * Measured against that worst-case plate: card name 14.3:1, description
- * 6.6:1, heading 10.6:1. The description uses --color-on-light-72 rather
- * than the -60 used on solid grounds; at -60 it measures 4.25:1 over a dark
- * photograph, which fails. The index number uses --color-gold-warm rather
- * than --color-gold-ink for the same reason -- 3.0:1 against 2.4:1.
+ * The one thing that could not follow the design is the index number: gold
+ * measures 2.2:1 on this glass, so 01-06 are warm white here. Restoring the
+ * gold is a one-line change if the look matters more than the ratio.
  *
  * With no photograph uploaded the section renders its original light
- * treatment instead of a full-width placeholder block, which would dominate
- * the page.
+ * treatment -- black type on the page ground -- rather than a full-width
+ * placeholder block.
  */
 interface Props {
   headingLevel?: 'h1' | 'h2';
@@ -55,7 +59,7 @@ const hasPhoto = Boolean(image);
   }
 
   <div class="al-container al-why__inner">
-    <Eyebrow label="Why Alicore" ground={hasPhoto ? 'dark' : 'light'} />
+    <Eyebrow label="Why Alicore" ground={hasPhoto ? 'shaded' : 'light'} />
     <Heading class="al-why__title">Why Choose Alicore?</Heading>
 
     <div class="al-hairline-grid al-why__grid">
@@ -86,7 +90,7 @@ const hasPhoto = Boolean(image);
     position: absolute;
     inset: 0;
     overflow: hidden;
-    background: var(--color-panel-2);
+    background: var(--color-ink-2);
     z-index: 0;
   }
 
@@ -100,19 +104,19 @@ const hasPhoto = Boolean(image);
     aspect-ratio: auto;
   }
 
-  /* The scrim. Denser at the top, where the eyebrow and heading sit directly
-     on it with no card behind them -- and where a sky, the brightest or
-     darkest part of most architectural photographs, tends to fall. */
+  /* The only tint on the picture, and it is gone by the time the cards
+     start. The heading has no card behind it, so it needs the photograph
+     under it to be predictable; the sky is also the part of an
+     architectural photograph least worth protecting. */
   .al-why__bg::after {
     content: '';
     position: absolute;
     inset: 0;
     background: linear-gradient(
       180deg,
-      rgb(246 244 239 / 0.82) 0%,
-      rgb(246 244 239 / 0.68) 22%,
-      rgb(246 244 239 / 0.55) 46%,
-      rgb(246 244 239 / 0.55) 100%
+      rgb(18 17 15 / 0.58) 0%,
+      rgb(18 17 15 / 0.42) 18%,
+      rgb(18 17 15 / 0) 40%
     );
   }
 
@@ -177,43 +181,49 @@ const hasPhoto = Boolean(image);
   }
 
   /* --- over a photograph -------------------------------------------------
-     The cards stay warm-white but let the photograph's tone through, so the
-     band reads as glass over architecture rather than an opaque strip laid
-     across it. The blur is what keeps small text crisp: it removes the
-     high-frequency detail behind the type that would otherwise fight it. */
+     Dark glass: enough to hold type, transparent enough that the picture
+     reads straight through it. The blur is doing as much work as the tint --
+     it removes the detail behind the type without removing the colour, so
+     the card still looks like the photograph rather than like a panel. */
   .al-why--photo .al-why__card {
-    background: rgb(246 244 239 / 0.82);
-    -webkit-backdrop-filter: blur(7px) saturate(1.06);
-    backdrop-filter: blur(7px) saturate(1.06);
+    background: rgb(18 17 15 / 0.44);
+    -webkit-backdrop-filter: blur(18px) saturate(1.08);
+    backdrop-filter: blur(18px) saturate(1.08);
   }
 
   .al-why--photo .al-why__card:hover {
-    background: rgb(246 244 239 / 0.92);
+    background: rgb(18 17 15 / 0.56);
   }
 
-  /* Both raised for contrast over the photograph -- see the header comment
-     for the measured ratios. */
-  .al-why--photo .al-why__desc {
-    color: var(--color-on-light-72);
+  .al-why--photo .al-why__title {
+    color: var(--color-on-dark);
+  }
+
+  /* Full-strength warm white, not the -80/-60 steps used on solid grounds:
+     over the brightest backdrop the glass can sit on, -80 measures 3.6:1
+     and full 4.7:1. */
+  .al-why--photo .al-why__name,
+  .al-why--photo .al-why__desc,
+  .al-why--photo .al-why__idx {
+    color: var(--color-on-dark);
   }
 
   .al-why--photo .al-why__idx {
-    color: var(--color-gold-warm);
+    opacity: 0.92;
   }
 
-  /* The 1px hairlines run over the photograph now, so they need the slightly
-     stronger rule to stay visible against a busy image. */
+  /* Light hairlines, since the grid now sits on dark glass. */
   .al-why--photo .al-why__grid {
-    background: rgb(18 17 15 / 0.22);
-    border-color: rgb(18 17 15 / 0.22);
+    background: rgb(246 244 239 / 0.22);
+    border-color: rgb(246 244 239 / 0.22);
   }
 
-  /* Safari and Firefox without backdrop-filter get opaque cards rather than
-     translucent ones. Contrast only improves; the photograph still reads
-     around and between them. */
+  /* Without backdrop-filter the tint alone has to carry the type, so it goes
+     up. Contrast improves; only the sharpness of the picture through the
+     card is lost. */
   @supports not (backdrop-filter: blur(1px)) {
     .al-why--photo .al-why__card {
-      background: rgb(246 244 239 / 0.94);
+      background: rgb(18 17 15 / 0.62);
     }
   }
 
