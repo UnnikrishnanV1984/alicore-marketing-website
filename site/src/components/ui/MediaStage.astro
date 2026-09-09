@@ -21,14 +21,17 @@ interface Props {
   image?: SlotImageType;
   /**
    * Photographs shown side by side instead of one full-bleed image --
-   * Manufacturing (2) and About (3). Takes precedence over `image`.
+   * Manufacturing and About both use two. Takes precedence over `image`.
+   *
+   * Entries may be undefined: a caller looking a panel up by slot position
+   * gets nothing back for a placement nobody has filled, and that panel is
+   * meant to render its placeholder rather than shift its neighbour over.
    */
-  images?: SlotImageType[];
+  images?: (SlotImageType | undefined)[];
   /**
-   * How many side-by-side panels to render. Defaults to 2 for backward
-   * compatibility with Manufacturing's original two-up layout; About passes
-   * 3. Missing positions in `images` render as empty placeholders rather
-   * than collapsing the layout to fewer, narrower columns.
+   * How many side-by-side panels to render. Defaults to 2, which is what both
+   * split stages use. Missing positions in `images` render as empty
+   * placeholders rather than collapsing the layout to fewer, wider columns.
    */
   columns?: number;
   /** Which side the panel sits on at desktop widths. */

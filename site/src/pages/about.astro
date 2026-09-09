@@ -14,8 +14,11 @@ import { meta } from '../content/seo';
 
 const [galleries, capSlots] = await Promise.all([loadSlotGalleries(), loadSlotImages()]);
 const aboutGallery = galleries.get('alicore-about') ?? [];
-// Two panels: [right photo] (may crop) then [centre/original photo] (must not crop).
-const aboutOrdered = [aboutGallery[2], aboutGallery[0]];
+// Two panels, left then right. Looked up by position rather than array index:
+// a gallery with only one of the two filled would otherwise shift the second
+// panel into the first slot. Same ordering as the home page's About section.
+const aboutAt = (position: number) => aboutGallery.find((i) => i.position === position);
+const aboutOrdered = [aboutAt(2), aboutAt(1)];
 ---
 
 <Page meta={meta['/about']} path="/about" active="/about">

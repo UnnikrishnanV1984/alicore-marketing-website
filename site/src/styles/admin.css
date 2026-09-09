@@ -321,8 +321,83 @@
   font-weight: 500;
 }
 
+/* --- section tabs --------------------------------------------------------
+   The library is 26 placements across six sections. As one scroll it was long
+   enough that finding a placement meant hunting; one section at a time is what
+   makes it usable. The tab row sticks to the top so the section you are in
+   stays visible while you scroll a long group like Products.
+
+   The count on each tab is the point of the row: it says at a glance which
+   sections still have empty placements without opening them. */
+.al-media__tabs {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 34px;
+  padding: 10px 0;
+  background: var(--color-ink);
+  border-bottom: 1px solid var(--color-rule-dark);
+}
+
+.al-media__tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 15px;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  color: rgb(246 244 239 / 0.62);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.al-media__tab:hover {
+  color: var(--color-on-dark);
+  background: rgb(246 244 239 / 0.06);
+}
+
+.al-media__tab.is-on {
+  color: var(--color-ink);
+  background: var(--color-gold);
+  border-color: var(--color-gold);
+}
+
+.al-media__tab:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 2px;
+}
+
+.al-media__tabcount {
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  padding: 2px 6px;
+  border-radius: 2px;
+  background: rgb(246 244 239 / 0.1);
+  color: inherit;
+}
+
+/* A complete section reads as done at a glance; an incomplete one does not. */
+.al-media__tabcount.is-done {
+  background: rgb(120 170 120 / 0.22);
+}
+
+.al-media__tab.is-on .al-media__tabcount {
+  background: rgb(18 17 15 / 0.16);
+}
+
 .al-media__group {
-  margin-top: 56px;
+  margin-top: 34px;
 }
 
 .al-media__grouphead {

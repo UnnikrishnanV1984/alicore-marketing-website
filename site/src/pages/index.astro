@@ -31,7 +31,7 @@ const [slots, galleries, projects, contact] = await Promise.all([
 ---
 
 <Page meta={meta['/']} path="/" scrollSpy active="/">
-  <Hero />
+  <Hero images={galleries.get('alicore-hero') ?? []} />
   <AboutSection images={galleries.get('alicore-about') ?? []} capSlots={slots} />
   <ProductsSection slots={galleries} />
 

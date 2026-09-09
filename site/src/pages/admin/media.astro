@@ -17,11 +17,21 @@ const GALLERY_GROUP = 'Products';
  * Slots that show more than one photograph side by side rather than a single
  * full-bleed image or a cycle. Value is how many positions to offer.
  */
-const SPLIT_SLOTS: Record<string, number> = { 'alicore-factory': 2, 'alicore-about': 3 };
+const SPLIT_SLOTS: Record<string, number> = {
+  'alicore-factory': 2,
+  'alicore-about': 2,
+  // The hero is a wall of three columns cycling three frames each, in reading
+  // order: positions 1-3 are column 1, 4-6 column 2, 7-9 column 3.
+  'alicore-hero': 9,
+};
 
 /** Friendly names for a split slot's positions, where "Photo N" would be confusing. */
 const SPLIT_LABELS: Record<string, Record<number, string>> = {
-  'alicore-about': { 1: 'Right panel (shown uncropped)', 2: 'Unused', 3: 'Left panel (may crop)' },
+  'alicore-about': { 1: 'Right panel', 2: 'Left panel' },
+  'alicore-factory': { 1: 'Left photograph', 2: 'Right photograph' },
+  'alicore-hero': Object.fromEntries(
+    Array.from({ length: 9 }, (_, i) => [i + 1, `Column ${Math.floor(i / 3) + 1}, frame ${(i % 3) + 1}`]),
+  ),
 };
 
 let slots: AdminSlot[] = [];
@@ -93,9 +103,11 @@ try {
     Every image placement on the website appears below. Drag a photograph onto a slot — or click to
     browse — and it fills that position on the live page. Use landscape shots at 2000px wide or
     larger; they are resized and converted automatically, so upload the best original you have.
-    Each product in the Products group can carry up to {MAX_GALLERY_POSITIONS} photographs, which
-    the live site cycles through automatically. Manufacturing carries two photographs shown side by
-    side, and About carries three (Left, Centre, Right).
+    Each product carries up to {MAX_GALLERY_POSITIONS} photographs, which the live site cycles
+    through automatically. The hero is a wall of nine — three columns of three, each column
+    cycling on its own timer — and any frame left empty keeps the photograph the site ships with.
+    Every other placement is a single photograph, except the two side-by-side pairs on About and
+    Manufacturing.
   </p>
 
   {

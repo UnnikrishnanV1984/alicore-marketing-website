@@ -93,8 +93,25 @@ export default function MediaLibrary({ slots }: { slots: AdminSlot[] }) {
    */
   const [needsPublish, setNeedsPublish] = useState(false);
 
+  /**
+   * Groups are the section tabs, in the order the slots arrive (sort_order).
+   * The library is 26 placements across six sections and was a single scroll;
+   * one section at a time is what makes it usable.
+   */
   const groups = Array.from(new Set(state.map((s) => s.groupTitle)));
+  const [tab, setTab] = useState(groups[0] ?? '');
+  // A group can disappear if the slot list changes underneath the tab.
+  const activeTab = groups.includes(tab) ? tab : (groups[0] ?? '');
+
   const busyKey = (slotId: string, position: number) => `${slotId}:${position}`;
+
+  const countsFor = (group: string) => {
+    const inGroup = state.filter((s) => s.groupTitle === group);
+    return {
+      filled: inGroup.reduce((n, s) => n + s.images.filter((i) => i.hasImage).length, 0),
+      total: inGroup.reduce((n, s) => n + s.images.length, 0),
+    };
+  };
 
   /**
    * A second upload landing on the same placement before the first has
@@ -275,14 +292,40 @@ export default function MediaLibrary({ slots }: { slots: AdminSlot[] }) {
         </div>
       )}
 
-      {groups.map((group) => (
-        <section className="al-media__group" key={group}>
+      <div className="al-media__tabs" role="tablist" aria-label="Website sections">
+        {groups.map((group) => {
+          const { filled, total } = countsFor(group);
+          return (
+            <button
+              key={group}
+              type="button"
+              role="tab"
+              id={`al-tab-${group.replace(/\W+/g, '-')}`}
+              aria-selected={group === activeTab}
+              aria-controls={`al-panel-${group.replace(/\W+/g, '-')}`}
+              className={`al-media__tab${group === activeTab ? ' is-on' : ''}`}
+              onClick={() => setTab(group)}
+            >
+              {group}
+              <span className={`al-media__tabcount${filled === total ? ' is-done' : ''}`}>
+                {filled}/{total}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
+      {groups.filter((group) => group === activeTab).map((group) => (
+        <section
+          className="al-media__group"
+          key={group}
+          role="tabpanel"
+          id={`al-panel-${group.replace(/\W+/g, '-')}`}
+          aria-labelledby={`al-tab-${group.replace(/\W+/g, '-')}`}
+        >
           <div className="al-media__grouphead">
             <h2>{group}</h2>
-            <span>
-              {state.filter((s) => s.groupTitle === group).reduce((n, s) => n + s.images.filter((i) => i.hasImage).length, 0)} /{' '}
-              {state.filter((s) => s.groupTitle === group).reduce((n, s) => n + s.images.length, 0)} filled
-            </span>
+            <span>{countsFor(group).filled} / {countsFor(group).total} filled</span>
           </div>
 
           <div className={`al-media__products${group === 'Projects' ? ' al-media__products--row' : ''}`}>

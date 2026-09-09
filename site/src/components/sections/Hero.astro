@@ -2,6 +2,8 @@
 import Eyebrow from '../ui/Eyebrow.astro';
 import Button from '../ui/Button.astro';
 import { pillars } from '../../content/site';
+import { srcSet } from '../../lib/media';
+import type { SlotImage as SlotImageType } from '../../lib/media';
 
 /**
  * The photographs fill the hero and the copy arrives over them.
@@ -15,6 +17,12 @@ import { pillars } from '../../content/site';
  *
  * Each column cycles its own three images on a staggered timer, so the wall
  * never changes all at once.
+ *
+ * The nine frames are admin-managed through the `alicore-hero` slot, one
+ * position per frame in reading order -- position 1 is column 1's first frame,
+ * position 4 is column 2's first. Any position left empty falls back to the
+ * photograph shipped in public/hero/, so the wall is never broken by a slot
+ * nobody has filled and the site looks right on a first deploy.
  */
 
 const COLUMNS = [
@@ -25,6 +33,26 @@ const COLUMNS = [
 
 const FRAMES = [1, 2, 3] as const;
 const src = (id: string, n: number, w: number) => `/hero/${id}-${n}-${w}.webp`;
+
+interface Props {
+  /** The `alicore-hero` gallery. Missing positions keep the shipped files. */
+  images?: SlotImageType[];
+}
+const { images = [] } = Astro.props;
+
+/** Position for column `ci` (0-based), frame `n` (1-based): 1..9, in reading order. */
+const positionOf = (ci: number, n: number) => ci * FRAMES.length + n;
+
+/**
+ * Either the uploaded photograph for a frame or the file shipped with the
+ * repo. Both carry a srcset, so the two cases differ only in the URLs.
+ */
+function frameSources(ci: number, n: number) {
+  const uploaded = images.find((i) => i.position === positionOf(ci, n));
+  if (uploaded) return { src: uploaded.webp[1280] ?? uploaded.fallback, srcset: srcSet(uploaded) };
+  const id = COLUMNS[ci].id;
+  return { src: src(id, n, 660), srcset: `${src(id, n, 440)} 440w, ${src(id, n, 660)} 660w` };
+}
 ---
 
 <section id="top" class="al-hero" data-ground="dark">
@@ -32,21 +60,15 @@ const src = (id: string, n: number, w: number) => `/hero/${id}-${n}-${w}.webp`;
     {
       COLUMNS.map((col, ci) => (
         <div class="al-hero__col" data-hero-col style={`--col-delay:${ci * 1.6}s`}>
-          {FRAMES.map((n) => (
+          {FRAMES.map((n) => {
+            const f = frameSources(ci, n);
+            return (
             <img
               class={`al-hero__frame${n === 1 ? ' is-on' : ''}`}
-              src={n === 1 ? src(col.id, n, 660) : undefined}
-              data-src={n === 1 ? undefined : src(col.id, n, 660)}
-              srcset={
-                n === 1
-                  ? `${src(col.id, n, 440)} 440w, ${src(col.id, n, 660)} 660w`
-                  : undefined
-              }
-              data-srcset={
-                n === 1
-                  ? undefined
-                  : `${src(col.id, n, 440)} 440w, ${src(col.id, n, 660)} 660w`
-              }
+              src={n === 1 ? f.src : undefined}
+              data-src={n === 1 ? undefined : f.src}
+              srcset={n === 1 ? f.srcset : undefined}
+              data-srcset={n === 1 ? undefined : f.srcset}
               sizes="(max-width: 860px) 100vw, 34vw"
               alt=""
               width="660"
@@ -55,7 +77,8 @@ const src = (id: string, n: number, w: number) => `/hero/${id}-${n}-${w}.webp`;
               decoding="async"
               fetchpriority={n === 1 && ci === 0 ? 'high' : 'auto'}
             />
-          ))}
+            );
+          })}
         </div>
       ))
     }
