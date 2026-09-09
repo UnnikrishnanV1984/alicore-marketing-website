@@ -3,15 +3,16 @@ import Page from '../layouts/Page.astro';
 import PageHero from '../components/ui/PageHero.astro';
 import MediaStage from '../components/ui/MediaStage.astro';
 import Eyebrow from '../components/ui/Eyebrow.astro';
+import SlotImage from '../components/ui/SlotImage.astro';
 import WhySection from '../components/sections/WhySection.astro';
 import IndustriesSection from '../components/sections/IndustriesSection.astro';
 import CtaBand from '../components/sections/CtaBand.astro';
-import { loadSlotGalleries } from '../lib/media';
+import { loadSlotGalleries, loadSlotImages } from '../lib/media';
 import { about } from '../content/sections';
 import { capabilities } from '../content/site';
 import { meta } from '../content/seo';
 
-const galleries = await loadSlotGalleries();
+const [galleries, capSlots] = await Promise.all([loadSlotGalleries(), loadSlotImages()]);
 const aboutGallery = galleries.get('alicore-about') ?? [];
 // Two panels: [right photo] (may crop) then [centre/original photo] (must not crop).
 const aboutOrdered = [aboutGallery[2], aboutGallery[0]];
@@ -40,23 +41,32 @@ const aboutOrdered = [aboutGallery[2], aboutGallery[0]];
   </MediaStage>
 
   <section class="al-section">
-    <div class="al-container al-about-page">
+    <div class="al-container">
       <div class="al-about-page__body">
         {about.body.map((p) => <p>{p}</p>)}
       </div>
 
-      <aside class="al-about-page__aside">
-        <div class="al-hairline-grid al-about-page__caps">
-          {
-            capabilities.map((c) => (
-              <div class="al-cap">
+      <div class="al-hairline-grid al-about-page__caps">
+        {
+          capabilities.map((c) => (
+            <div class="al-cap">
+              <div class="al-cap__media">
+                <SlotImage
+                  slot={c.slot}
+                  placeholder={c.shot}
+                  image={capSlots.get(c.slot)}
+                  ratio="4/3"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1100px) 50vw, 25vw"
+                />
+              </div>
+              <div class="al-cap__body">
                 <div class="al-cap__k">{c.k}</div>
                 <div class="al-cap__v">{c.v}</div>
               </div>
-            ))
-          }
-        </div>
-      </aside>
+            </div>
+          ))
+        }
+      </div>
     </div>
   </section>
 
@@ -66,13 +76,6 @@ const aboutOrdered = [aboutGallery[2], aboutGallery[0]];
 </Page>
 
 <style>
-  .al-about-page {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: clamp(40px, 6vw, 90px);
-    align-items: start;
-  }
-
   /* On the dark panel, not the page ground. */
   .al-about-page__stagelead {
     margin-top: 16px;
@@ -97,18 +100,27 @@ const aboutOrdered = [aboutGallery[2], aboutGallery[0]];
   }
 
   .al-about-page__caps {
-    grid-template-columns: 1fr;
-    margin-top: 28px;
+    /* Same cell size as the Products grid's cards (ProductsSection.astro). */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    margin-top: 52px;
   }
 
   .al-cap {
     background: var(--color-bg);
-    padding: 22px 24px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .al-cap__body {
+    padding: 28px;
   }
 
   .al-cap__k {
     font-family: var(--font-display);
-    font-size: 16px;
+    font-weight: 400;
+    font-size: 20px;
+    letter-spacing: 0.02em;
+    color: var(--color-ink);
   }
 
   .al-cap__v {

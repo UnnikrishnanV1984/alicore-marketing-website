@@ -70,10 +70,33 @@ export const pillars = [
   { n: '04', code: 'FACADE', full: 'Elevating Spaces · Defining Style' },
 ] as const;
 
-/** The four capability tiles in the "Who We Are" section. */
+/**
+ * The four capability tiles in the "Who We Are" section. Each carries its own
+ * Image Library slot -- like the product cards, a photo sits above the text.
+ */
 export const capabilities = [
-  { k: 'Custom Manufacturing', v: 'Made to project drawings and dimensions' },
-  { k: 'Material Expertise', v: 'GFRC and FRP systems' },
-  { k: 'Project Support', v: 'Design development to delivery' },
-  { k: 'Scalable Production', v: 'Single pieces to full projects' },
+  {
+    k: 'Custom Manufacturing',
+    v: 'Made to project drawings and dimensions',
+    slot: 'alicore-cap-1',
+    shot: 'Panel being cast or moulded to a project drawing',
+  },
+  {
+    k: 'Material Expertise',
+    v: 'GFRC and FRP systems',
+    slot: 'alicore-cap-2',
+    shot: 'GFRC and FRP material or texture close-up',
+  },
+  {
+    k: 'Project Support',
+    v: 'Design development to delivery',
+    slot: 'alicore-cap-3',
+    shot: 'Drawing review or site coordination',
+  },
+  {
+    k: 'Scalable Production',
+    v: 'Single pieces to full projects',
+    slot: 'alicore-cap-4',
+    shot: 'Multiple panels in production on the factory floor',
+  },
 ] as const;
