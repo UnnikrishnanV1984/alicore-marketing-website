@@ -67,7 +67,7 @@ const [slots, galleries, projects, contact] = await Promise.all([
     ctaVariant="gold"
   />
 
-  <WhySection />
+  <WhySection image={slots.get('alicore-why')} />
   <CustomSection />
   {contact.showProjects && <ProjectsSection projects={projects} />}
   <ManufacturingSection images={galleries.get('alicore-factory') ?? []} />

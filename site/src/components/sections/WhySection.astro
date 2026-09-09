@@ -1,17 +1,61 @@
 ---
 import Eyebrow from '../ui/Eyebrow.astro';
+import SlotImage from '../ui/SlotImage.astro';
 import { why } from '../../content/sections';
+import type { SlotImage as SlotImageType } from '../../lib/media';
 
+/**
+ * "Why Choose Alicore?" -- six reasons on a full-bleed architectural
+ * photograph.
+ *
+ * Readability is guaranteed by construction, not by the photograph. Staff
+ * swap this image from /admin/media without a designer, so the section is
+ * built so that even a solid-black upload still clears WCAG AA:
+ *
+ *   - a warm-white scrim over the photo (0.82 at the top where the heading
+ *     sits, easing to 0.55 through the card grid), and
+ *   - cards at 0.82 over that, giving a worst-case plate of rgb(226,224,220).
+ *
+ * Measured against that worst-case plate: card name 14.3:1, description
+ * 6.6:1, heading 10.6:1. The description uses --color-on-light-72 rather
+ * than the -60 used on solid grounds; at -60 it measures 4.25:1 over a dark
+ * photograph, which fails. The index number uses --color-gold-warm rather
+ * than --color-gold-ink for the same reason -- 3.0:1 against 2.4:1.
+ *
+ * With no photograph uploaded the section renders its original light
+ * treatment instead of a full-width placeholder block, which would dominate
+ * the page.
+ */
 interface Props {
   headingLevel?: 'h1' | 'h2';
+  /** The `alicore-why` slot. Absent -> the original light treatment. */
+  image?: SlotImageType;
 }
-const { headingLevel = 'h2' } = Astro.props;
+
+const { headingLevel = 'h2', image } = Astro.props;
 const Heading = headingLevel;
+const hasPhoto = Boolean(image);
 ---
 
-<section class="al-section">
-  <div class="al-container">
-    <Eyebrow label="Why Alicore" />
+<section class={`al-section al-why${hasPhoto ? ' al-why--photo' : ''}`}>
+  {
+    hasPhoto && (
+      <div class="al-why__bg" aria-hidden="true">
+        <SlotImage
+          slot="alicore-why"
+          placeholder="Wide architectural photograph used behind the Why Choose Alicore section"
+          image={image}
+          ratio="16/9"
+          fit="cover"
+          sizes="100vw"
+          class="al-why__slot"
+        />
+      </div>
+    )
+  }
+
+  <div class="al-container al-why__inner">
+    <Eyebrow label="Why Alicore" ground={hasPhoto ? 'dark' : 'light'} />
     <Heading class="al-why__title">Why Choose Alicore?</Heading>
 
     <div class="al-hairline-grid al-why__grid">
@@ -29,6 +73,54 @@ const Heading = headingLevel;
 </section>
 
 <style>
+  .al-why {
+    position: relative;
+    isolation: isolate;
+  }
+
+  /* --- the photograph ---------------------------------------------------
+     Absolutely positioned so it is a background layer: the container is the
+     only thing in flow, so the section stays self-sizing however tall the
+     copy becomes. Same approach as MediaStage. */
+  .al-why__bg {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    background: var(--color-panel-2);
+    z-index: 0;
+  }
+
+  /* height:100% against a min-height-only parent resolves to auto and lets
+     the photograph's own ratio drive the section height. Filling absolutely
+     is what keeps it a background rather than content. */
+  .al-why__bg :global(.al-slot) {
+    position: absolute;
+    inset: 0;
+    height: auto;
+    aspect-ratio: auto;
+  }
+
+  /* The scrim. Denser at the top, where the eyebrow and heading sit directly
+     on it with no card behind them -- and where a sky, the brightest or
+     darkest part of most architectural photographs, tends to fall. */
+  .al-why__bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      rgb(246 244 239 / 0.82) 0%,
+      rgb(246 244 239 / 0.68) 22%,
+      rgb(246 244 239 / 0.55) 46%,
+      rgb(246 244 239 / 0.55) 100%
+    );
+  }
+
+  .al-why__inner {
+    position: relative;
+    z-index: 1;
+  }
+
   .al-why__title {
     font-family: var(--font-display);
     font-weight: 400;
@@ -72,5 +164,59 @@ const Heading = headingLevel;
     line-height: 1.65;
     color: var(--color-on-light-60);
     margin-top: 14px;
+  }
+
+  /* --- over a photograph -------------------------------------------------
+     The cards stay warm-white but let the photograph's tone through, so the
+     band reads as glass over architecture rather than an opaque strip laid
+     across it. The blur is what keeps small text crisp: it removes the
+     high-frequency detail behind the type that would otherwise fight it. */
+  .al-why--photo .al-why__card {
+    background: rgb(246 244 239 / 0.82);
+    -webkit-backdrop-filter: blur(7px) saturate(1.06);
+    backdrop-filter: blur(7px) saturate(1.06);
+  }
+
+  .al-why--photo .al-why__card:hover {
+    background: rgb(246 244 239 / 0.92);
+  }
+
+  /* Both raised for contrast over the photograph -- see the header comment
+     for the measured ratios. */
+  .al-why--photo .al-why__desc {
+    color: var(--color-on-light-72);
+  }
+
+  .al-why--photo .al-why__idx {
+    color: var(--color-gold-warm);
+  }
+
+  /* The 1px hairlines run over the photograph now, so they need the slightly
+     stronger rule to stay visible against a busy image. */
+  .al-why--photo .al-why__grid {
+    background: rgb(18 17 15 / 0.22);
+    border-color: rgb(18 17 15 / 0.22);
+  }
+
+  /* Safari and Firefox without backdrop-filter get opaque cards rather than
+     translucent ones. Contrast only improves; the photograph still reads
+     around and between them. */
+  @supports not (backdrop-filter: blur(1px)) {
+    .al-why--photo .al-why__card {
+      background: rgb(246 244 239 / 0.94);
+    }
+  }
+
+  /* Phones: the stacked cards make the section far taller than the 16:9
+     photograph, so it crops to a narrow centre strip. Anchoring the image to
+     its centre keeps the subject rather than the sky or the ground. */
+  @media (max-width: 640px) {
+    .al-why__bg :global(img) {
+      object-position: center;
+    }
+
+    .al-why--photo .al-why__card {
+      padding: 32px 26px 36px;
+    }
   }
 </style>
