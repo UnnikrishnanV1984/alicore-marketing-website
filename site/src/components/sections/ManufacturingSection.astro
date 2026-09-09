@@ -1,16 +1,20 @@
 ---
 import Eyebrow from '../ui/Eyebrow.astro';
 import MediaStage from '../ui/MediaStage.astro';
+import PhotoBackdrop from '../ui/PhotoBackdrop.astro';
 import { journey, quality } from '../../content/sections';
 import type { SlotImage as SlotImageType } from '../../lib/media';
 
 interface Props {
   /** Two photographs, shown side by side. Positions 1 and 2 of alicore-factory. */
   images: SlotImageType[];
+  /** The `alicore-journey` slot, behind the six stages. Absent -> flat ground. */
+  journeyImage?: SlotImageType;
   headingLevel?: 'h1' | 'h2';
 }
-const { images, headingLevel = 'h2' } = Astro.props;
+const { images, journeyImage, headingLevel = 'h2' } = Astro.props;
 const Heading = headingLevel;
+const hasJourneyPhoto = Boolean(journeyImage);
 ---
 
 <section id="manufacturing">
@@ -33,12 +37,22 @@ const Heading = headingLevel;
     </p>
   </MediaStage>
 
-  <div class="al-section">
-    <div class="al-container al-mfg__below">
-      <ol class="al-journey">
+  <div class={`al-section al-mfg__stages${hasJourneyPhoto ? ' al-mfg__stages--photo al-photo-sec' : ''}`}>
+    {
+      hasJourneyPhoto && (
+        <PhotoBackdrop
+          slot="alicore-journey"
+          placeholder="Wide photograph behind the Design / Mould Development steps"
+          image={journeyImage}
+          ground="light"
+        />
+      )
+    }
+    <div class="al-container al-mfg__below al-photo-sec__inner">
+      <ol class="al-journey al-stagger" data-reveal>
         {
           journey.map((j) => (
-            <li class="al-journey__row">
+            <li class={`al-journey__row${hasJourneyPhoto ? ' al-glass' : ''}`}>
               <div class="al-journey__n">{j.n}</div>
               <div>
                 <div class="al-journey__name">{j.name}</div>
@@ -51,7 +65,7 @@ const Heading = headingLevel;
 
       <!-- Quality. Deliberately carries no certification or standards claim --
            the brief forbids it without verified evidence. -->
-      <div class="al-quality">
+      <div class={`al-quality${hasJourneyPhoto ? ' al-glass' : ''}`} data-reveal>
         <h3 class="al-quality__title">{quality.heading}</h3>
         <p class="al-quality__body">{quality.body}</p>
       </div>
@@ -94,8 +108,13 @@ const Heading = headingLevel;
     grid-template-columns: 56px 1fr;
     gap: 20px;
     padding: 20px 0;
-    border-bottom: 1px solid var(--color-rule);
     align-items: center;
+  }
+
+  /* Astro scopes this with an attribute selector, which outranks the shared
+     .al-glass, so exclude the glass variant rather than out-specifying it. */
+  .al-journey__row:not(.al-glass) {
+    border-bottom: 1px solid var(--color-rule);
   }
 
   .al-journey__n {
@@ -120,6 +139,9 @@ const Heading = headingLevel;
   .al-quality {
     border: 1px solid var(--color-rule);
     padding: 34px 32px;
+  }
+
+  .al-quality:not(.al-glass) {
     background: var(--color-panel);
   }
 
@@ -134,5 +156,31 @@ const Heading = headingLevel;
     line-height: 1.7;
     color: rgb(18 17 15 / 0.65);
     margin-top: 14px;
+  }
+
+  /* --- over a photograph -------------------------------------------------
+     A bright picture (pale building against sky), so the copy stays black
+     and the wash stays light -- the same choice MediaStage makes for type
+     over a photograph. */
+  .al-mfg__stages--photo .al-journey__row {
+    --al-glass-tint: 0.26;
+    padding: 18px 22px;
+    margin-bottom: 2px;
+  }
+
+  .al-mfg__stages--photo .al-quality {
+    --al-glass-tint: 0.3;
+    border-color: rgb(18 17 15 / 0.2);
+  }
+
+  /* Both raised over a photograph: 0.58 and 0.65 body text sits under AA
+     once anything shows through behind it. */
+  .al-mfg__stages--photo .al-journey__desc,
+  .al-mfg__stages--photo .al-quality__body {
+    color: var(--color-on-light-72);
+  }
+
+  .al-mfg__stages--photo .al-journey__n {
+    color: var(--color-gold-warm);
   }
 </style>

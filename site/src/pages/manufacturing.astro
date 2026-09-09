@@ -3,10 +3,10 @@ import Page from '../layouts/Page.astro';
 import PageHero from '../components/ui/PageHero.astro';
 import ManufacturingSection from '../components/sections/ManufacturingSection.astro';
 import CtaBand from '../components/sections/CtaBand.astro';
-import { loadSlotGalleries } from '../lib/media';
+import { loadSlotImages, loadSlotGalleries } from '../lib/media';
 import { meta } from '../content/seo';
 
-const galleries = await loadSlotGalleries();
+const [slots, galleries] = await Promise.all([loadSlotImages(), loadSlotGalleries()]);
 ---
 
 <Page meta={meta['/manufacturing']} path="/manufacturing" active="/manufacturing">
@@ -17,11 +17,17 @@ const galleries = await loadSlotGalleries();
     breadcrumb={[{ label: 'Manufacturing', href: '/manufacturing' }]}
   />
 
-  <ManufacturingSection images={galleries.get('alicore-factory') ?? []} />
+  <ManufacturingSection
+    images={galleries.get('alicore-factory') ?? []}
+    journeyImage={slots.get('alicore-journey')}
+  />
 
   <CtaBand
     heading="Planning a project?"
     body="Talk to us early — material and mould decisions made at design stage are the ones that keep an elevation buildable."
     cta="Talk to Our Team"
+    slotId="alicore-planning"
+    placeholder='Wide photograph behind the "Planning a project?" band'
+    image={slots.get('alicore-planning')}
   />
 </Page>

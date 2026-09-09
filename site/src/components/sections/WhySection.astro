@@ -48,7 +48,7 @@ const hasPhoto = Boolean(image);
 <section class={`al-section al-why${hasPhoto ? ' al-why--photo' : ''}`}>
   {
     hasPhoto && (
-      <div class="al-why__bg" aria-hidden="true">
+      <div class="al-why__bg" aria-hidden="true" data-reveal>
         <SlotImage
           slot="alicore-why"
           placeholder="Wide architectural photograph used behind the Why Choose Alicore section"
@@ -63,10 +63,12 @@ const hasPhoto = Boolean(image);
   }
 
   <div class="al-container al-why__inner">
-    <Eyebrow label="Why Alicore" ground={hasPhoto ? 'shaded' : 'light'} />
-    <Heading class="al-why__title">Why Choose Alicore?</Heading>
+    <div class="al-why__head al-stagger" data-reveal>
+      <Eyebrow label="Why Alicore" ground={hasPhoto ? 'shaded' : 'light'} />
+      <Heading class="al-why__title">Why Choose Alicore?</Heading>
+    </div>
 
-    <div class="al-hairline-grid al-why__grid">
+    <div class="al-hairline-grid al-why__grid al-stagger" data-reveal>
       {
         why.map((w) => (
           <div class="al-why__card">
@@ -132,6 +134,26 @@ const hasPhoto = Boolean(image);
   .al-why__inner {
     position: relative;
     z-index: 1;
+  }
+
+  /* The photograph settles out of a slow push-in as the section arrives, the
+     same motion MediaStage and PhotoBackdrop use. Scaling down to exactly 1
+     means no edge is ever exposed. Behind [data-reveal-ready], so a script
+     failure costs the motion and never the picture. */
+  :global([data-reveal-ready]) .al-why__bg :global(.al-slot) {
+    transform: scale(1.08);
+    transition: transform 2.4s cubic-bezier(0.16, 0.72, 0.24, 1);
+  }
+
+  :global([data-reveal-ready]) .al-why__bg[data-revealed] :global(.al-slot) {
+    transform: scale(1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global([data-reveal-ready]) .al-why__bg :global(.al-slot) {
+      transform: none;
+      transition: none;
+    }
   }
 
   .al-why__title {

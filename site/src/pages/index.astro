@@ -68,9 +68,12 @@ const [slots, galleries, projects, contact] = await Promise.all([
   />
 
   <WhySection image={slots.get('alicore-why')} />
-  <CustomSection />
+  <CustomSection image={slots.get('alicore-custom')} />
   {contact.showProjects && <ProjectsSection projects={projects} />}
-  <ManufacturingSection images={galleries.get('alicore-factory') ?? []} />
+  <ManufacturingSection
+    images={galleries.get('alicore-factory') ?? []}
+    journeyImage={slots.get('alicore-journey')}
+  />
   <IndustriesSection />
   <ContactSection />
 </Page>

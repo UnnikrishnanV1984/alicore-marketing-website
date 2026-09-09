@@ -1,18 +1,37 @@
 ---
 import Eyebrow from '../ui/Eyebrow.astro';
 import Button from '../ui/Button.astro';
+import PhotoBackdrop from '../ui/PhotoBackdrop.astro';
 import { steps } from '../../content/sections';
+import type { SlotImage as SlotImageType } from '../../lib/media';
 
 interface Props {
   headingLevel?: 'h1' | 'h2';
+  /** The `alicore-custom` slot. Absent -> the original flat panel ground. */
+  image?: SlotImageType;
 }
-const { headingLevel = 'h2' } = Astro.props;
+const { headingLevel = 'h2', image } = Astro.props;
 const Heading = headingLevel;
+const hasPhoto = Boolean(image);
 ---
 
-<section id="custom" class="al-section al-custom">
-  <div class="al-container">
-    <div class="al-custom__head">
+<section
+  id="custom"
+  class={`al-section al-custom${hasPhoto ? ' al-custom--photo al-photo-sec' : ''}`}
+>
+  {
+    hasPhoto && (
+      <PhotoBackdrop
+        slot="alicore-custom"
+        placeholder='Wide photograph behind "Your Design. Our Manufacturing."'
+        image={image}
+        ground="light"
+      />
+    )
+  }
+
+  <div class="al-container al-photo-sec__inner">
+    <div class="al-custom__head al-stagger" data-reveal>
       <div>
         <Eyebrow label="Custom Solutions" />
         <Heading class="al-custom__title">Your Design.<br />Our Manufacturing.</Heading>
@@ -27,10 +46,10 @@ const Heading = headingLevel;
       </div>
     </div>
 
-    <ol class="al-custom__steps">
+    <ol class="al-custom__steps al-stagger" data-reveal>
       {
         steps.map((s) => (
-          <li class="al-step">
+          <li class={`al-step${hasPhoto ? ' al-glass' : ''}`}>
             <div class="al-step__n">{s.n}</div>
             <h3 class="al-step__name">{s.name}</h3>
             <p class="al-step__desc">{s.desc}</p>
@@ -44,6 +63,12 @@ const Heading = headingLevel;
 <style>
   .al-custom {
     background: var(--color-panel);
+  }
+
+  /* The photograph is the ground now, so the flat panel colour would sit on
+     top of it. */
+  .al-custom--photo {
+    background: none;
   }
 
   .al-custom__head {
@@ -82,9 +107,24 @@ const Heading = headingLevel;
     list-style: none;
   }
 
+  /* Three across, so the six steps fill two complete rows. auto-fit resolves
+     to four columns on a desktop and leaves two empty cells -- invisible
+     against a flat ground, two holes once a photograph shows through them. */
+  @media (min-width: 1000px) {
+    .al-custom__steps {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
   .al-step {
-    background: var(--color-panel);
     padding: 34px 30px 40px;
+  }
+
+  /* Astro scopes this rule with an attribute selector, which outranks the
+     shared .al-glass. Excluding the glass variant is cleaner than trying to
+     out-specify it. */
+  .al-step:not(.al-glass) {
+    background: var(--color-panel);
     border-bottom: 1px solid var(--color-rule);
   }
 
@@ -110,5 +150,31 @@ const Heading = headingLevel;
     line-height: 1.65;
     color: var(--color-on-light-60);
     margin-top: 12px;
+  }
+
+  /* --- over a photograph -------------------------------------------------
+     The photographs behind these sections are bright -- pale buildings
+     against sky -- so the copy stays black and the wash stays light. That is
+     the same choice MediaStage makes for type over a photograph, and the
+     opposite of the Why section, whose picture is dark. */
+  .al-custom--photo .al-step {
+    --al-glass-tint: 0.26;
+  }
+
+  /* The 1px gaps are the grid's only structure, and they have a photograph
+     behind them now rather than a flat panel. */
+  .al-custom--photo .al-custom__steps {
+    background: rgb(18 17 15 / 0.22);
+    border-top-color: rgb(18 17 15 / 0.22);
+  }
+
+  /* -60 measures 4.79:1 even on a solid ground; over a photograph it drops
+     under AA, so the body copy goes up a step. */
+  .al-custom--photo .al-step__desc {
+    color: var(--color-on-light-72);
+  }
+
+  .al-custom--photo .al-step__n {
+    color: var(--color-gold-warm);
   }
 </style>

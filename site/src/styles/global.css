@@ -165,3 +165,77 @@ button {
     transform: translateY(0);
   }
 }
+
+/* --------------------------------------------------------------------------
+   Sections that sit on a photograph
+
+   The backdrop itself is PhotoBackdrop.astro; these are the two things the
+   content laid over it needs. Shared rather than repeated, because Custom
+   Solutions, the manufacturing journey and the closing band all want exactly
+   the same treatment.
+   -------------------------------------------------------------------------- */
+
+/* Positioning context for an absolutely-filled backdrop. */
+.al-photo-sec {
+  position: relative;
+  isolation: isolate;
+}
+
+/* ...and the stacking order that keeps the copy above it. */
+.al-photo-sec__inner {
+  position: relative;
+  z-index: 1;
+}
+
+/* A card on a photograph: present enough to group the copy, transparent
+   enough that the picture reads through it. --al-glass-tint is the single
+   lever between those two, so a section that needs more contrast raises it
+   rather than reaching for a different colour. */
+.al-glass {
+  background: rgb(246 244 239 / var(--al-glass-tint, 0.22));
+  -webkit-backdrop-filter: blur(2px) saturate(1);
+  backdrop-filter: blur(2px) saturate(1);
+}
+
+/* Without backdrop-filter the wash alone has to separate the card from the
+   picture, so it goes up. Contrast improves; only the sharpness of the
+   photograph through the card is lost. */
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .al-glass {
+    background: rgb(246 244 239 / calc(var(--al-glass-tint, 0.22) + 0.2));
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Staggered arrival
+
+   A container marked [data-reveal] rises its own children in sequence once it
+   enters view, rather than every child being observed separately -- which
+   made a grid pop row by row at whatever rate the reader happened to scroll.
+
+   The hidden starting state lives behind [data-reveal-ready], armed by
+   Base.astro and dropped automatically if its script never claims it, so a
+   failure costs the motion and never the content. The reduced-motion block
+   above already flattens all of this.
+   -------------------------------------------------------------------------- */
+[data-reveal-ready] .al-stagger > * {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.85s var(--ease-premium),
+    transform 0.85s var(--ease-premium);
+}
+
+[data-reveal-ready] .al-stagger[data-revealed] > * {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+[data-reveal-ready] .al-stagger[data-revealed] > :nth-child(1) { transition-delay: 0.04s; }
+[data-reveal-ready] .al-stagger[data-revealed] > :nth-child(2) { transition-delay: 0.12s; }
+[data-reveal-ready] .al-stagger[data-revealed] > :nth-child(3) { transition-delay: 0.2s; }
+[data-reveal-ready] .al-stagger[data-revealed] > :nth-child(4) { transition-delay: 0.28s; }
+[data-reveal-ready] .al-stagger[data-revealed] > :nth-child(5) { transition-delay: 0.36s; }
+[data-reveal-ready] .al-stagger[data-revealed] > :nth-child(6) { transition-delay: 0.44s; }
+[data-reveal-ready] .al-stagger[data-revealed] > :nth-child(7) { transition-delay: 0.52s; }
+[data-reveal-ready] .al-stagger[data-revealed] > :nth-child(n + 8) { transition-delay: 0.6s; }

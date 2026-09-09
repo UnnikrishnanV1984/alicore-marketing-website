@@ -1,6 +1,8 @@
 ---
 import Button from '../ui/Button.astro';
+import PhotoBackdrop from '../ui/PhotoBackdrop.astro';
 import { loadContact } from '../../lib/settings';
+import type { SlotImage as SlotImageType } from '../../lib/media';
 
 const contact = await loadContact(Astro.locals);
 
@@ -13,18 +15,42 @@ interface Props {
   heading?: string;
   body?: string;
   cta?: string;
+  /**
+   * Optional photographic background. Opt-in per placement rather than on by
+   * default: this band closes five different pages, and only the one that has
+   * a photograph of its own should change.
+   */
+  image?: SlotImageType;
+  /**
+   * Slot id for `image`. Named `slotId`, not `slot`: `slot` is Astro's own
+   * named-slot assignment attribute, and this band is a direct child of the
+   * page layout component -- an attribute called `slot` there routes the whole
+   * band into a layout slot that does not exist, and it renders nothing.
+   */
+  slotId?: string;
+  placeholder?: string;
 }
 
 const {
   heading = 'Discuss your project with our team.',
   body = 'Share drawings, dimensions or a design concept and we will come back with the right manufacturing approach.',
   cta = 'Request a Quote',
+  image,
+  slotId = '',
+  placeholder = '',
 } = Astro.props;
+
+const hasPhoto = Boolean(image && slotId);
 ---
 
-<section class="al-cta-band">
-  <div class="al-container al-cta-band__inner">
-    <div>
+<section class={`al-cta-band${hasPhoto ? ' al-cta-band--photo al-photo-sec' : ''}`}>
+  {
+    hasPhoto && (
+      <PhotoBackdrop slot={slotId} placeholder={placeholder} image={image} ground="light" />
+    )
+  }
+  <div class="al-container al-cta-band__inner al-photo-sec__inner al-stagger" data-reveal>
+    <div class={hasPhoto ? 'al-glass al-cta-band__copy' : ''}>
       <h2 class="al-cta-band__title al-balance">{heading}</h2>
       <p class="al-cta-band__body">{body}</p>
     </div>
@@ -40,8 +66,23 @@ const {
 <style>
   .al-cta-band {
     padding-block: clamp(56px, 7vw, 96px);
-    background: var(--color-panel);
     border-top: 1px solid var(--color-rule);
+  }
+
+  .al-cta-band:not(.al-cta-band--photo) {
+    background: var(--color-panel);
+  }
+
+  /* Only the copy sits on glass; the buttons carry their own grounds and
+     would look boxed in by a second panel behind them. */
+  .al-cta-band__copy {
+    --al-glass-tint: 0.28;
+    padding: clamp(26px, 3vw, 38px) clamp(22px, 2.6vw, 34px);
+  }
+
+  /* 0.6 body text drops under AA once a photograph shows through. */
+  .al-cta-band--photo .al-cta-band__body {
+    color: var(--color-on-light-72);
   }
 
   .al-cta-band__inner {

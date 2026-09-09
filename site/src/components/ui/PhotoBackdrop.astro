@@ -1,0 +1,127 @@
+---
+import SlotImage from './SlotImage.astro';
+import type { SlotImage as SlotImageType } from '../../lib/media';
+
+/**
+ * A full-bleed photograph behind a whole section, with the copy left in flow
+ * on top of it.
+ *
+ * Different from MediaStage, which pairs a photograph with one panel of copy
+ * and sizes itself. This is a backdrop: it takes no space, so the section
+ * keeps whatever height its own content needs. Used by the sections whose
+ * content is a grid or a list rather than a single panel -- Custom Solutions,
+ * the manufacturing journey, the closing band.
+ *
+ * The photograph is admin-managed, so nothing here can assume what it looks
+ * like. Two things follow from that:
+ *
+ *  - a scrim across the top third, where a heading sits on bare photograph
+ *    with no card behind it, and
+ *  - `ground`, which says whether the copy over it is dark or light. The
+ *    three photographs using this today are bright (pale buildings against
+ *    sky, luminance 162-175), so they take dark copy on a light scrim --
+ *    the same reasoning that makes MediaStage's over-photo type black.
+ *
+ * Render nothing when the slot is empty: a full-width placeholder block would
+ * dominate the page, and the section's own flat ground is the better fallback.
+ */
+interface Props {
+  slot: string;
+  placeholder: string;
+  image?: SlotImageType;
+  /** 'light' -> warm-white scrim for dark copy. 'dark' -> the inverse. */
+  ground?: 'light' | 'dark';
+  class?: string;
+}
+
+const { slot, placeholder, image, ground = 'light', class: className = '' } = Astro.props;
+---
+
+<div class={`al-photobg al-photobg--${ground} ${className}`} aria-hidden="true" data-reveal>
+  <SlotImage
+    slot={slot}
+    placeholder={placeholder}
+    image={image}
+    ratio="16/9"
+    fit="cover"
+    sizes="100vw"
+    class="al-photobg__slot"
+  />
+</div>
+
+<style>
+  .al-photobg {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    z-index: 0;
+  }
+
+  .al-photobg--light {
+    background: var(--color-panel-2);
+  }
+
+  .al-photobg--dark {
+    background: var(--color-ink-2);
+  }
+
+  /* height:100% against a parent with only min-height resolves to auto, which
+     would let the photograph's own ratio drive the section height. Filling
+     absolutely is what keeps this a background rather than content. */
+  .al-photobg :global(.al-slot) {
+    position: absolute;
+    inset: 0;
+    height: auto;
+    aspect-ratio: auto;
+  }
+
+  /* The scrim, and the only tint on the picture: strongest at the top, where
+     a heading sits directly on the photograph, and gone by the time the cards
+     -- which carry their own wash -- begin. */
+  .al-photobg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  .al-photobg--light::after {
+    background: linear-gradient(
+      180deg,
+      rgb(246 244 239 / 0.72) 0%,
+      rgb(246 244 239 / 0.58) 20%,
+      rgb(246 244 239 / 0.36) 34%,
+      rgb(246 244 239 / 0.18) 50%,
+      rgb(246 244 239 / 0.18) 100%
+    );
+  }
+
+  .al-photobg--dark::after {
+    background: linear-gradient(
+      180deg,
+      rgb(18 17 15 / 0.62) 0%,
+      rgb(18 17 15 / 0.52) 20%,
+      rgb(18 17 15 / 0.34) 34%,
+      rgb(18 17 15 / 0) 50%
+    );
+  }
+
+  /* The photograph settles out of a slow push-in as the section arrives,
+     matching MediaStage. Scaling down to exactly 1 means no edge is ever
+     exposed. Behind [data-reveal-ready], so a script failure costs the
+     motion and never the picture. */
+  :global([data-reveal-ready]) .al-photobg :global(.al-slot) {
+    transform: scale(1.08);
+    transition: transform 2.4s cubic-bezier(0.16, 0.72, 0.24, 1);
+  }
+
+  :global([data-reveal-ready]) .al-photobg[data-revealed] :global(.al-slot) {
+    transform: scale(1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global([data-reveal-ready]) .al-photobg :global(.al-slot) {
+      transform: none;
+      transition: none;
+    }
+  }
+</style>

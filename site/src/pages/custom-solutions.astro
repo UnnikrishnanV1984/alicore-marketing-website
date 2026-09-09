@@ -4,7 +4,10 @@ import PageHero from '../components/ui/PageHero.astro';
 import CustomSection from '../components/sections/CustomSection.astro';
 import CtaBand from '../components/sections/CtaBand.astro';
 import Eyebrow from '../components/ui/Eyebrow.astro';
+import { loadSlotImages } from '../lib/media';
 import { meta } from '../content/seo';
+
+const slots = await loadSlotImages();
 ---
 
 <Page meta={meta['/custom-solutions']} path="/custom-solutions" active="/custom-solutions">
@@ -16,7 +19,7 @@ import { meta } from '../content/seo';
     breadcrumb={[{ label: 'Custom Solutions', href: '/custom-solutions' }]}
   />
 
-  <CustomSection />
+  <CustomSection image={slots.get('alicore-custom')} />
 
   <section class="al-section">
     <div class="al-container al-what">
