@@ -129,9 +129,19 @@ const hasPhoto = Boolean(image);
     margin-top: 20px;
   }
 
+  /* Three across, so the six reasons fill two complete rows. auto-fit alone
+     resolves to four columns on a desktop and leaves two empty cells inside
+     the grid's border -- invisible against the flat page ground this section
+     used to have, but a pair of holes once a photograph shows through them. */
   .al-why__grid {
     grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
     margin-top: 52px;
+  }
+
+  @media (min-width: 1000px) {
+    .al-why__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
   }
 
   .al-why__card {
