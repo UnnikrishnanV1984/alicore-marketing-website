@@ -56,11 +56,7 @@ export const why = [
   ['Project Support', 'Support from design development through manufacturing and delivery.'],
   ['Quality Focus', 'Consistent attention to material selection, production and finishing.'],
   ['Scalable Production', 'Capability to support individual custom pieces as well as larger project requirements.'],
-].map(([name, desc], i) => ({
-  idx: String(i + 1).padStart(2, '0'),
-  name,
-  desc,
-}));
+].map(([name, desc]) => ({ name, desc }));
 
 /* --------------------------------------------------------------------------
    Custom Solutions -- six process steps

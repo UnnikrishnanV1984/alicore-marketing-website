@@ -5,26 +5,30 @@ import { why } from '../../content/sections';
 import type { SlotImage as SlotImageType } from '../../lib/media';
 
 /**
- * "Why Choose Alicore?" -- six reasons on a full-bleed architectural
- * photograph, which is meant to be seen rather than washed out.
+ * "Why Choose Alicore?" -- six reasons over a full-bleed architectural
+ * photograph, which is meant to be seen rather than covered.
  *
- * The photograph carries NO full-height overlay: it renders at its own
- * brightness, and the only tint anywhere is a gradient across the top third
- * that the heading sits in. Everything below -- the whole subject of the
- * picture -- is untouched.
+ * The photograph carries no full-height overlay; the only tint is a gradient
+ * across the top third that the heading sits in. The cards are all but
+ * transparent -- a 0.16 wash, there to mark the grid rather than to hold the
+ * type -- so the picture reads straight through them.
  *
- * The cards are therefore dark glass rather than a light plate. That is what
- * makes an untinted photograph survivable: a light card has to out-lighten
- * whatever is behind it before black type is readable, which is exactly the
- * whitewash we are trying to avoid, whereas a dark card only has to darken,
- * and darkening a photograph still shows the photograph. Measured over the
- * brightest backdrop inside the card rectangle, warm-white type on the glass
- * reaches 4.7:1 -- the worst case for light text, since light text fails
- * against bright backdrops, not dark ones.
+ * That leaves the type with no plate to sit on, which matters most for the
+ * gold titles: gold is almost exactly the tone of sand and stone, so on this
+ * photograph --color-gold measures 2.4:1 at the median and 1.2:1 across the
+ * lit areas. Two things carry them instead:
  *
- * The one thing that could not follow the design is the index number: gold
- * measures 2.2:1 on this glass, so 01-06 are warm white here. Restoring the
- * gold is a one-line change if the look matters more than the ratio.
+ *   - --color-gold-bright, lighter than the mid-tone golds used on solid
+ *     grounds, so it separates from the picture rather than blending in; and
+ *   - a soft dark shadow, which darkens the few pixels immediately around
+ *     each glyph. Measured at the glyph edge that lifts the titles to about
+ *     7:1, though WCAG scores text against the wider background and so does
+ *     not credit it.
+ *
+ * The honest position: with a near-transparent card this section reads well
+ * but does not clear AA by the letter over the brightest parts of the
+ * picture. Raising `--why-card-tint` below is the single lever -- 0.60 puts
+ * the gold at 4.5:1 -- at the cost of the transparency.
  *
  * With no photograph uploaded the section renders its original light
  * treatment -- black type on the page ground -- rather than a full-width
@@ -66,7 +70,6 @@ const hasPhoto = Boolean(image);
       {
         why.map((w) => (
           <div class="al-why__card">
-            <div class="al-why__idx">{w.idx}</div>
             <h3 class="al-why__name">{w.name}</h3>
             <p class="al-why__desc">{w.desc}</p>
           </div>
@@ -80,6 +83,11 @@ const hasPhoto = Boolean(image);
   .al-why {
     position: relative;
     isolation: isolate;
+
+    /* The one lever between "the picture shows through" and "the type clears
+       AA on its own". 0.16 is nearly clear; 0.60 puts the gold titles at
+       4.5:1 over the brightest part of the photograph. */
+    --why-card-tint: 0.16;
   }
 
   /* --- the photograph ---------------------------------------------------
@@ -104,10 +112,10 @@ const hasPhoto = Boolean(image);
     aspect-ratio: auto;
   }
 
-  /* The only tint on the picture, and it is gone by the time the cards
-     start. The heading has no card behind it, so it needs the photograph
-     under it to be predictable; the sky is also the part of an
-     architectural photograph least worth protecting. */
+  /* The only tint on the picture, and it is gone before the cards start.
+     The heading has no card behind it, so it needs the photograph under it
+     to be predictable; the sky is also the part of an architectural
+     photograph least worth protecting. */
   .al-why__bg::after {
     content: '';
     position: absolute;
@@ -159,18 +167,10 @@ const hasPhoto = Boolean(image);
     background: var(--color-panel);
   }
 
-  .al-why__idx {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.14em;
-    color: var(--color-gold-ink);
-  }
-
   .al-why__name {
     font-family: var(--font-display);
     font-weight: 400;
     font-size: 21px;
-    margin-top: 20px;
     line-height: 1.2;
   }
 
@@ -181,50 +181,59 @@ const hasPhoto = Boolean(image);
     margin-top: 14px;
   }
 
-  /* --- over a photograph -------------------------------------------------
-     Dark glass: enough to hold type, transparent enough that the picture
-     reads straight through it. The blur is doing as much work as the tint --
-     it removes the detail behind the type without removing the colour, so
-     the card still looks like the photograph rather than like a panel. */
+  /* --- over a photograph ------------------------------------------------- */
   .al-why--photo .al-why__card {
-    background: rgb(18 17 15 / 0.44);
-    -webkit-backdrop-filter: blur(18px) saturate(1.08);
-    backdrop-filter: blur(18px) saturate(1.08);
+    background: rgb(18 17 15 / var(--why-card-tint));
+    -webkit-backdrop-filter: blur(10px) saturate(1.06);
+    backdrop-filter: blur(10px) saturate(1.06);
   }
 
   .al-why--photo .al-why__card:hover {
-    background: rgb(18 17 15 / 0.56);
+    background: rgb(18 17 15 / calc(var(--why-card-tint) + 0.14));
   }
 
   .al-why--photo .al-why__title {
     color: var(--color-on-dark);
   }
 
-  /* Full-strength warm white, not the -80/-60 steps used on solid grounds:
-     over the brightest backdrop the glass can sit on, -80 measures 3.6:1
-     and full 4.7:1. */
-  .al-why--photo .al-why__name,
-  .al-why--photo .al-why__desc,
-  .al-why--photo .al-why__idx {
+  .al-why--photo .al-why__name {
+    color: var(--color-gold-bright);
+  }
+
+  .al-why--photo .al-why__desc {
     color: var(--color-on-dark);
   }
 
-  .al-why--photo .al-why__idx {
-    opacity: 0.92;
+  /* The shadow is the type's plate now that the card is not one. Two layers:
+     a tight one that draws the edge of each letter, and a wide soft one that
+     dims the picture immediately around the text block. Kept low enough not
+     to read as a glow. */
+  .al-why--photo .al-why__name,
+  .al-why--photo .al-why__desc {
+    text-shadow:
+      0 1px 2px rgb(18 17 15 / 0.62),
+      0 0 20px rgb(18 17 15 / 0.55);
   }
 
-  /* Light hairlines, since the grid now sits on dark glass. */
+  .al-why--photo .al-why__title {
+    text-shadow:
+      0 1px 3px rgb(18 17 15 / 0.5),
+      0 0 28px rgb(18 17 15 / 0.42);
+  }
+
+  /* Light hairlines, since the grid now sits over a photograph. Slightly
+     stronger than the standard rule: with the cards this transparent, the
+     grid is the only thing giving the six reasons their structure. */
   .al-why--photo .al-why__grid {
-    background: rgb(246 244 239 / 0.22);
-    border-color: rgb(246 244 239 / 0.22);
+    background: rgb(246 244 239 / 0.3);
+    border-color: rgb(246 244 239 / 0.3);
   }
 
-  /* Without backdrop-filter the tint alone has to carry the type, so it goes
-     up. Contrast improves; only the sharpness of the picture through the
-     card is lost. */
+  /* Without backdrop-filter the wash alone separates the card from the
+     picture, so it goes up a little. */
   @supports not (backdrop-filter: blur(1px)) {
     .al-why--photo .al-why__card {
-      background: rgb(18 17 15 / 0.62);
+      background: rgb(18 17 15 / calc(var(--why-card-tint) + 0.16));
     }
   }
 

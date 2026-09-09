@@ -27,6 +27,9 @@
   --color-gold-ink: #b08d3c;
   --color-gold-mute: #8c8a82;
   --color-gold-warm: #a8763a;
+  /* For gold type over a photograph, where the mid-tone golds vanish
+     into sand and stone. Lighter, so it separates from the picture. */
+  --color-gold-bright: #e0bb6a;
 
   /* --- hairlines ---------------------------------------------------------
      The "cards" in this design are 1px GAPS over a tinted ground, not boxes.
