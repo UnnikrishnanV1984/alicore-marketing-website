@@ -30,6 +30,12 @@
   /* For gold type over a photograph, where the mid-tone golds vanish
      into sand and stone. Lighter, so it separates from the picture. */
   --color-gold-bright: #e0bb6a;
+  /* The inverse case: gold type over a BRIGHT photograph. The mid-tone golds
+     measure 1.7-2.4:1 against pale stone and sky, so large gold type there
+     goes deep enough to clear 3:1 (measured worst case 3.17:1). Reads as
+     bronze rather than gold, which is the price of the picture showing
+     through. Not enough for text at body size -- that stays ink. */
+  --color-gold-deep: #734e1f;
 
   /* --- hairlines ---------------------------------------------------------
      The "cards" in this design are 1px GAPS over a tinted ground, not boxes.
