@@ -30,7 +30,7 @@ const directs = [
   <div class="al-container al-contact__grid">
     <div>
       <Eyebrow label="Contact" ground="dark" />
-      <Heading class="al-contact__title al-balance">Let's Build Something Remarkable.</Heading>
+      <Heading class="al-contact__title al-balance">Let's Build Something <span class="al-contact__accent">Remarkable</span>.</Heading>
       <p class="al-contact__intro">
         Have an architectural requirement, drawing or project in development? Share your project
         details with our team and let's explore the right manufacturing solution.
@@ -88,6 +88,11 @@ const directs = [
     grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
     gap: clamp(40px, 6vw, 90px);
     align-items: start;
+  }
+
+  /* Gold on the near-black contact ground: 6.96:1. */
+  .al-contact__accent {
+    color: var(--color-gold);
   }
 
   .al-contact__title {
