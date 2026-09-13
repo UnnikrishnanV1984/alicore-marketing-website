@@ -104,21 +104,23 @@ const align = media === 'left' ? 'right' : 'left';
     max-width: 20ch;
   }
 
-  /* Colour inherited, never set: the panel decides it from its tone, and a
-     rule here would override that and put white back over the picture.
-     Weight follows the tone too -- 600 exists to give a 1px glyph outline
-     more stem to hold, and the warm tones have no outline. */
+  /* One set of numbers for every stage panel on the site -- 19px, 400, 1.78,
+     the same as the Who We Are lead and the body copy those pages carry
+     below the fold.
+
+     600 was here to give a 1px glyph outline more stem to hold on to, on the
+     theory that a heavier letter survives a bright picture better. Measured
+     on the FRP panel it is the other way round: at 400 the outline covers a
+     larger share of each glyph and the copy holds 3:1 across 94% of its area
+     against 92% at 600. So the weight is not a per-tone decision after all.
+
+     Colour is inherited, never set: the panel decides that from its tone, and
+     a rule here would override it and put white back over a bright picture. */
   .al-material-sec__intro {
     margin-top: 16px;
     font-size: 19px;
-    line-height: 1.7;
-    color: inherit;
-    font-weight: 600;
-  }
-
-  .al-photo-panel--warm .al-material-sec__intro,
-  .al-photo-panel--warm-deep .al-material-sec__intro {
     line-height: 1.78;
+    color: inherit;
     font-weight: 400;
   }
 
@@ -137,16 +139,16 @@ const align = media === 'left' ? 'right' : 'left';
     gap: 10px;
     align-items: baseline;
     font-size: 16.5px;
-    font-weight: 600;
+    font-weight: 400;
     color: inherit;
     padding-bottom: 8px;
     border-bottom: 1px solid var(--color-rule-dark-soft);
   }
 
+  /* The hairline stays 12% white over a dark picture and flips to 34% black
+     over a light one, where 12% white is nothing. */
   .al-photo-panel--warm .al-material-sec__points li,
   .al-photo-panel--warm-deep .al-material-sec__points li {
-    font-weight: 400;
-    /* The hairline was 12% white, which is nothing on a light picture. */
     border-bottom-color: var(--color-rule-photo);
   }
 
