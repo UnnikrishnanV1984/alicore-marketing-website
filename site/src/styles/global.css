@@ -259,15 +259,25 @@ button {
    bright picture at the distance that matters. A hard edge can, which is why
    there is no shadow here at all: the stroke is the whole treatment.
 
-   Thin, on the client's instruction, and thin is the point -- paint-order
-   puts the fill back over the stroke, so only the outer half of the width
-   shows and the letterform keeps its own weight instead of looking traced.
-   The floor is what keeps body copy from losing the edge entirely, since the
-   em term alone leaves a 16px line well under a pixel. */
+   Thin, on the client's instruction, and paint-order is what lets it be thin:
+   the fill goes back over the stroke, so only its outer half shows and the
+   letterform keeps its own weight instead of looking traced.
+
+   1.8px is the floor because thinner stops working over a BRIGHT picture.
+   Swept against the About stage's sky, the share of glyph edge reaching 3:1
+   runs 75% at 1.2px, 90% at 1.5px, 96% at 1.8px, 99% at 2.1px -- a sub-pixel
+   stroke antialiases towards whatever is behind it, and against near-white
+   there is nothing left of it. Over mid-grey concrete even 1.2px measured
+   98%, which is why this has to be set by the worst picture a slot can hold
+   rather than by the one in front of you. Opaque for the same reason: at 0.92
+   the same sweep lost about fifteen points.
+
+   The floor also carries body copy, since the em term alone leaves a 16px
+   line well under a pixel. */
 .al-photo-panel {
   color: var(--color-on-dark);
   paint-order: stroke fill;
-  -webkit-text-stroke: max(1.2px, 0.022em) rgb(18 17 15 / 0.92);
+  -webkit-text-stroke: max(1.8px, 0.022em) rgb(18 17 15);
 }
 
 /* Where the browser cannot paint a stroke behind the fill, eight hard offset
@@ -278,14 +288,14 @@ button {
   .al-photo-panel {
     -webkit-text-stroke: 0;
     text-shadow:
-      max(-0.7px, -0.012em) max(-0.7px, -0.012em) 0 rgb(18 17 15 / 0.9),
-      min(0.7px, 0.012em) max(-0.7px, -0.012em) 0 rgb(18 17 15 / 0.9),
-      max(-0.7px, -0.012em) min(0.7px, 0.012em) 0 rgb(18 17 15 / 0.9),
-      min(0.7px, 0.012em) min(0.7px, 0.012em) 0 rgb(18 17 15 / 0.9),
-      0 max(-0.7px, -0.012em) 0 rgb(18 17 15 / 0.9),
-      0 min(0.7px, 0.012em) 0 rgb(18 17 15 / 0.9),
-      max(-0.7px, -0.012em) 0 0 rgb(18 17 15 / 0.9),
-      min(0.7px, 0.012em) 0 0 rgb(18 17 15 / 0.9);
+      max(-0.9px, -0.011em) max(-0.9px, -0.011em) 0 rgb(18 17 15),
+      min(0.9px, 0.011em) max(-0.9px, -0.011em) 0 rgb(18 17 15),
+      max(-0.9px, -0.011em) min(0.9px, 0.011em) 0 rgb(18 17 15),
+      min(0.9px, 0.011em) min(0.9px, 0.011em) 0 rgb(18 17 15),
+      0 max(-0.9px, -0.011em) 0 rgb(18 17 15),
+      0 min(0.9px, 0.011em) 0 rgb(18 17 15),
+      max(-0.9px, -0.011em) 0 0 rgb(18 17 15),
+      min(0.9px, 0.011em) 0 0 rgb(18 17 15);
   }
 }
 

@@ -55,6 +55,19 @@ interface Props {
   /** Above the fold: load eagerly rather than lazily. */
   priority?: boolean;
   height?: string;
+  /**
+   * Make the stage a full viewport tall instead of `height`.
+   *
+   * Worth understanding why this crops LESS rather than more. The stage is
+   * always full-bleed, so its width is fixed and its height decides its
+   * aspect ratio; the photograph is cropped by whatever the difference
+   * between the two ratios is. At the default 72vh a 1536x864 laptop gives
+   * the stage a 2.5:1 letterbox, and a 2500x1536 photograph (1.63:1) loses
+   * about a third of its height to fill it. A full-height stage is 1.78:1 --
+   * much closer to the photograph's own shape -- and the same upload loses
+   * around 8%.
+   */
+  fill?: boolean;
   class?: string;
 }
 
@@ -70,6 +83,7 @@ const {
   fits,
   priority = false,
   height = 'clamp(460px, 72vh, 780px)',
+  fill = false,
   class: className = '',
 } = Astro.props;
 
@@ -81,7 +95,11 @@ const split = images !== undefined;
 const splitPanels = split ? Array.from({ length: columns }, (_, i) => images![i]) : [];
 ---
 
-<div class={`al-stage al-stage--${align} ${className}`} style={`--stage-h:${height}`} data-reveal>
+<div
+  class={`al-stage al-stage--${align}${fill ? ' al-stage--fill' : ''} ${className}`}
+  style={`--stage-h:${height}`}
+  data-reveal
+>
   <div class={`al-stage__media${split ? ' al-stage__media--split' : ''}`}>
     {
       split ? (
@@ -133,6 +151,21 @@ const splitPanels = split ? Array.from({ length: columns }, (_, i) => images![i]
     min-height: var(--stage-h);
     padding: clamp(28px, 4vw, 60px) clamp(16px, 4vw, 64px);
     isolation: isolate;
+  }
+
+  /* A full viewport tall. vh first so a browser without dvh still gets the
+     behaviour; dvh then wins where it is understood, which is what keeps a
+     phone's collapsing address bar from leaving a strip of the next section
+     showing. The stage still only has a MINIMUM height, so copy longer than
+     the screen grows it rather than overflowing. */
+  .al-stage--fill {
+    min-height: 100vh;
+  }
+
+  @supports (height: 100dvh) {
+    .al-stage--fill {
+      min-height: 100dvh;
+    }
   }
 
   .al-stage__media {
@@ -310,7 +343,12 @@ const splitPanels = split ? Array.from({ length: columns }, (_, i) => images![i]
      cover most of the photograph and leave the copy in a cramped column, so
      the image keeps its full frame and the panel sits beneath it. */
   @media (max-width: 860px) {
-    .al-stage {
+    /* Below 860px the panel sits under the photograph rather than over it, so
+       "a screen tall" would mean a screen of picture followed by copy pushed
+       entirely below the fold. --fill is reset with everything else here and
+       the photograph keeps its own narrow-screen height. */
+    .al-stage,
+    .al-stage--fill {
       display: block;
       min-height: 0;
       padding: 0;
@@ -338,6 +376,11 @@ const splitPanels = split ? Array.from({ length: columns }, (_, i) => images![i]
       box-shadow: none;
       backdrop-filter: none;
       padding: clamp(28px, 7vw, 40px) var(--spacing-gutter);
+      /* The panel has a real ground here, so the glyph outline it inherits
+         from .al-photo-panel has nothing left to separate the copy from --
+         it is just a black edge drawn around white type on flat ash. */
+      -webkit-text-stroke: 0;
+      text-shadow: none;
     }
   }
 
