@@ -336,6 +336,6 @@ button {
    against the bronze's 5.3:1, and every heading that lands in one of these
    panels is 29px or more. */
 .al-photo-panel--warm :is(h1, h2, h3) {
-  color: var(--color-gold-warm);
+  color: var(--color-gold-dark);
 }
 
