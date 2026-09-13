@@ -32,6 +32,30 @@ interface Props {
    * in a 16:9 stage), rather than losing most of it to a crop.
    */
   fit?: 'cover' | 'contain';
+  /**
+   * Which part of the photograph to keep when `fit` is 'cover' and the box
+   * is a different shape from the source -- any CSS object-position value.
+   * Defaults to the centre, which is right for a photograph whose subject is
+   * in the middle of it.
+   *
+   * Worth setting when the crop has to avoid part of the source rather than
+   * merely frame it. The FRP stage is the case. That slot's upload is three
+   * photographs butted together into one wide contact sheet -- a dark evening
+   * mosque, a bright daylit pavilion, then another evening building -- and a
+   * centred crop puts the join under the copy. Measured on the glyph pixels,
+   * the backdrop is 0.11-0.21 luminance to x409 and 0.59-0.67 after it, so a
+   * line of text starts on the dark photograph and finishes on the bright one.
+   * White holds 3:1 across 83-94% of the first and 6-8% of the second; a warm
+   * colour is the exact inverse, and nothing crosses the seam.
+   *
+   * focus="0% center" aims the crop at the left photograph alone: every line
+   * lands on the dark one and the join goes off to the right where no text
+   * sits. 99.5% of glyph edges clear 3:1 against 94.4% centred, and the worst
+   * 1% sits at 3.13 rather than 1.86. Replace that upload with a single,
+   * evenly bright photograph and the override can go -- the panel could then
+   * take the warm tone About and GFRC use.
+   */
+  focus?: string;
   /** Above-the-fold images load eagerly and get fetchpriority=high. */
   priority?: boolean;
   sizes?: string;
@@ -46,6 +70,7 @@ const {
   images,
   ratio = '4/3',
   fit = 'cover',
+  focus = '50% 50%',
   priority = false,
   sizes = '(max-width: 768px) 100vw, 50vw',
   ground = 'light',
@@ -61,7 +86,7 @@ const duration = list.length * HOLD_SECONDS;
 
 <div
   class={`al-slot al-slot--${ground} ${className}`}
-  style={`--ratio:${ratio};--fit:${fit}`}
+  style={`--ratio:${ratio};--fit:${fit};--pos:${focus}`}
   data-slot={slot}
 >
   {
@@ -123,6 +148,7 @@ const duration = list.length * HOLD_SECONDS;
     width: 100%;
     height: 100%;
     object-fit: var(--fit, cover);
+    object-position: var(--pos, 50% 50%);
   }
 
   /* --- cycling gallery ---------------------------------------------------
@@ -143,6 +169,7 @@ const duration = list.length * HOLD_SECONDS;
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: var(--pos, 50% 50%);
     opacity: 0;
     animation-name: var(--al-cycle-name, al-slot-cycle-5);
     animation-duration: var(--al-cycle-duration, 20s);

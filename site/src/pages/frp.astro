@@ -33,6 +33,7 @@ const jsonLd = [
     breadcrumb={[{ label: 'FRP', href: '/frp' }]}
   />
 
+  <!-- focus: this slot's upload is a 3-photo contact sheet; see SlotImage. -->
   <MaterialSection
     id="frp"
     eyebrow="Why FRP"
@@ -44,6 +45,7 @@ const jsonLd = [
     slotId={frp.slot}
     placeholder="FRP element / moulded component photo"
     image={slots.get(frp.slot)}
+    focus="0% center"
     ground="ink2"
     media="right"
     ctaVariant="gold"

@@ -24,6 +24,8 @@ interface Props {
   ground?: 'ink' | 'ink2';
   /** Panel copy treatment -- see MediaStage. Decided by the photograph. */
   tone?: 'light' | 'warm' | 'warm-deep';
+  /** Which part of the photograph the crop keeps -- see SlotImage. */
+  focus?: string;
   /** Which side the copy panel sits on. */
   media?: 'left' | 'right';
   ctaVariant?: 'gold' | 'outline';
@@ -43,6 +45,7 @@ const {
   image,
   ground = 'ink',
   tone = 'light',
+  focus,
   media = 'left',
   ctaVariant = 'gold',
   headingLevel = 'h2',
@@ -64,6 +67,7 @@ const align = media === 'left' ? 'right' : 'left';
     align={align}
     ground={ground}
     tone={tone}
+    focus={focus}
   >
     <Eyebrow label={eyebrow} ground="dark" />
     <Heading class="al-material-sec__title al-balance">{heading}</Heading>

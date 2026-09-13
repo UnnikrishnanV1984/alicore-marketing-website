@@ -52,6 +52,7 @@ const [slots, galleries, projects, contact] = await Promise.all([
     ctaVariant="gold"
   />
 
+  <!-- focus: this slot's upload is a 3-photo contact sheet; see SlotImage. -->
   <MaterialSection
     id="frp"
     eyebrow={frp.eyebrow}
@@ -63,6 +64,7 @@ const [slots, galleries, projects, contact] = await Promise.all([
     slotId={frp.slot}
     placeholder="FRP element / moulded component photo"
     image={slots.get(frp.slot)}
+    focus="0% center"
     ground="ink2"
     media="right"
     ctaVariant="gold"

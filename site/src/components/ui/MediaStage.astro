@@ -68,6 +68,11 @@ interface Props {
    * neighbour still crops to fill the frame.
    */
   fits?: ('cover' | 'contain')[];
+  /**
+   * Which part of the photograph the crop keeps -- see SlotImage. Applies to
+   * every panel of a split stage.
+   */
+  focus?: string;
   /** Above the fold: load eagerly rather than lazily. */
   priority?: boolean;
   height?: string;
@@ -98,6 +103,7 @@ const {
   tone = 'light',
   fit = 'cover',
   fits,
+  focus,
   priority = false,
   height = 'clamp(460px, 72vh, 780px)',
   fill = false,
@@ -127,6 +133,7 @@ const splitPanels = split ? Array.from({ length: columns }, (_, i) => images![i]
             image={img}
             ratio="16/9"
             fit={fits?.[i] ?? fit}
+            focus={focus}
             ground="dark"
             priority={priority && i === 0}
             sizes={`${Math.round(100 / columns)}vw`}
@@ -140,6 +147,7 @@ const splitPanels = split ? Array.from({ length: columns }, (_, i) => images![i]
           image={image}
           ratio="16/9"
           fit={fit}
+          focus={focus}
           ground="dark"
           priority={priority}
           sizes="100vw"
