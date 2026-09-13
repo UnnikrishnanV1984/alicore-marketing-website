@@ -56,6 +56,11 @@ jobs:
           # number under a green deploy is worse than a failed one.
           PUBLIC_REQUIRE_DB: '1'
 
+      # A page with no rule in public/_headers gets cached at the edge with no
+      # validator, and the site keeps serving it after a deploy.
+      - name: Check cache headers cover every page
+        run: node scripts/check-cache-headers.mjs
+
       - name: Deploy to Cloudflare
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         uses: cloudflare/wrangler-action@v3
