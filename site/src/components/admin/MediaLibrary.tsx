@@ -156,13 +156,13 @@ export default function MediaLibrary({ slots }: { slots: AdminSlot[] }) {
       }
 
       const preview = URL.createObjectURL(blobs.get(640)!);
-      const wasEmpty = !image.hasImage;
       setState((prev) => updateImage(prev, slot.id, image.position, { hasImage: true, previewUrl: preview }));
 
-      if (wasEmpty) {
-        setNeedsPublish(true);
-        setNotice(null);
-      }
+      // Every upload, not just the first into an empty placement. An upload
+      // writes to a path nothing has served before, so the live site keeps
+      // showing the old photograph until the built pages point at the new one.
+      setNeedsPublish(true);
+      setNotice(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Upload failed.');
     } finally {
@@ -285,10 +285,9 @@ export default function MediaLibrary({ slots }: { slots: AdminSlot[] }) {
 
       {needsPublish && (
         <div className="al-set__notice" role="status">
-          A photograph was added to or removed from a placement that was empty or full. Press{' '}
-          <strong>Publish to the live site</strong> (top right) to put it on the public site —
-          replacing a photograph that was already there goes live on its own, but filling or
-          emptying a placement does not.
+          Your change is saved but is not on the public site yet. Press{' '}
+          <strong>Publish to the live site</strong> (top right) and it appears in about a minute.
+          Visitors then see it straight away — no refreshing, and nothing to clear.
         </div>
       )}
 

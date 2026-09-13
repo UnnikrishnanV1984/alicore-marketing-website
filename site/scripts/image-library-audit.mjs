@@ -13,11 +13,12 @@
 //     nine frames, and a single landscape image sitting in frame 1 would crop
 //     to a portrait sliver next to eight photographs chosen for that shape.
 //
-//  3. Delete stored files that no longer correspond to a placement: the
-//     pre-gallery path shape (slots/<id>/<width>.webp, before positions
-//     existed) and the odd widths an early seeding script wrote by naming each
-//     file after its clamped pixel width instead of the nominal target. The
-//     site only ever requests 640, 1280 and 2000.
+//  3. Delete stored files that no active asset points at: the pre-gallery
+//     path shape (slots/<id>/<width>.webp, before positions existed), the odd
+//     widths an early seeding script wrote by naming each file after its
+//     clamped pixel width, and -- now that each upload writes its own path
+//     segment -- the files left behind by a photograph that has since been
+//     replaced.
 //
 // Safe to run more than once: every step checks for what it is about to do.
 //
@@ -138,21 +139,29 @@ async function listAll(prefix = '', depth = 0, out = []) {
 async function deleteOrphanFiles() {
   const { data: assets, error } = await supabase
     .from('media_assets')
-    .select('slot_id, position')
+    .select('slot_id, position, variants')
     .eq('is_active', true);
   if (error) throw new Error(error.message);
-  const live = new Set(assets.map((a) => `${a.slot_id}/${a.position ?? 1}`));
+
+  // The live set comes from what each active asset actually recorded, not from
+  // a path rebuilt by rule. Uploads carry their own version segment now, so no
+  // rule can predict them -- and guessing wrong here deletes live photographs.
+  const live = new Set();
+  for (const a of assets) {
+    const stored = a.variants?.webp;
+    if (stored && Object.keys(stored).length) {
+      for (const path of Object.values(stored)) live.add(path);
+    } else {
+      // Pre-versioning asset: its files are at the derived path.
+      for (const w of WIDTHS) live.add(`slots/${a.slot_id}/${a.position ?? 1}/${w}.webp`);
+    }
+  }
 
   const orphans = [];
   for (const path of await listAll()) {
-    const m = path.match(/^slots\/([^/]+)\/(\d+)\/(\d+)\.webp$/);
-    if (!m) {
-      orphans.push([path, 'path shape predates positions']);
-      continue;
-    }
-    const [, slot, position, width] = m;
-    if (!live.has(`${slot}/${position}`)) orphans.push([path, 'no placement uses it']);
-    else if (!WIDTHS.includes(width)) orphans.push([path, 'width the site never requests']);
+    if (live.has(path)) continue;
+    const superseded = /^slots\/[^/]+\/\d+\/[^/]+\/\d+\.webp$/.test(path);
+    orphans.push([path, superseded ? 'superseded by a later upload' : 'no active asset uses it']);
   }
 
   if (!orphans.length) {

@@ -41,16 +41,24 @@ try {
   const [{ data: slotRows, error: slotErr }, { data: assetRows }, { data: projectRows }] =
     await Promise.all([
       supabase.from('media_slots').select('*').order('sort_order'),
-      supabase.from('media_assets').select('slot_id, position, alt_text').eq('is_active', true),
+      supabase.from('media_assets').select('slot_id, position, alt_text, variants').eq('is_active', true),
       supabase.from('projects').select('id, image_path, is_published').not('image_path', 'is', null),
     ]);
 
   if (slotErr) throw new Error(slotErr.message);
 
-  const active = new Map<string, Map<number, string>>();
+  type ActiveAsset = { alt: string; path: string };
+  const active = new Map<string, Map<number, ActiveAsset>>();
   for (const a of assetRows ?? []) {
     if (!active.has(a.slot_id)) active.set(a.slot_id, new Map());
-    active.get(a.slot_id)!.set(a.position ?? 1, a.alt_text ?? '');
+    const position = a.position ?? 1;
+    // Follow the path the upload actually wrote. Deriving it would point at
+    // the pre-versioning location, which a recent upload never touched.
+    const stored = (a.variants as { webp?: Record<string, string> } | null)?.webp?.['640'];
+    active.get(a.slot_id)!.set(position, {
+      alt: a.alt_text ?? '',
+      path: stored ?? slotPath(a.slot_id, 640, position),
+    });
   }
 
   // One project per slot, per the seed data (supabase/migrations/0002_seed.sql)
@@ -60,21 +68,20 @@ try {
   slots = (slotRows ?? []).map((s) => {
     const maxPositions =
       s.group_title === GALLERY_GROUP ? MAX_GALLERY_POSITIONS : (SPLIT_SLOTS[s.id] ?? 1);
-    const byPosition = active.get(s.id) ?? new Map<number, string>();
+    const byPosition = active.get(s.id) ?? new Map<number, ActiveAsset>();
 
     const images = Array.from({ length: maxPositions }, (_, i) => {
       const position = i + 1;
-      const hasImage = byPosition.has(position);
+      const asset = byPosition.get(position);
+      const hasImage = asset !== undefined;
       return {
         position,
         hasImage,
-        altText: byPosition.get(position) ?? '',
+        altText: asset?.alt ?? '',
         label: SPLIT_LABELS[s.id]?.[position],
         // Cache-bust the admin preview only; the public site relies on the
         // stable URL plus an edge purge.
-        previewUrl: hasImage
-          ? `${mediaUrl(slotPath(s.id, 640, position), Astro.locals)}?t=${Date.now()}`
-          : null,
+        previewUrl: asset ? mediaUrl(asset.path, Astro.locals) : null,
       };
     });
 

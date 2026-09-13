@@ -21,6 +21,9 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const VARIANT_WIDTHS = [640, 1280, 2000];
+// Matches MEDIA_MAX_AGE_SECONDS in src/lib/media.ts. A year is safe because
+// each upload writes to its own path segment -- see slotPath() there.
+const MEDIA_MAX_AGE_SECONDS = 31536000;
 const MAX_POSITIONS = 5;
 
 // slot ids from supabase/migrations/0002_seed.sql -- must match exactly.
@@ -114,15 +117,19 @@ async function main() {
       // target, not by the clamped pixel width, or every target below the
       // source's actual width collapses onto the same filename and the site
       // requests URLs that were never written.
+      // Its own path segment per upload, so the CDN cannot serve a previous
+      // upload's bytes from this URL -- see slotPath() in src/lib/media.ts.
+      const version = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
+
       const variants = { webp: {} };
       for (const target of VARIANT_WIDTHS) {
         const width = Math.min(target, meta.width ?? target);
         const buf = await sharp(input).resize({ width }).webp({ quality: 82 }).toBuffer();
-        const path = `slots/${slotId}/${position}/${target}.webp`;
+        const path = `slots/${slotId}/${position}/${version}/${target}.webp`;
 
         const { error } = await supabase.storage
           .from('media')
-          .upload(path, buf, { contentType: 'image/webp', upsert: true, cacheControl: '31536000' });
+          .upload(path, buf, { contentType: 'image/webp', upsert: true, cacheControl: String(MEDIA_MAX_AGE_SECONDS) });
         if (error) throw new Error(`${path}: ${error.message}`);
         variants.webp[target] = path;
       }

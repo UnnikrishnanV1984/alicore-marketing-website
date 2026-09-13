@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 import { serviceClient, mediaUrl } from '../../../lib/supabase';
-import { slotPath, VARIANT_WIDTHS, MAX_GALLERY_POSITIONS } from '../../../lib/media';
+import { slotPath, VARIANT_WIDTHS, MAX_GALLERY_POSITIONS, MEDIA_MAX_AGE_SECONDS } from '../../../lib/media';
 import { json, requireStaff, isResponse, purgeCloudflare } from '../../../lib/admin-api';
 
 export const prerender = false;
@@ -50,14 +50,23 @@ export const POST: APIRoute = async (context) => {
     const variants: Record<string, Record<number, string>> = { webp: {} };
     const purge: string[] = [];
 
+    // Every upload gets its own path segment. Overwriting the previous one
+    // would leave the CDN serving the old photograph for as long as its
+    // Cache-Control allows, with no way to purge it -- see slotPath().
+    const version = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
+
     for (const w of VARIANT_WIDTHS) {
       const file = form.get(`variant_${w}`);
       if (!(file instanceof File)) continue;
 
-      const path = slotPath(slotId, w, position);
+      const path = slotPath(slotId, w, position, 'webp', version);
       const { error } = await supabase.storage
         .from('media')
-        .upload(path, file, { contentType: 'image/webp', upsert: true, cacheControl: '31536000' });
+        .upload(path, file, {
+          contentType: 'image/webp',
+          upsert: true,
+          cacheControl: String(MEDIA_MAX_AGE_SECONDS),
+        });
 
       if (error) throw new Error(`${path}: ${error.message}`);
 
