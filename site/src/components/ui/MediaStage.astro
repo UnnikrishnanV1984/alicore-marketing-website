@@ -160,6 +160,11 @@ const splitPanels = split ? Array.from({ length: columns }, (_, i) => images![i]
      the screen grows it rather than overflowing. */
   .al-stage--fill {
     min-height: 100vh;
+    /* The copy is bottom-aligned, and on a screen-tall stage that put it in
+       the very last inch of the viewport. 1.5in lifts it to where the client
+       asked for it -- written as inches because that is the unit the request
+       came in, and CSS resolves 1.5in to exactly 144px. */
+    padding-bottom: calc(clamp(28px, 4vw, 60px) + 1.5in);
   }
 
   @supports (height: 100dvh) {

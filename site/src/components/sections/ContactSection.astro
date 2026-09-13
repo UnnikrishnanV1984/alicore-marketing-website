@@ -92,7 +92,7 @@ const directs = [
 
   /* Gold on the near-black contact ground: 6.96:1. */
   .al-contact__accent {
-    color: var(--color-gold);
+    color: var(--color-gold-on-ash);
   }
 
   .al-contact__title {
@@ -108,7 +108,7 @@ const directs = [
     margin-top: 22px;
     font-size: 16.5px;
     line-height: 1.7;
-    color: var(--color-on-dark-66);
+    color: var(--color-on-dark-74);
     max-width: 48ch;
     font-weight: 300;
   }
@@ -128,8 +128,10 @@ const directs = [
     transition: background-color 0.25s var(--ease-premium);
   }
 
+  /* Now that the ash is light, the hover goes DOWN rather than up: lifting it
+     further put the gold label at 3.9:1 against its own ground. */
   .al-direct:hover {
-    background: var(--color-ash-3);
+    background: var(--color-ash-deep);
   }
 
   .al-direct--pending {
@@ -142,7 +144,7 @@ const directs = [
     font-size: 10px;
     letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: var(--color-gold);
+    color: var(--color-gold-on-ash);
   }
 
   .al-direct__value {

@@ -277,7 +277,7 @@ button {
 .al-photo-panel {
   color: var(--color-on-dark);
   paint-order: stroke fill;
-  -webkit-text-stroke: max(1.8px, 0.022em) rgb(18 17 15);
+  -webkit-text-stroke: max(1.4px, 0.018em) rgb(18 17 15);
 }
 
 /* Where the browser cannot paint a stroke behind the fill, eight hard offset

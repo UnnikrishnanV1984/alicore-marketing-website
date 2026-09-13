@@ -13,19 +13,22 @@
   --color-panel-2: #dad5cb; /* deeper concrete, image placeholder ground */
   --color-ink: #12110f; /* near-black: PRIMARY TEXT only, never a ground */
 
-  /* Dark grounds are ash, not black. #353532 is the lightest ash that still
-     holds --color-gold at 4.5:1 -- one step lighter (#3a3936) drops gold to
-     4.26 and puts every gold eyebrow and label on a dark section under AA for
-     body text. So this is the brief ("grey/ash, not black") taken as far as
-     the accent colour allows.
+  /* Dark grounds are ash, not black, and lighter than they were: #353532 was
+     still reading as near-black on the client's screen. The constraint that
+     set the old value was --color-gold at 4.5:1, which no ash this light can
+     hold -- so the gold split in two instead. --color-gold stays the brand
+     fill and --color-gold-on-ash carries gold TEXT here; see the accent block.
+
+     The muted whites below moved with it, since alpha over a lighter ground
+     lands closer to it.
 
      The old near-blacks are kept below under their original names because
      --color-ink is still the text colour and a few places genuinely want a
      near-black tonal scrim over a photograph rather than a grey one. */
-  --color-ash: #353532; /* dark sections: masthead, materials, projects, contact */
-  --color-ash-2: #3d3c39; /* lifted variant: FRP ground, media stage */
-  --color-ash-3: #454440; /* tile ground and hover state on dark */
-  --color-ash-deep: #2f2e2b; /* footer, admin sidebar */
+  --color-ash: #4d4c48; /* dark sections: masthead, materials, projects, contact */
+  --color-ash-2: #55534e; /* lifted variant: FRP ground, media stage */
+  --color-ash-3: #5d5b56; /* tile ground on dark */
+  --color-ash-deep: #403f3c; /* footer, admin sidebar, hover on ash */
 
   --color-ink-2: #1a1917;
   --color-ink-3: #1f1d1a;
@@ -39,6 +42,13 @@
        #C0973F  #B08D3C  #8C8A82  #A8763A
   ----------------------------------------------------------------------- */
   --color-gold: #c0973f;
+  /* Gold TEXT on the ash family. #c0973f measures 3.17:1 on the lighter ash
+     and fails AA for the mono labels it is mostly used on; this holds 5.13:1
+     there, 4.59 on --color-ash-2 and 6.29 on --color-ash-deep. It is NOT a
+     replacement for --color-gold: that is still the fill for buttons, rules
+     and the active-nav marker, where a gold this light would disappear
+     against the warm-white page. */
+  --color-gold-on-ash: #e6c47a;
   --color-gold-ink: #b08d3c;
   --color-gold-mute: #8c8a82;
   --color-gold-warm: #a8763a;
@@ -74,11 +84,15 @@
   --color-rule-dark-soft: rgb(246 244 239 / 0.12);
 
   /* --- text on dark ------------------------------------------------------ */
+  /* The number is the alpha. All three muted steps went up when the ash did:
+     composited over #4d4c48 the old 0.66 lands at 4.48:1 and the old 0.42 at
+     2.7:1 -- the breadcrumb was already under AA on the darker ash and would
+     only have got worse. 0.74 / 0.68 / 0.62 measure 5.2 / 4.6 / 4.0. */
   --color-on-dark: #f6f4ef;
   --color-on-dark-80: rgb(246 244 239 / 0.8);
-  --color-on-dark-66: rgb(246 244 239 / 0.66);
-  --color-on-dark-55: rgb(246 244 239 / 0.55);
-  --color-on-dark-42: rgb(246 244 239 / 0.42);
+  --color-on-dark-74: rgb(246 244 239 / 0.74);
+  --color-on-dark-68: rgb(246 244 239 / 0.68);
+  --color-on-dark-62: rgb(246 244 239 / 0.62);
 
   /* --- text on light ----------------------------------------------------- */
   --color-on-light-72: rgb(18 17 15 / 0.72);
