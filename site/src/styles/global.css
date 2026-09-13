@@ -345,24 +345,34 @@ button {
   color: var(--color-gold-ink);
 }
 
-/* The same idea over a MID-TONE picture, which needs both colours a step
-   deeper. The GFRC facade runs 0.44 to 0.78 under the glyphs against the
-   About sky's flat 0.80, and that lower end is what decides it: bronze body
-   copy holds 4.5:1 across only 18% of glyph area there against brown-deep's
-   99.6%, and --color-gold-ink, which is fine on the sky, measures 1.8:1 on
-   the facade and disappears. So brown carries the copy and bronze takes the
-   heading -- bronze being exactly the luminance a 3:1 large-text bar allows
-   at this backdrop's 5th percentile.
+/* The same idea over a MID-TONE picture. The copy colour is deliberately the
+   SAME bronze -- body copy should not change colour from one section to the
+   next just because the photograph behind it did. What changes is the
+   heading, and only because it has to: --color-gold-ink reads as gold on the
+   About sky but measures 1.4-1.8:1 on the GFRC facade, 0% of its glyph area
+   reaching even 3:1, so there it takes the copy's bronze instead.
 
-   Two variants rather than one because no single pair spans both pictures:
-   the heading that reads as gold on the sky is invisible on the facade. */
+   Measured band by band down the GFRC panel, bronze runs 3.2:1 at the
+   heading and 3.6-5.0:1 through the body and bullets, the backdrop lightening
+   as the eye moves down the picture. Parts of that are under the 4.5:1 body
+   text wants; brown-deep would hold 6-10:1 throughout but reads as black,
+   which is the trade the client has already called. */
 .al-photo-panel--warm-deep {
-  color: var(--color-brown-deep);
+  color: var(--color-bronze);
   -webkit-text-stroke: 0;
   text-shadow: none;
 }
 
 .al-photo-panel--warm-deep :is(h1, h2, h3) {
   color: var(--color-bronze);
+}
+
+/* The one thing that does stay deep. The eyebrow is 11px, so it needs 4.5:1
+   rather than the 3:1 its heading gets, and it sits over the darkest band of
+   this picture (0.40) where bronze is 2.85:1 and brown-deep 5.96:1. The
+   doubled class outranks Eyebrow's own scoped rule, which is otherwise a
+   specificity tie that the component wins. */
+.al-photo-panel--warm-deep .al-eyebrow.al-eyebrow--inherit {
+  color: var(--color-brown-deep);
 }
 
