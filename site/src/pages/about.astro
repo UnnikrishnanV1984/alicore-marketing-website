@@ -79,20 +79,22 @@ const aboutAt = (position: number) => aboutGallery.find((i) => i.position === po
 </Page>
 
 <style>
-  /* The same size and weight as the FRP and GFRC panels' intro, which is the
-     one the client picked out as readable over a photograph -- full strength
-     at 600, not a light weight.
+  /* 400 and 1.78, the same as .al-about-page__body below it -- this is the
+     page's body copy, just larger and over a photograph.
 
-     The colour is inherited, not set: this panel is tone="warm", and a rule
-     of its own here would override the tone and put white back over the sky.
-     Anything inside a MediaStage panel should take its colour from the panel
-     for that reason. */
+     It was 600 while the panel was white-on-outline: a heavier stem gives a
+     1px stroke more letterform to hold on to. tone="warm" has no stroke at
+     all, so that reason went with it and the weight can come back down.
+
+     The colour is inherited, not set: a rule of its own here would override
+     the tone and put white back over the sky. Anything inside a MediaStage
+     panel should take its colour from the panel for that reason. */
   .al-about-page__stagelead {
     margin-top: 16px;
     font-size: 19px;
-    line-height: 1.7;
+    line-height: 1.78;
     color: inherit;
-    font-weight: 600;
+    font-weight: 400;
   }
 
   /* Styles every paragraph, not just `p + p`. The lead used to be the first

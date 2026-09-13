@@ -96,14 +96,18 @@ const at = (position: number) => images.find((i) => i.position === position);
     max-width: 20ch;
   }
 
-  /* Inherited, not set: the stage is tone="warm" and a colour of its own here
-     would override the tone and put white back over the sky. */
+  /* 400 and 1.78, matching .al-about__body below it. The 600 was there to
+     give a 1px glyph outline more stem to hold on to; tone="warm" has no
+     outline, so it is not needed.
+
+     Inherited, not set: a colour of its own here would override the tone and
+     put white back over the sky. */
   .al-about__lead {
     margin-top: 16px;
     font-size: 19px;
-    line-height: 1.7;
+    line-height: 1.78;
     color: inherit;
-    font-weight: 600;
+    font-weight: 400;
   }
 
   .al-about__cta {
