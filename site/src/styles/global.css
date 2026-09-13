@@ -345,3 +345,24 @@ button {
   color: var(--color-gold-ink);
 }
 
+/* The same idea over a MID-TONE picture, which needs both colours a step
+   deeper. The GFRC facade runs 0.44 to 0.78 under the glyphs against the
+   About sky's flat 0.80, and that lower end is what decides it: bronze body
+   copy holds 4.5:1 across only 18% of glyph area there against brown-deep's
+   99.6%, and --color-gold-ink, which is fine on the sky, measures 1.8:1 on
+   the facade and disappears. So brown carries the copy and bronze takes the
+   heading -- bronze being exactly the luminance a 3:1 large-text bar allows
+   at this backdrop's 5th percentile.
+
+   Two variants rather than one because no single pair spans both pictures:
+   the heading that reads as gold on the sky is invisible on the facade. */
+.al-photo-panel--warm-deep {
+  color: var(--color-brown-deep);
+  -webkit-text-stroke: 0;
+  text-shadow: none;
+}
+
+.al-photo-panel--warm-deep :is(h1, h2, h3) {
+  color: var(--color-bronze);
+}
+

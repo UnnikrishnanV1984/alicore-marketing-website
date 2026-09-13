@@ -47,8 +47,13 @@ interface Props {
    * stroke width this thin -- see .al-photo-panel--warm in global.css. It
    * trades the guarantee for the picture: white-on-outline holds up whatever
    * staff upload, brown only holds up while the photograph stays bright.
+   *
+   * 'warm-deep' is the same trade one step darker, for a mid-tone picture
+   * where the bright pair stops measuring. Which of the two a slot wants is
+   * a property of the photograph in it, not of the section -- see the
+   * numbers in global.css.
    */
-  tone?: 'light' | 'warm';
+  tone?: 'light' | 'warm' | 'warm-deep';
   /**
    * 'cover' (default) fills the stage and crops. 'contain' letterboxes a
    * photo whose own shape doesn't suit a wide 16:9 band -- a square or tall
@@ -146,7 +151,7 @@ const splitPanels = split ? Array.from({ length: columns }, (_, i) => images![i]
 
   <div
     class={`al-stage__panel al-stage__panel--${ground} al-photo-panel${
-      tone === 'warm' ? ' al-photo-panel--warm al-stage__panel--warm' : ''
+      tone === 'light' ? '' : ` al-photo-panel--${tone} al-stage__panel--warm`
     }`}
     data-reveal
   >
@@ -267,6 +272,10 @@ const splitPanels = split ? Array.from({ length: columns }, (_, i) => images![i]
      heading beneath it and clears the 3:1 that non-text needs. */
   .al-stage__panel--warm::before {
     background: var(--color-gold-ink);
+  }
+
+  .al-stage__panel.al-photo-panel--warm-deep::before {
+    background: var(--color-bronze);
   }
 
   .al-stage--left .al-stage__panel {
