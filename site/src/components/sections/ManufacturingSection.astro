@@ -49,11 +49,11 @@ const hasJourneyPhoto = Boolean(journeyImage);
       )
     }
     <div class="al-container al-mfg__below al-photo-sec__inner">
-      <ol class={`al-journey al-stagger${hasJourneyPhoto ? ' al-photo-panel' : ''}`} data-reveal>
+      <ol class="al-journey al-stagger" data-reveal>
         {
           journey.map((j) => (
             <li class="al-journey__row">
-              <div class="al-journey__n al-photo-accent">{j.n}</div>
+              <div class="al-journey__n">{j.n}</div>
               <div>
                 <div class="al-journey__name">{j.name}</div>
                 <div class="al-journey__desc">{j.desc}</div>
@@ -65,7 +65,7 @@ const hasJourneyPhoto = Boolean(journeyImage);
 
       <!-- Quality. Deliberately carries no certification or standards claim --
            the brief forbids it without verified evidence. -->
-      <div class={`al-quality${hasJourneyPhoto ? ' al-photo-panel' : ''}`} data-reveal>
+      <div class="al-quality" data-reveal>
         <h3 class="al-quality__title">{quality.heading}</h3>
         <p class="al-quality__body">{quality.body}</p>
       </div>
@@ -88,10 +88,10 @@ const hasJourneyPhoto = Boolean(journeyImage);
      light ground behind it. Bare picture: it joins the rest of the panel. */
   .al-mfg__intro {
     margin-top: 16px;
-    font-size: 16px;
+    font-size: 17px;
     line-height: 1.7;
     color: var(--color-on-dark);
-    font-weight: 500;
+    font-weight: 600;
   }
 
   .al-mfg__below {
@@ -161,23 +161,22 @@ const hasJourneyPhoto = Boolean(journeyImage);
   }
 
   /* --- over a photograph -------------------------------------------------
-     The photograph behind these stages is a pale facade -- white building,
-     white sky -- and the copy was white too, which is what the client saw and
-     objected to. It now sits on an ash ground: a colour from the site's own
-     palette rather than the white wash it had, no blur, and transparent
-     enough that the building still reads through it.
+     Nothing behind this copy: no wash, no blur, no panel. The picture here is
+     a pale facade against a pale sky, and measured under the glyphs that is
+     the easy case -- black holds 5.0:1 on the stage descriptions and 6.5:1 on
+     the names with no help at all, so it needs none.
 
-     Warm white on that ground measures 6.5:1, and the stage number can
-     finally be gold again: gold is hopeless on the bare facade (1.0-1.8:1
-     whatever the shade) but reaches 3.7:1 here in its lighter tone, which
-     carries it at large-text size. Ground and text colour come from
-     .al-photo-panel / .al-photo-accent in global.css. */
+     What it must not be is white, which is what the client saw and objected
+     to: white on a white building. And it should not be only black either, so
+     the numbers and the rule take the deep brown, the one warm colour that
+     survives sitting directly on a bright photograph -- 4.0:1 on the numbers,
+     where gold manages 1.0-2.2:1 at any shade still worth calling gold. */
   .al-mfg__stages--photo .al-journey {
-    padding: 8px clamp(20px, 2.4vw, 30px);
+    padding: 0;
   }
 
   .al-mfg__stages--photo .al-journey__row {
-    border-bottom-color: rgb(246 244 239 / 0.16);
+    border-bottom-color: var(--color-rule-photo);
   }
 
   .al-mfg__stages--photo .al-journey__row:last-child {
@@ -186,12 +185,13 @@ const hasJourneyPhoto = Boolean(journeyImage);
 
   .al-mfg__stages--photo .al-quality {
     border: none;
-    border-left: 2px solid var(--color-gold-bright);
-    padding: 30px clamp(20px, 2.4vw, 30px) 34px;
+    border-left: 2px solid var(--color-brown-deep);
+    padding: 4px 0 6px clamp(18px, 2vw, 26px);
   }
 
-  /* Large text, so the lighter gold clears its 3:1 bar with room. */
+  /* 20px/700 is large text, so brown's 4.0:1 clears the 3:1 bar with room. */
   .al-mfg__stages--photo .al-journey__n {
+    color: var(--color-brown-deep);
     font-size: 20px;
     font-weight: 700;
     letter-spacing: 0.02em;
@@ -199,27 +199,24 @@ const hasJourneyPhoto = Boolean(journeyImage);
 
   .al-mfg__stages--photo .al-journey__name,
   .al-mfg__stages--photo .al-quality__title {
-    color: var(--color-on-dark);
+    color: var(--color-brown-deep);
   }
 
   .al-mfg__stages--photo .al-journey__name {
     font-size: 21px;
-    font-weight: 500;
+    font-weight: 600;
   }
 
   .al-mfg__stages--photo .al-quality__title {
     font-size: 26px;
-    font-weight: 500;
+    font-weight: 600;
   }
 
-  /* 0.72 black was what a light wash allowed. On the ash ground the copy is
-     warm white, a size up and a weight up so it is not hairline over a
-     picture. */
+  /* Full black, up a size and a weight: 0.72 black was what a wash allowed,
+     and there is no wash now. */
   .al-mfg__stages--photo .al-journey__desc,
   .al-mfg__stages--photo .al-quality__body {
-    /* Full warm white, not the 80% variant: measured on this ground 80%
-       lands at 3.5:1, under the 4.5 bar for body copy. */
-    color: var(--color-on-dark);
+    color: var(--color-ink);
     font-weight: 500;
   }
 
