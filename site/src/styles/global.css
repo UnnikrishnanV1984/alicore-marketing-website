@@ -325,8 +325,17 @@ button {
    staying bright. A dark upload into this slot would need it turned off --
    hence a prop on MediaStage rather than a rule keyed to the slot id. */
 .al-photo-panel--warm {
-  color: var(--color-brown-deep);
+  color: var(--color-bronze);
   -webkit-text-stroke: 0;
   text-shadow: none;
+}
+
+/* The heading can go further than the body can. WCAG's large-text threshold
+   buys it a 3:1 bar instead of 4.5:1, which is the difference between a
+   bronze and an actual gold: --color-gold-warm measures 3.18:1 on this sky
+   against the bronze's 5.3:1, and every heading that lands in one of these
+   panels is 29px or more. */
+.al-photo-panel--warm :is(h1, h2, h3) {
+  color: var(--color-gold-warm);
 }
 

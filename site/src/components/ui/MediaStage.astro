@@ -263,9 +263,10 @@ const splitPanels = split ? Array.from({ length: columns }, (_, i) => images![i]
   }
 
   /* #c0973f measures about 2.2:1 on the same sky. The rule is 2px of pure
-     decoration, but at that ratio it is 2px of nothing. */
+     decoration, but at that ratio it is 2px of nothing. This matches the
+     heading beneath it and clears the 3:1 that non-text needs. */
   .al-stage__panel--warm::before {
-    background: var(--color-gold-deep);
+    background: var(--color-gold-warm);
   }
 
   .al-stage--left .al-stage__panel {

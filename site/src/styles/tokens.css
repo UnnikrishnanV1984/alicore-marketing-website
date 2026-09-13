@@ -71,6 +71,15 @@
      black. */
   --color-brown-deep: #3b2a19;
 
+  /* Brown-deep reads as black -- at 0.027 relative luminance it is one
+     twelfth of the way out of the shadows, and the warmth in it does not
+     survive being that dark. This is the same idea at 0.110: unmistakably
+     bronze, and still 5.3:1 against the sky in the Who We Are photograph,
+     where the ceiling for body copy is 0.140. Paired with --color-gold-warm
+     for headings, which at 0.216 is over the ceiling for body text but inside
+     the 0.235 that large text allows. */
+  --color-bronze: #7d5526;
+
   /* A hairline over a photograph. --color-rule is 0.14 black, which reads as
      nothing once a picture is showing through it. */
   --color-rule-photo: rgb(18 17 15 / 0.34);
