@@ -102,13 +102,23 @@ const classes = ['al-btn', `al-btn--${variant}`, `al-btn--${ground}`, `al-btn--$
     color: var(--color-on-dark);
   }
 
-  /* Directly on a photograph. A button is a control, not a text area: it is
-     small enough that a real ground costs almost none of the picture, and an
-     outline button with nothing behind it vanishes over a pale facade. */
+  /* Directly on a photograph. Copy in a photo panel is carried by a glyph
+     outline, and a button inherits it -- a 2.6px black stroke on 14px type,
+     which reads as a heavy black border around every letter. A button does
+     not need it: it brings its own ground, so the label sits on a known
+     colour rather than on the picture. Drop the outline and let the two
+     buttons weigh the same. */
+  :global(.al-photo-panel) .al-btn {
+    -webkit-text-stroke: 0;
+    text-shadow: none;
+  }
+
+  /* A button is a control, not a text area: it is small enough that a real
+     ground costs almost none of the picture, and an outline button with
+     nothing behind it vanishes over a pale facade. */
   :global(.al-photo-panel) .al-btn--outline.al-btn--dark {
     background: rgb(18 17 15 / 0.74);
     border-color: rgb(246 244 239 / 0.66);
-    text-shadow: none;
   }
   :global(.al-photo-panel) .al-btn--outline.al-btn--dark:hover {
     background: rgb(18 17 15 / 0.88);
