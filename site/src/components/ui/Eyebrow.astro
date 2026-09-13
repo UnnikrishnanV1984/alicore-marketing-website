@@ -8,29 +8,42 @@ interface Props {
   /**
    * Which ground this sits on. Selects the correct colour.
    *  - 'light'  the page ground: gold.
-   *  - 'dark'   a transparent panel over a bright photograph: black.
+   *  - 'ash'    a solid dark section (masthead, projects, contact): gold.
+   *             --color-ash is the lightest ash that still holds --color-gold
+   *             at 4.5:1, which is what makes this pairing the one to use.
+   *  - 'dark'   inside an .al-photo-panel over a photograph: inherited.
+   *             The panel decides its own colour and outline and both are
+   *             inherited properties, so the label matches the copy beside it
+   *             instead of being coloured independently of it.
    *  - 'shaded' a darkened photograph (Why Choose Alicore): warm white.
    *             Black measures 1.46:1 there and gold 2.9:1; only the light
    *             text is readable over a photo that has been dimmed rather
    *             than lightened.
    */
-  ground?: 'light' | 'dark' | 'shaded';
+  ground?: 'light' | 'ash' | 'dark' | 'shaded';
   class?: string;
 }
 
 const { label, ground = 'light', class: className = '' } = Astro.props;
-// Dark ground now backs a fully transparent overlay panel (over a photo),
-// so gold text -- readable against a solid dark card -- can vanish against a
-// bright photograph. Black reads reliably against any photo underneath.
+// 'dark' used to mean black, chosen when the panel over a photograph still
+// had a ground of its own to sit black type on. It has none now, so the label
+// inherits whatever the panel paints its copy with rather than picking a
+// colour that was right for a card that no longer exists.
+// Inheriting is a class rather than a value, because a CSS-wide keyword
+// arriving through a custom property is not reliably honoured.
+const inherits = ground === 'dark';
 const color =
   ground === 'shaded'
     ? 'var(--color-on-dark)'
-    : ground === 'dark'
-      ? 'var(--color-ink)'
+    : ground === 'ash'
+      ? 'var(--color-gold)'
       : 'var(--color-gold-ink)';
 ---
 
-<div class={`al-eyebrow ${className}`} style={`--eyebrow-color:${color}`}>
+<div
+  class={`al-eyebrow${inherits ? ' al-eyebrow--inherit' : ''} ${className}`}
+  style={inherits ? undefined : `--eyebrow-color:${color}`}
+>
   <span class="al-eyebrow__rule" aria-hidden="true"></span>{label}
 </div>
 
@@ -44,6 +57,17 @@ const color =
     letter-spacing: 0.2em;
     text-transform: uppercase;
     color: var(--eyebrow-color);
+  }
+
+  .al-eyebrow--inherit {
+    color: inherit;
+  }
+
+  /* The panel's outline is sized for a heading and for body copy. At 11px a
+     2.6px stroke closes the counters and the label turns into a row of
+     blobs, so scale it down to this type size. */
+  :global(.al-photo-panel) .al-eyebrow {
+    -webkit-text-stroke: max(1.1px, 0.085em) rgb(18 17 15 / 0.92);
   }
 
   .al-eyebrow__rule {
