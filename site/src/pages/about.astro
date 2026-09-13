@@ -35,6 +35,7 @@ const aboutAt = (position: number) => aboutGallery.find((i) => i.position === po
     placeholder="Close-up: GFRC surface texture / finished panel"
     image={aboutAt(1)}
     fill
+    tone="warm"
     align="left"
     ground="ink"
   >
@@ -78,18 +79,19 @@ const aboutAt = (position: number) => aboutGallery.find((i) => i.position === po
 </Page>
 
 <style>
-  /* On the dark panel, not the page ground. */
-  /* The same treatment as the FRP and GFRC panels' intro, which is the one
-     the client picked out as readable over a photograph: full-strength white
-     at 600, not a light weight. A 300 stroke is thin enough that the glyph
-     outline has very little letterform to hold on to, which is exactly where
-     it struggles -- and this panel sits over the brightest photograph on the
-     site. */
+  /* The same size and weight as the FRP and GFRC panels' intro, which is the
+     one the client picked out as readable over a photograph -- full strength
+     at 600, not a light weight.
+
+     The colour is inherited, not set: this panel is tone="warm", and a rule
+     of its own here would override the tone and put white back over the sky.
+     Anything inside a MediaStage panel should take its colour from the panel
+     for that reason. */
   .al-about-page__stagelead {
     margin-top: 16px;
     font-size: 19px;
     line-height: 1.7;
-    color: var(--color-on-dark);
+    color: inherit;
     font-weight: 600;
   }
 

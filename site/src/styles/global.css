@@ -308,3 +308,25 @@ button {
   color: var(--color-gold-bright);
 }
 
+/* The inverse case: a photograph with no dark in it at all.
+   Sampling the picture under the glyphs of the About stage, the backdrop runs
+   0.80 luminance from the 5th percentile to the 95th -- it is sky, almost
+   edge to edge. White measures 1.11:1 on it, and no outline this thin closes
+   a gap that size; the client asked for 1px and asked for a colour instead.
+
+   So the colour does the separating here and the outline comes off entirely,
+   which also takes the black edge off the letterforms. Measured against that
+   same backdrop: brown 11.2:1, gold-deep 6.0:1, both over 98% of glyph area.
+   Brown carries the copy -- note this is well past the "large text only" bar
+   in its token comment, which was measured over a MID-TONE picture; against
+   sky it clears AA for body text with room to spare.
+
+   This is the one treatment on the site that depends on the photograph
+   staying bright. A dark upload into this slot would need it turned off --
+   hence a prop on MediaStage rather than a rule keyed to the slot id. */
+.al-photo-panel--warm {
+  color: var(--color-brown-deep);
+  -webkit-text-stroke: 0;
+  text-shadow: none;
+}
+

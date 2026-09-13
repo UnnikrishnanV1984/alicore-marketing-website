@@ -39,6 +39,17 @@ interface Props {
   /** Panel ground: 'ink' is near-black, 'ink2' the slightly lifted variant. */
   ground?: 'ink' | 'ink2';
   /**
+   * Panel copy treatment.
+   *
+   * 'light' (default) is warm white carried by a glyph outline, which works
+   * over anything with some dark in it. 'warm' is deep brown and NO outline,
+   * for a photograph bright enough that white cannot separate from it at any
+   * stroke width this thin -- see .al-photo-panel--warm in global.css. It
+   * trades the guarantee for the picture: white-on-outline holds up whatever
+   * staff upload, brown only holds up while the photograph stays bright.
+   */
+  tone?: 'light' | 'warm';
+  /**
    * 'cover' (default) fills the stage and crops. 'contain' letterboxes a
    * photo whose own shape doesn't suit a wide 16:9 band -- a square or tall
    * photo, say -- against the stage's dark ground instead of cropping most
@@ -79,6 +90,7 @@ const {
   columns = 2,
   align = 'left',
   ground = 'ink',
+  tone = 'light',
   fit = 'cover',
   fits,
   priority = false,
@@ -132,7 +144,12 @@ const splitPanels = split ? Array.from({ length: columns }, (_, i) => images![i]
     }
   </div>
 
-  <div class={`al-stage__panel al-stage__panel--${ground} al-photo-panel`} data-reveal>
+  <div
+    class={`al-stage__panel al-stage__panel--${ground} al-photo-panel${
+      tone === 'warm' ? ' al-photo-panel--warm al-stage__panel--warm' : ''
+    }`}
+    data-reveal
+  >
     <slot />
   </div>
 </div>
@@ -243,6 +260,12 @@ const splitPanels = split ? Array.from({ length: columns }, (_, i) => images![i]
     height: 2px;
     background: var(--color-gold);
     transform-origin: left center;
+  }
+
+  /* #c0973f measures about 2.2:1 on the same sky. The rule is 2px of pure
+     decoration, but at that ratio it is 2px of nothing. */
+  .al-stage__panel--warm::before {
+    background: var(--color-gold-deep);
   }
 
   .al-stage--left .al-stage__panel {

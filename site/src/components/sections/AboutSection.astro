@@ -41,6 +41,7 @@ const at = (position: number) => images.find((i) => i.position === position);
     placeholder="Close-up: GFRC surface texture / finished panel"
     image={at(1)}
     fill
+    tone="warm"
     align="left"
     ground="ink"
   >
@@ -95,11 +96,13 @@ const at = (position: number) => images.find((i) => i.position === position);
     max-width: 20ch;
   }
 
+  /* Inherited, not set: the stage is tone="warm" and a colour of its own here
+     would override the tone and put white back over the sky. */
   .al-about__lead {
     margin-top: 16px;
     font-size: 19px;
     line-height: 1.7;
-    color: var(--color-on-dark);
+    color: inherit;
     font-weight: 600;
   }
 
