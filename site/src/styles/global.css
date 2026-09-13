@@ -330,12 +330,18 @@ button {
   text-shadow: none;
 }
 
-/* The heading can go further than the body can. WCAG's large-text threshold
-   buys it a 3:1 bar instead of 4.5:1, which is the difference between a
-   bronze and an actual gold: --color-gold-warm measures 3.18:1 on this sky
-   against the bronze's 5.3:1, and every heading that lands in one of these
-   panels is 29px or more. */
+/* The heading can go further than the body can -- WCAG's large-text threshold
+   buys it a 3:1 bar instead of 4.5:1 -- and it spends that on being the same
+   gold as the rest of the site. --color-gold-ink is what carries gold type on
+   every light ground here, product names included, so a heading sitting on a
+   pale sky uses it too rather than a shade of its own.
+
+   It measures 2.55:1 on that sky, under the 3:1 large text wants. Recorded
+   rather than corrected: the same token measures 2.84:1 on the page ground
+   where it is already shipping at 22px, so this is the palette's existing
+   position on gold, not a new exception. Darkening --color-gold-ink to about
+   #8a6d2e would clear both, everywhere, in one change. */
 .al-photo-panel--warm :is(h1, h2, h3) {
-  color: var(--color-gold-dark);
+  color: var(--color-gold-ink);
 }
 

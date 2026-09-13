@@ -50,7 +50,6 @@
      against the warm-white page. */
   --color-gold-on-ash: #e6c47a;
   --color-gold-ink: #b08d3c;
-  --color-gold-mute: #8c8a82;
   --color-gold-warm: #a8763a;
   /* For gold type over a photograph, where the mid-tone golds vanish
      into sand and stone. Lighter, so it separates from the picture. */
@@ -80,13 +79,6 @@
      the 0.235 that large text allows. */
   --color-bronze: #7d5526;
 
-  /* --color-gold itself, taken down to the darkest value that still clears
-     3:1 on a bright photograph -- same hue (41deg), same saturation, 82% of
-     the value. #c0973f measures 2.21:1 on the Who We Are sky and cannot be
-     used there; this measures 3.19:1, which large text is allowed.
-     --color-gold-warm was the nearest existing token and sits at hue 33deg,
-     which reads orange rather than gold. */
-  --color-gold-dark: #9d7c34;
 
   /* A hairline over a photograph. --color-rule is 0.14 black, which reads as
      nothing once a picture is showing through it. */
