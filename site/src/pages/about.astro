@@ -79,12 +79,18 @@ const aboutAt = (position: number) => aboutGallery.find((i) => i.position === po
 
 <style>
   /* On the dark panel, not the page ground. */
+  /* The same treatment as the FRP and GFRC panels' intro, which is the one
+     the client picked out as readable over a photograph: full-strength white
+     at 600, not a light weight. A 300 stroke is thin enough that the glyph
+     outline has very little letterform to hold on to, which is exactly where
+     it struggles -- and this panel sits over the brightest photograph on the
+     site. */
   .al-about-page__stagelead {
     margin-top: 16px;
-    font-size: clamp(17px, 1.6vw, 21px);
-    line-height: 1.55;
+    font-size: 19px;
+    line-height: 1.7;
     color: var(--color-on-dark);
-    font-weight: 300;
+    font-weight: 600;
   }
 
   /* Styles every paragraph, not just `p + p`. The lead used to be the first

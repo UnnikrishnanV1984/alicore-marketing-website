@@ -304,14 +304,17 @@ function frameSources(ci: number, n: number) {
     color: var(--color-gold);
   }
 
+  /* font-weight was declared twice here, 600 and then 300, so the lead had
+     been rendering light the whole time -- visibly fainter than the support
+     paragraph directly beneath it. One declaration, and the same values as
+     the FRP panel's intro. */
   .al-hero__lead {
     margin-top: 26px;
     max-width: 52ch;
     font-size: clamp(19.5px, 1.85vw, 23px);
-    font-weight: 600;
     line-height: 1.6;
-    color: var(--color-on-dark-80);
-    font-weight: 300;
+    color: var(--color-on-dark);
+    font-weight: 600;
   }
 
   /* Was --color-ink: black copy inside a panel whose other text is white,
