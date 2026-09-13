@@ -1,0 +1,31 @@
+# Cache rules for the Worker's static assets.
+#
+# The default Workers Assets header is `public, max-age=0, must-revalidate`,
+# which only works if the response carries a validator. Pages do not: a page
+# comes back with an ETag on the asset itself but none on the document the
+# Worker returns, so Cloudflare caches the document at the edge, has nothing
+# to revalidate it against, and keeps serving it after a deploy. Staff kept
+# seeing old copy and old photographs until they hard-refreshed -- and a hard
+# refresh was only fixing their own browser, not the edge copy everyone else
+# was getting.
+#
+# So: documents are never stored, and everything with a content-hashed name is
+# stored for good. Rules are listed least-specific first.
+
+/*
+  Cache-Control: no-store
+
+# Astro writes the hash into the filename, so a changed file is a new URL and
+# the old one is never requested again.
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Photographs and brand art ship under their own names and can change without
+# the name changing, so they keep the revalidate-every-time default -- which
+# works here, because these are served straight from assets and do carry an
+# ETag. A 304 is a few hundred bytes; the file is a few hundred kilobytes.
+/hero/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/brand/*
+  Cache-Control: public, max-age=0, must-revalidate
