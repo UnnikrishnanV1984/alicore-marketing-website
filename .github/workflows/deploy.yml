@@ -8,6 +8,16 @@ on:
     paths: ['site/**']
   workflow_dispatch:
 
+# Two runs for the same branch must never deploy at once. A duplicate push
+# event once started a second run three seconds behind the first; both built
+# the same commit, both uploaded the same 157 assets, and the one that
+# finished second published a manifest pointing at the PREVIOUS build's
+# hashed chunks -- a green deploy serving stale CSS. Queue them instead, and
+# let the newer commit cancel a run that has not deployed yet.
+concurrency:
+  group: deploy-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
