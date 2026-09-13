@@ -11,10 +11,25 @@
   --color-bg: #f6f4ef; /* warm white, page default */
   --color-panel: #ece8e0; /* light concrete, alternating sections */
   --color-panel-2: #dad5cb; /* deeper concrete, image placeholder ground */
-  --color-ink: #12110f; /* near-black: primary text AND dark sections */
-  --color-ink-2: #1a1917; /* FRP section ground */
-  --color-ink-3: #1f1d1a; /* project tile ground, hover state on dark */
-  --color-footer: #0c0b0a; /* footer, admin sidebar */
+  --color-ink: #12110f; /* near-black: PRIMARY TEXT only, never a ground */
+
+  /* Dark grounds are ash, not black. #353532 is the lightest ash that still
+     holds --color-gold at 4.5:1 -- one step lighter (#3a3936) drops gold to
+     4.26 and puts every gold eyebrow and label on a dark section under AA for
+     body text. So this is the brief ("grey/ash, not black") taken as far as
+     the accent colour allows.
+
+     The old near-blacks are kept below under their original names because
+     --color-ink is still the text colour and a few places genuinely want a
+     near-black tonal scrim over a photograph rather than a grey one. */
+  --color-ash: #353532; /* dark sections: masthead, materials, projects, contact */
+  --color-ash-2: #3d3c39; /* lifted variant: FRP ground, media stage */
+  --color-ash-3: #454440; /* tile ground and hover state on dark */
+  --color-ash-deep: #2f2e2b; /* footer, admin sidebar */
+
+  --color-ink-2: #1a1917;
+  --color-ink-3: #1f1d1a;
+  --color-footer: #0c0b0a;
 
   /* --- accent -----------------------------------------------------------
      Context dependent, and the mockup never mixes them:
@@ -36,6 +51,19 @@
      bronze rather than gold, which is the price of the picture showing
      through. Not enough for text at body size -- that stays ink. */
   --color-gold-deep: #734e1f;
+
+  /* The one warm accent that survives type sitting directly on a bright
+     photograph with no plate under it. Measured under the glyphs of the
+     manufacturing page: gold reads 1.0-2.0:1 there at any shade still
+     recognisable as gold, and only reaches 3:1 once it has darkened past
+     brown entirely. This brown holds 4.0:1 on the stage numbers and 4.8:1 on
+     the stage names -- enough for large text, not for body copy, which stays
+     black. */
+  --color-brown-deep: #3b2a19;
+
+  /* A hairline over a photograph. --color-rule is 0.14 black, which reads as
+     nothing once a picture is showing through it. */
+  --color-rule-photo: rgb(18 17 15 / 0.34);
 
   /* --- hairlines ---------------------------------------------------------
      The "cards" in this design are 1px GAPS over a tinted ground, not boxes.

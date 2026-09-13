@@ -124,7 +124,7 @@ button {
   top: -100%;
   left: var(--spacing-gutter);
   z-index: 200;
-  background: var(--color-ink);
+  background: var(--color-ash);
   color: var(--color-on-dark);
   padding: 14px 22px;
   font-family: var(--font-display);
@@ -239,3 +239,36 @@ button {
 [data-reveal-ready] .al-stagger[data-revealed] > :nth-child(6) { transition-delay: 0.44s; }
 [data-reveal-ready] .al-stagger[data-revealed] > :nth-child(7) { transition-delay: 0.52s; }
 [data-reveal-ready] .al-stagger[data-revealed] > :nth-child(n + 8) { transition-delay: 0.6s; }
+
+/* --- copy sitting over a photograph ---------------------------------------
+   No blur, per the brief. What replaced it went through three rounds of
+   measurement (render the page, render it again with the text hidden, diff
+   the two, sample the second at the first's glyph pixels):
+
+     1. Colour alone. Nothing in the palette carries it. On the panels whose
+        photograph passes through mid-tones the best any colour manages is
+        black 1.8:1 and white 1.6:1 -- mid-grey is the one ground that is far
+        from both ends of the palette at once.
+     2. A soft halo on the glyphs. Measured 1.2-1.6:1 at the glyph edge over a
+        pale facade: a diffuse shadow cannot darken a bright picture enough at
+        the distance that matters.
+     3. A hard outline. Good for display type -- the hero line is excellent --
+        but at 16px the outline is under a pixel wide and does nothing, and
+        thickening it enough to work makes body copy look like a video game.
+
+   So the copy gets a ground after all, in ash rather than the white wash it
+   had before, and with no blur. 0.78 is the point where warm white clears AA
+   comfortably (6.5:1) while the photograph still reads through -- the picture
+   is visible, which was the point, it just is not carrying the text. */
+.al-photo-panel {
+  background: rgb(53 53 50 / 0.78);
+  color: var(--color-on-dark);
+}
+
+/* Gold finally becomes usable here: it is hopeless on a bare bright facade
+   (1.0-1.8:1) but reaches 3.7:1 on this ground in its lighter shade, which
+   carries large text. Accents only -- never body copy. */
+.al-photo-panel .al-photo-accent {
+  color: var(--color-gold-bright);
+}
+

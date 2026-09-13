@@ -101,6 +101,19 @@ const classes = ['al-btn', `al-btn--${variant}`, `al-btn--${ground}`, `al-btn--$
     border-color: rgb(246 244 239 / 0.35);
     color: var(--color-on-dark);
   }
+
+  /* Directly on a photograph. A button is a control, not a text area: it is
+     small enough that a real ground costs almost none of the picture, and an
+     outline button with nothing behind it vanishes over a pale facade. */
+  :global(.al-photo-panel) .al-btn--outline.al-btn--dark {
+    background: rgb(18 17 15 / 0.74);
+    border-color: rgb(246 244 239 / 0.66);
+    text-shadow: none;
+  }
+  :global(.al-photo-panel) .al-btn--outline.al-btn--dark:hover {
+    background: rgb(18 17 15 / 0.88);
+    border-color: var(--color-on-dark);
+  }
   .al-btn--outline.al-btn--dark:hover {
     border-color: var(--color-on-dark);
     background: rgb(246 244 239 / 0.07);

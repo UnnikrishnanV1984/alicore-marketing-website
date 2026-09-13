@@ -65,7 +65,7 @@ export const footerProductLinks = [
 /** The four hero pillars beneath the fold. */
 export const pillars = [
   { n: '01', code: 'GFRC', full: 'Glass Fiber Reinforced Concrete' },
-  { n: '02', code: 'FRP', full: 'Fiber Reinforced Plastic' },
+  { n: '02', code: 'FRP', full: 'Fiber Reinforced Polymer' },
   { n: '03', code: 'PRECAST', full: 'Precision · Strength · Performance' },
   { n: '04', code: 'FACADE', full: 'Elevating Spaces · Defining Style' },
 ] as const;

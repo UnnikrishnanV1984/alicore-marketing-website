@@ -143,7 +143,7 @@ export const products: Product[] = [
     shot: 'FRP moulded element',
     keyword: 'FRP architectural products',
     detail: [
-      'Fiber Reinforced Plastic suits placements where weight, corrosion resistance or a complex moulded geometry rule out heavier materials.',
+      'Fiber Reinforced Polymer suits placements where weight, corrosion resistance or a complex moulded geometry rule out heavier materials.',
       'FRP holds fine moulded detail and comes out of the mould light enough for single-person handling on many elements, which simplifies installation on interiors and retrofit work.',
       'Its corrosion resistance makes it a practical choice for coastal exposure, wet areas and environments where cementitious or metal elements would need frequent attention.',
     ],
@@ -193,7 +193,7 @@ export const materialTiles = [
   {
     code: 'FRP',
     href: '/frp',
-    desc: 'Fiber Reinforced Plastic — lightweight, corrosion-resistant elements for architectural applications.',
+    desc: 'Fiber Reinforced Polymer — lightweight, corrosion-resistant elements for architectural applications.',
     cta: 'Explore FRP',
   },
   {

@@ -93,7 +93,7 @@ function frameSources(ci: number, n: number) {
   </p>
 
   <div class="al-container al-hero__inner">
-    <div class="al-hero__copy" data-hero-copy>
+    <div class="al-hero__copy al-photo-panel" data-hero-copy>
       <Eyebrow label="Architectural Products Manufacturer" ground="dark" />
       <h1 class="al-hero__title al-balance">
         Architectural Products. Engineered to <span class="al-hero__accent">Elevate</span>.
@@ -195,7 +195,7 @@ function frameSources(ci: number, n: number) {
 <style>
   .al-hero {
     position: relative;
-    background: var(--color-ink);
+    background: var(--color-ash);
     color: var(--color-on-dark);
     min-height: min(880px, 92vh);
     display: flex;
@@ -213,7 +213,7 @@ function frameSources(ci: number, n: number) {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 2px;
-    background: var(--color-ink-2);
+    background: var(--color-ash-2);
   }
 
   .al-hero__col {
@@ -256,11 +256,8 @@ function frameSources(ci: number, n: number) {
      behind a solid card. */
   .al-hero__copy {
     max-width: 640px;
-    background: #b9b5b500;
-    color: var(--color-on-dark);
-    backdrop-filter: blur(5px) saturate(1.1);
+    /* Ground and colour from .al-photo-panel. */
     padding: clamp(26px, 3vw, 40px) clamp(22px, 2.6vw, 36px);
-    box-shadow: 0 24px 60px rgb(18 17 15 / 0.22);
   }
 
   /* Each element rises in turn once the page is ready. Scoped to [data-in],
@@ -293,8 +290,10 @@ function frameSources(ci: number, n: number) {
 
   .al-hero__title {
     font-family: var(--font-display);
-    font-weight: 400;
-    font-size: clamp(38px, 6.4vw, 86px);
+    /* Up from 400. With no panel behind it the stroke has to hold its own
+       against a facade that can be any tone. */
+    font-weight: 500;
+    font-size: clamp(40px, 6.6vw, 88px);
     line-height: 1.02;
     letter-spacing: -0.015em;
     margin-top: 26px;
@@ -308,19 +307,23 @@ function frameSources(ci: number, n: number) {
   .al-hero__lead {
     margin-top: 26px;
     max-width: 52ch;
-    font-size: clamp(16px, 1.5vw, 19px);
+    font-size: clamp(17px, 1.6vw, 20px);
+    font-weight: 500;
     line-height: 1.6;
     color: var(--color-on-dark-80);
     font-weight: 300;
   }
 
+  /* Was --color-ink: black copy inside a panel whose other text is white,
+     which only worked while the blur guaranteed a light ground behind it.
+     With the picture bare it joins the rest of the panel. */
   .al-hero__support {
     margin-top: 16px;
     max-width: 62ch;
-    font-size: 15px;
+    font-size: 16px;
     line-height: 1.7;
-    color: var(--color-ink);
-    font-weight: 300;
+    color: var(--color-on-dark);
+    font-weight: 500;
   }
 
   .al-hero__cta {
@@ -336,7 +339,6 @@ function frameSources(ci: number, n: number) {
     z-index: 2;
     border-top: 1px solid var(--color-rule-dark);
     background: rgb(18 17 15 / 0.62);
-    backdrop-filter: blur(10px);
   }
 
   .al-hero__pillars-grid {

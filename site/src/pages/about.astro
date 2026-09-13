@@ -14,11 +14,10 @@ import { meta } from '../content/seo';
 
 const [galleries, capSlots] = await Promise.all([loadSlotGalleries(), loadSlotImages()]);
 const aboutGallery = galleries.get('alicore-about') ?? [];
-// Two panels, left then right. Looked up by position rather than array index:
-// a gallery with only one of the two filled would otherwise shift the second
-// panel into the first slot. Same ordering as the home page's About section.
+// One photograph, at position 1 -- the stage used to pair two side by side.
+// Looked up by position rather than array index so an empty gallery gives
+// nothing back. Same as the home page's About section.
 const aboutAt = (position: number) => aboutGallery.find((i) => i.position === position);
-const aboutOrdered = [aboutAt(2), aboutAt(1)];
 ---
 
 <Page meta={meta['/about']} path="/about" active="/about">
@@ -34,8 +33,7 @@ const aboutOrdered = [aboutAt(2), aboutAt(1)];
   <MediaStage
     slotId="alicore-about"
     placeholder="Close-up: GFRC surface texture / finished panel"
-    images={aboutOrdered}
-    columns={2}
+    image={aboutAt(1)}
     align="left"
     ground="ink"
   >

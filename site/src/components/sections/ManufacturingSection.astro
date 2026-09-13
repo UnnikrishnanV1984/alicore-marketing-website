@@ -49,11 +49,11 @@ const hasJourneyPhoto = Boolean(journeyImage);
       )
     }
     <div class="al-container al-mfg__below al-photo-sec__inner">
-      <ol class="al-journey al-stagger" data-reveal>
+      <ol class={`al-journey al-stagger${hasJourneyPhoto ? ' al-photo-panel' : ''}`} data-reveal>
         {
           journey.map((j) => (
-            <li class={`al-journey__row${hasJourneyPhoto ? ' al-glass' : ''}`}>
-              <div class="al-journey__n">{j.n}</div>
+            <li class="al-journey__row">
+              <div class="al-journey__n al-photo-accent">{j.n}</div>
               <div>
                 <div class="al-journey__name">{j.name}</div>
                 <div class="al-journey__desc">{j.desc}</div>
@@ -65,7 +65,7 @@ const hasJourneyPhoto = Boolean(journeyImage);
 
       <!-- Quality. Deliberately carries no certification or standards claim --
            the brief forbids it without verified evidence. -->
-      <div class={`al-quality${hasJourneyPhoto ? ' al-glass' : ''}`} data-reveal>
+      <div class={`al-quality${hasJourneyPhoto ? ' al-photo-panel' : ''}`} data-reveal>
         <h3 class="al-quality__title">{quality.heading}</h3>
         <p class="al-quality__body">{quality.body}</p>
       </div>
@@ -76,7 +76,7 @@ const hasJourneyPhoto = Boolean(journeyImage);
 <style>
   .al-mfg__title {
     font-family: var(--font-display);
-    font-weight: 400;
+    font-weight: 500;
     /* See AboutSection: panel width is fixed, so type must not scale with the
        viewport or it wraps to five lines on a wide screen. */
     font-size: clamp(26px, 2.3vw, 36px);
@@ -84,12 +84,14 @@ const hasJourneyPhoto = Boolean(journeyImage);
     margin-top: 16px;
   }
 
+  /* Was --color-ink, which only read while the panel's blur guaranteed a
+     light ground behind it. Bare picture: it joins the rest of the panel. */
   .al-mfg__intro {
     margin-top: 16px;
-    font-size: 15.5px;
+    font-size: 16px;
     line-height: 1.7;
-    color: var(--color-ink);
-    font-weight: 300;
+    color: var(--color-on-dark);
+    font-weight: 500;
   }
 
   .al-mfg__below {
@@ -111,9 +113,7 @@ const hasJourneyPhoto = Boolean(journeyImage);
     align-items: center;
   }
 
-  /* Astro scopes this with an attribute selector, which outranks the shared
-     .al-glass, so exclude the glass variant rather than out-specifying it. */
-  .al-journey__row:not(.al-glass) {
+  .al-journey__row {
     border-bottom: 1px solid var(--color-rule);
   }
 
@@ -141,7 +141,9 @@ const hasJourneyPhoto = Boolean(journeyImage);
     padding: 34px 32px;
   }
 
-  .al-quality:not(.al-glass) {
+  /* Over a photograph the panel keeps no ground of its own -- see the
+     over-a-photograph block below. */
+  .al-mfg__stages:not(.al-mfg__stages--photo) .al-quality {
     background: var(--color-panel);
   }
 
@@ -159,31 +161,76 @@ const hasJourneyPhoto = Boolean(journeyImage);
   }
 
   /* --- over a photograph -------------------------------------------------
-     A bright picture (pale building against sky), so the copy stays black
-     and the wash stays light -- the same choice MediaStage makes for type
-     over a photograph. */
+     The photograph behind these stages is a pale facade -- white building,
+     white sky -- and the copy was white too, which is what the client saw and
+     objected to. It now sits on an ash ground: a colour from the site's own
+     palette rather than the white wash it had, no blur, and transparent
+     enough that the building still reads through it.
+
+     Warm white on that ground measures 6.5:1, and the stage number can
+     finally be gold again: gold is hopeless on the bare facade (1.0-1.8:1
+     whatever the shade) but reaches 3.7:1 here in its lighter tone, which
+     carries it at large-text size. Ground and text colour come from
+     .al-photo-panel / .al-photo-accent in global.css. */
+  .al-mfg__stages--photo .al-journey {
+    padding: 8px clamp(20px, 2.4vw, 30px);
+  }
+
   .al-mfg__stages--photo .al-journey__row {
-    --al-glass-tint: 0.26;
-    padding: 18px 22px;
-    margin-bottom: 2px;
+    border-bottom-color: rgb(246 244 239 / 0.16);
+  }
+
+  .al-mfg__stages--photo .al-journey__row:last-child {
+    border-bottom: none;
   }
 
   .al-mfg__stages--photo .al-quality {
-    --al-glass-tint: 0.3;
-    border-color: rgb(18 17 15 / 0.2);
+    border: none;
+    border-left: 2px solid var(--color-gold-bright);
+    padding: 30px clamp(20px, 2.4vw, 30px) 34px;
   }
 
-  /* Both raised over a photograph: 0.58 and 0.65 body text sits under AA
-     once anything shows through behind it. */
+  /* Large text, so the lighter gold clears its 3:1 bar with room. */
+  .al-mfg__stages--photo .al-journey__n {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+
+  .al-mfg__stages--photo .al-journey__name,
+  .al-mfg__stages--photo .al-quality__title {
+    color: var(--color-on-dark);
+  }
+
+  .al-mfg__stages--photo .al-journey__name {
+    font-size: 21px;
+    font-weight: 500;
+  }
+
+  .al-mfg__stages--photo .al-quality__title {
+    font-size: 26px;
+    font-weight: 500;
+  }
+
+  /* 0.72 black was what a light wash allowed. On the ash ground the copy is
+     warm white, a size up and a weight up so it is not hairline over a
+     picture. */
   .al-mfg__stages--photo .al-journey__desc,
   .al-mfg__stages--photo .al-quality__body {
-    color: var(--color-on-light-72);
+    /* Full warm white, not the 80% variant: measured on this ground 80%
+       lands at 3.5:1, under the 4.5 bar for body copy. */
+    color: var(--color-on-dark);
+    font-weight: 500;
   }
 
-  /* 12px mono, so normal text: 4.5:1. No gold reaches that against this
-     photograph -- even the deep gold stops at 3.2:1 -- so the stage number
-     drops its accent colour and matches the stage name it labels. */
-  .al-mfg__stages--photo .al-journey__n {
-    color: var(--color-ink);
+  .al-mfg__stages--photo .al-journey__desc {
+    font-size: 15px;
+    line-height: 1.65;
   }
+
+  .al-mfg__stages--photo .al-quality__body {
+    font-size: 15.5px;
+    line-height: 1.7;
+  }
+
 </style>

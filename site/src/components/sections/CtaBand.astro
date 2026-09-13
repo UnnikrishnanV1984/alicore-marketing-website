@@ -50,7 +50,7 @@ const hasPhoto = Boolean(image && slotId);
     )
   }
   <div class="al-container al-cta-band__inner al-photo-sec__inner al-stagger" data-reveal>
-    <div class={hasPhoto ? 'al-glass al-cta-band__copy' : ''}>
+    <div class={hasPhoto ? 'al-cta-band__copy' : ''}>
       <h2 class="al-cta-band__title al-balance">{heading}</h2>
       <p class="al-cta-band__body">{body}</p>
     </div>
@@ -73,16 +73,25 @@ const hasPhoto = Boolean(image && slotId);
     background: var(--color-panel);
   }
 
-  /* Only the copy sits on glass; the buttons carry their own grounds and
-     would look boxed in by a second panel behind them. */
-  .al-cta-band__copy {
-    --al-glass-tint: 0.28;
-    padding: clamp(26px, 3vw, 38px) clamp(22px, 2.6vw, 34px);
+  /* Over a photograph the copy carries no panel of its own -- the picture is
+     meant to be seen. Measured under the glyphs on the manufacturing page,
+     black holds 4.2:1 across the worst 5% of the heading and 9.5:1 of the
+     body, while gold and white both collapse to about 1.1:1 against a
+     building this bright. So: black, heavier, larger.
+
+     The heading crosses one genuinely dark pocket of the picture where black
+     drops to 1.5:1 over roughly 1% of its glyph area. Weight 600 is what
+     answers that -- a thicker stroke keeps the letter legible across the
+     transition -- and at clamp(28-42px) it is large text, so the bar is 3:1. */
+  .al-cta-band--photo .al-cta-band__title {
+    font-size: clamp(28px, 3.4vw, 42px);
+    font-weight: 600;
   }
 
-  /* 0.6 body text drops under AA once a photograph shows through. */
   .al-cta-band--photo .al-cta-band__body {
-    color: var(--color-on-light-72);
+    color: var(--color-ink);
+    font-size: 16px;
+    font-weight: 500;
   }
 
   .al-cta-band__inner {

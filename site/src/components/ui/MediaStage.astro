@@ -114,7 +114,7 @@ const splitPanels = split ? Array.from({ length: columns }, (_, i) => images![i]
     }
   </div>
 
-  <div class={`al-stage__panel al-stage__panel--${ground}`} data-reveal>
+  <div class={`al-stage__panel al-stage__panel--${ground} al-photo-panel`} data-reveal>
     <slot />
   </div>
 </div>
@@ -139,7 +139,7 @@ const splitPanels = split ? Array.from({ length: columns }, (_, i) => images![i]
     position: absolute;
     inset: 0;
     overflow: hidden;
-    background: var(--color-ink-2);
+    background: var(--color-ash-2);
     z-index: 0;
   }
 
@@ -188,10 +188,10 @@ const splitPanels = split ? Array.from({ length: columns }, (_, i) => images![i]
     z-index: 2;
     width: min(560px, 100%);
     padding: clamp(26px, 3vw, 40px) clamp(22px, 2.6vw, 36px);
-    background: #b9b5b500;
-    color: var(--color-on-dark);
-    box-shadow: 0 24px 60px rgb(18 17 15 / 0.22);
-    backdrop-filter: blur(5px) saturate(1.1);
+    /* Ground and colour come from .al-photo-panel -- see global.css for the
+       measurements behind it. It matters here more than anywhere: these
+       photographs are admin-managed and run bright to dark, so a treatment
+       that depends on the picture is one upload away from being wrong. */
   }
 
   /* The gold rule is a pseudo-element rather than a border so it can wipe in
@@ -333,7 +333,7 @@ const splitPanels = split ? Array.from({ length: columns }, (_, i) => images![i]
     .al-stage--right .al-stage__panel,
     .al-stage--centre .al-stage__panel {
       width: 100%;
-      background: var(--color-ink);
+      background: var(--color-ash);
       color: var(--color-on-dark);
       box-shadow: none;
       backdrop-filter: none;

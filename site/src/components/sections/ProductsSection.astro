@@ -107,18 +107,18 @@ const Heading = headingLevel;
      ground. */
   .al-material {
     position: relative;
-    /* A flat fill of --color-gold reads as mustard, not metal -- a real gold
-       surface has depth: it's lighter where light catches it, darker in the
-       recesses. This is that, as a static diagonal gradient rather than a
-       photographic texture, which would fight the site's flat, restrained
-       surfaces everywhere else. */
+    /* A lighter gold, and no black in it. The previous ramp put a
+       45%-black band across the middle to read as a recess; at the client's
+       request the tile is now lit throughout -- every stop is gold mixed
+       toward white, so the depth comes from how much gold is in each stop
+       rather than from darkening any of them. */
     background: linear-gradient(
       135deg,
-      color-mix(in srgb, var(--color-gold) 65%, white 35%) 0%,
-      var(--color-gold) 24%,
-      color-mix(in srgb, var(--color-gold) 55%, black 45%) 48%,
-      var(--color-gold) 72%,
-      color-mix(in srgb, var(--color-gold) 70%, white 30%) 100%
+      color-mix(in srgb, var(--color-gold) 38%, white 62%) 0%,
+      color-mix(in srgb, var(--color-gold) 58%, white 42%) 28%,
+      color-mix(in srgb, var(--color-gold) 46%, white 54%) 52%,
+      color-mix(in srgb, var(--color-gold) 62%, white 38%) 78%,
+      color-mix(in srgb, var(--color-gold) 44%, white 56%) 100%
     );
     color: var(--color-ink);
     padding: 34px 32px 38px;
@@ -141,18 +141,40 @@ const Heading = headingLevel;
     background: linear-gradient(
       115deg,
       transparent 38%,
-      rgb(255 255 255 / 0.55) 50%,
+      rgb(255 255 255 / 0.65) 50%,
       transparent 62%
     );
     mix-blend-mode: soft-light;
-    transform: translateX(-16%);
-    transition: transform 0.7s var(--ease-premium);
     pointer-events: none;
     z-index: 0;
+    /* The slight movement the client asked for: the sheen drifts across the
+       tile on a long, slow cycle so the gold looks like a surface catching
+       light rather than a printed swatch. Long enough not to nag -- it is
+       background, not an animation anyone should watch. */
+    animation: al-sheen 9s var(--ease-premium) infinite;
   }
 
+  @keyframes al-sheen {
+    0%,
+    100% {
+      transform: translateX(-18%);
+    }
+    50% {
+      transform: translateX(18%);
+    }
+  }
+
+  /* Hover takes the sheen over and sweeps it once, deliberately. */
   .al-material:hover::before {
-    transform: translateX(16%);
+    animation: none;
+    transform: translateX(18%);
+    transition: transform 0.7s var(--ease-premium);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .al-material::before {
+      animation: none;
+    }
   }
 
   .al-material:hover {
@@ -201,7 +223,7 @@ const Heading = headingLevel;
     position: absolute;
     top: 0;
     left: 0;
-    background: var(--color-ink);
+    background: var(--color-ash);
     color: var(--color-gold);
     font-family: var(--font-mono);
     font-size: 10px;
