@@ -84,14 +84,26 @@ const hasJourneyPhoto = Boolean(journeyImage);
     margin-top: 16px;
   }
 
-  /* Was --color-ink, which only read while the panel's blur guaranteed a
-     light ground behind it. Bare picture: it joins the rest of the panel. */
+  /* The same 19px/400/1.78 every stage panel lead uses -- About, GFRC and
+     FRP all landed here; this was the last one still at 600.
+
+     600 was meant to give the 1px glyph outline more stem to hold. Measured
+     on this panel it does the opposite, as it did on FRP: at 400 the outline
+     covers more of each letter and the copy holds 4.5:1 across 97.9% of its
+     area against 96.7% at 600. Dropping the weight also moves it from WCAG's
+     large-text bar (19px at 600 clears as large) to the normal-text 4.5:1
+     bar, which is the number quoted above -- so it is measured against the
+     stricter threshold and still better.
+
+     Colour inherited rather than set: a rule of its own here would override
+     the panel's tone. Same result today, since this stage is tone="light",
+     but it means a warm tone would actually take. */
   .al-mfg__intro {
     margin-top: 16px;
     font-size: 19px;
-    line-height: 1.7;
-    color: var(--color-on-dark);
-    font-weight: 600;
+    line-height: 1.78;
+    color: inherit;
+    font-weight: 400;
   }
 
   .al-mfg__below {
