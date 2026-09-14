@@ -376,3 +376,61 @@ button {
   color: var(--color-brown-deep);
 }
 
+/* --- warm-edge: dark copy carried by a LIGHT outline ---------------------
+
+   The inverse of the default treatment, and the answer when a photograph is
+   bright overall but still has dark patches in it -- so neither polarity wins
+   on colour alone.
+
+   The home hero is the case. Its three facades are pale limestone, but the
+   copy crosses a shaded corner in one column and bright sky in the next, so
+   the backdrop under it runs 0.05 to 0.67. Measured on the glyph pixels, with
+   no ground behind the type:
+
+     white + 1px black stroke     >=3:1  79.4%   >=4.5:1  57.1%
+     brown-deep, no stroke        >=3:1  78.5%   >=4.5:1  65.2%
+     ink, no stroke               >=3:1  79.5%   >=4.5:1  74.2%
+     brown-deep + 1px cream       >=3:1  99.3%   >=4.5:1  98.9%
+
+   Nothing that relies on colour alone clears 80%, because whichever polarity
+   is chosen loses wherever the picture turns the other way. The outline is
+   what fixes it: the fill says "dark text" on the bright stretches and the
+   cream ring separates it on the dark ones, so both halves are covered.
+
+   paint-order puts the stroke behind the fill, so the ring sits outside the
+   letterform and the glyph keeps its full weight rather than being eaten
+   into from both sides. */
+.al-photo-panel--warm-edge {
+  color: var(--color-brown-deep);
+  paint-order: stroke fill;
+  -webkit-text-stroke: 1px rgb(246 244 239);
+}
+
+.al-photo-panel--warm-edge :is(h1, h2, h3) {
+  color: var(--color-brown-deep);
+}
+
+/* Gold on pale limestone is hopeless -- it is very nearly the colour of the
+   stone. The accent goes deep, and the cream ring around it is what keeps it
+   legible; the colour only has to stay recognisably gold next to the brown. */
+.al-photo-panel--warm-edge .al-photo-accent {
+  color: var(--color-gold-deep);
+}
+
+/* Where the browser cannot paint a stroke behind a fill, eight hard offsets
+   draw the same ring -- the light-stroke counterpart of the block above. */
+@supports not (paint-order: stroke fill) {
+  .al-photo-panel--warm-edge {
+    -webkit-text-stroke: 0;
+    text-shadow:
+      -0.5px -0.5px 0 rgb(246 244 239),
+      0.5px -0.5px 0 rgb(246 244 239),
+      -0.5px 0.5px 0 rgb(246 244 239),
+      0.5px 0.5px 0 rgb(246 244 239),
+      0 -0.5px 0 rgb(246 244 239),
+      0 0.5px 0 rgb(246 244 239),
+      -0.5px 0 0 rgb(246 244 239),
+      0.5px 0 0 rgb(246 244 239);
+  }
+}
+

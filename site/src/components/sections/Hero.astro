@@ -88,7 +88,7 @@ function columnSources(ci: number) {
   </p>
 
   <div class="al-container al-hero__inner">
-    <div class="al-hero__copy al-photo-panel" data-hero-copy>
+    <div class="al-hero__copy al-photo-panel al-photo-panel--warm-edge" data-hero-copy>
       <Eyebrow label="Architectural Products Manufacturer" ground="dark" />
       <h1 class="al-hero__title al-balance">
         Architectural Products. Engineered to <span class="al-hero__accent">Elevate</span>.
@@ -109,7 +109,7 @@ function columnSources(ci: number) {
     </div>
   </div>
 
-  <div class="al-hero__pillars">
+  <div class="al-hero__pillars al-photo-panel al-photo-panel--warm-edge">
     <div class="al-container al-hero__pillars-grid">
       {
         pillars.map((p) => (
@@ -181,37 +181,15 @@ function columnSources(ci: number) {
     padding-block: clamp(56px, 8vh, 110px) clamp(40px, 6vw, 72px);
   }
 
-  /* No full-image scrim -- the photograph wall stays at full brightness, and
-     only the copy block gets a ground. That ground is the whole reason the
-     copy is legible: .al-photo-panel supplies a colour and a 1px glyph
-     outline but NO background, so until now an outline was all that stood
-     between white type and the facade behind it.
+  /* NO ground behind the copy -- no panel, no scrim, no tint. The photographs
+     are the point of this section and anything laid behind the type hides part
+     of them. That is a rule for the whole site, not a choice made here.
 
-     Measured on the three photographs now in the hero, which are pale
-     limestone throughout, white on the bare picture held 4.5:1 across 17% of
-     its glyph pixels. No colour fixes that: the copy spans a shaded corner in
-     column one and bright sky in column two, so the backdrop under it runs
-     0.05 to 0.67 and the best flat colour (near-black) still only reached
-     84%. A ground is the only treatment that does not depend on the picture.
-
-     0.62 is the value the pillar strip below already uses, and it takes every
-     glyph pixel in the block to 5.40:1 or better -- 100% at AA, worst pixel
-     included. Translucent enough that the facade still reads through it. */
+     Which means the copy has to carry itself on colour and outline alone. See
+     .al-hero__copy below the fold for how, and global.css for the widths. */
   .al-hero__copy {
     max-width: 640px;
     padding: clamp(26px, 3vw, 40px) clamp(22px, 2.6vw, 36px);
-    background: rgb(18 17 15 / 0.62);
-    -webkit-backdrop-filter: blur(3px);
-    backdrop-filter: blur(3px);
-  }
-
-  /* The outline was doing the separating while there was no ground. There is
-     one now, so it comes off: at these sizes it thickened the copy without
-     adding contrast the ground had not already provided. */
-  .al-hero__copy,
-  .al-hero__copy :global(*) {
-    -webkit-text-stroke: 0;
-    text-shadow: none;
   }
 
   /* Each element rises in turn once the page is ready. Scoped to [data-in],
@@ -254,8 +232,11 @@ function columnSources(ci: number) {
     max-width: 17ch;
   }
 
+  /* Brand gold is very nearly the colour of pale limestone, so it goes deep
+     here. The cream ring is what makes it legible; the colour only has to stay
+     recognisably gold beside the brown. */
   .al-hero__accent {
-    color: var(--color-gold);
+    color: var(--color-gold-deep);
   }
 
   /* font-weight was declared twice here, 600 and then 300, so the lead had
@@ -268,7 +249,7 @@ function columnSources(ci: number) {
     max-width: 52ch;
     font-size: clamp(19.5px, 1.85vw, 23px);
     line-height: 1.6;
-    color: var(--color-on-dark);
+    color: inherit;
     font-weight: 400;
   }
 
@@ -280,7 +261,7 @@ function columnSources(ci: number) {
     max-width: 62ch;
     font-size: 18.5px;
     line-height: 1.7;
-    color: var(--color-on-dark);
+    color: inherit;
     font-weight: 400;
   }
 
@@ -292,11 +273,12 @@ function columnSources(ci: number) {
   }
 
   /* --- pillar strip ------------------------------------------------------ */
+  /* No band behind these either -- same rule as the copy above. The strip is
+     a hairline and four labels sitting straight on the photographs. */
   .al-hero__pillars {
     position: relative;
     z-index: 2;
-    border-top: 1px solid var(--color-rule-dark);
-    background: rgb(18 17 15 / 0.62);
+    border-top: 1px solid var(--color-rule-photo);
   }
 
   .al-hero__pillars-grid {
@@ -311,13 +293,15 @@ function columnSources(ci: number) {
     flex-direction: column;
     gap: 12px;
     padding-left: 18px;
-    border-left: 1px solid var(--color-rule-dark-soft);
+    border-left: 1px solid var(--color-rule-photo);
   }
 
+  /* Was gold-on-ash, a light gold chosen for the 0.62 band that used to sit
+     behind this strip. On the bare facade it is the colour of the stone. */
   .al-pillar__n {
     font-family: var(--font-mono);
     font-size: 11px;
-    color: var(--color-gold-on-ash);
+    color: var(--color-gold-deep);
     letter-spacing: 0.2em;
   }
 
@@ -327,9 +311,11 @@ function columnSources(ci: number) {
     letter-spacing: 0.06em;
   }
 
+  /* 12.5px on a photograph owes the full 4.5:1, so it takes the tone's colour
+     at full strength rather than the 68% white the dark band allowed. */
   .al-pillar__full {
     font-size: 12.5px;
-    color: var(--color-on-dark-68);
+    color: inherit;
     line-height: 1.5;
   }
 

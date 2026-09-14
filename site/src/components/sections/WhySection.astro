@@ -8,27 +8,22 @@ import type { SlotImage as SlotImageType } from '../../lib/media';
  * "Why Choose Alicore?" -- six reasons over a full-bleed architectural
  * photograph, which is meant to be seen rather than covered.
  *
- * The photograph carries no full-height overlay; the only tint is a gradient
- * across the top third that the heading sits in. The cards are all but
- * transparent -- a 0.16 wash, there to mark the grid rather than to hold the
- * type -- so the picture reads straight through them.
+ * Nothing is laid over the picture. No gradient across the top, no wash on the
+ * cards, no soft halo around the type -- the photographs are the point of these
+ * sections and anything behind the copy hides part of them. That is a rule for
+ * the whole site.
  *
- * That leaves the type with no plate to sit on, which matters most for the
- * gold titles: gold is almost exactly the tone of sand and stone, so on this
- * photograph --color-gold measures 2.4:1 at the median and 1.2:1 across the
- * lit areas. Two things carry them instead:
+ * Which leaves the type carrying itself, and gold cannot: gold is almost
+ * exactly the tone of sand and stone, so on this photograph --color-gold
+ * measures 2.4:1 at the median and 1.2:1 across the lit areas. The answer is
+ * the warm-edge treatment in global.css -- deep colour with a 1px cream ring
+ * around each glyph. Measured on the glyph pixels with every overlay removed:
  *
- *   - --color-gold-bright, lighter than the mid-tone golds used on solid
- *     grounds, so it separates from the picture rather than blending in; and
- *   - a soft dark shadow, which darkens the few pixels immediately around
- *     each glyph. Measured at the glyph edge that lifts the titles to about
- *     7:1, though WCAG scores text against the wider background and so does
- *     not credit it.
+ *   white + 1px black stroke   >=3:1 97.6%   >=4.5:1 85.9%
+ *   brown-deep + 1px cream     >=3:1 99.7%   >=4.5:1 99.0%
  *
- * The honest position: with a near-transparent card this section reads well
- * but does not clear AA by the letter over the brightest parts of the
- * picture. Raising `--why-card-tint` below is the single lever -- 0.60 puts
- * the gold at 4.5:1 -- at the cost of the transparency.
+ * so the section clears AA on the bare photograph, which it never did behind
+ * the wash it used to carry.
  *
  * With no photograph uploaded the section renders its original light
  * treatment -- black type on the page ground -- rather than a full-width
@@ -45,7 +40,7 @@ const Heading = headingLevel;
 const hasPhoto = Boolean(image);
 ---
 
-<section class={`al-section al-why${hasPhoto ? ' al-why--photo' : ''}`}>
+<section class={`al-section al-why${hasPhoto ? ' al-why--photo al-photo-panel al-photo-panel--warm-edge' : ''}`}>
   {
     hasPhoto && (
       <div class="al-why__bg" aria-hidden="true" data-reveal>
@@ -64,7 +59,10 @@ const hasPhoto = Boolean(image);
 
   <div class="al-container al-why__inner">
     <div class="al-why__head al-stagger" data-reveal>
-      <Eyebrow label="Why Alicore" ground={hasPhoto ? 'shaded' : 'light'} />
+      {/* 'dark' means inherit -- it takes the warm-edge colour and ring from
+          the section. 'shaded' was white, which was legible against the
+          gradient that used to cover the top of this picture. */}
+      <Eyebrow label="Why Alicore" ground={hasPhoto ? 'dark' : 'light'} />
       <Heading class="al-why__title">Why Choose Alicore?</Heading>
     </div>
 
@@ -85,11 +83,6 @@ const hasPhoto = Boolean(image);
   .al-why {
     position: relative;
     isolation: isolate;
-
-    /* The one lever between "the picture shows through" and "the type clears
-       AA on its own". 0.16 is nearly clear; 0.60 puts the gold titles at
-       4.5:1 over the brightest part of the photograph. */
-    --why-card-tint: 0.16;
   }
 
   /* --- the photograph ---------------------------------------------------
@@ -112,23 +105,6 @@ const hasPhoto = Boolean(image);
     inset: 0;
     height: auto;
     aspect-ratio: auto;
-  }
-
-  /* The only tint on the picture, and it is gone before the cards start.
-     The heading has no card behind it, so it needs the photograph under it
-     to be predictable; the sky is also the part of an architectural
-     photograph least worth protecting. */
-  .al-why__bg::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      180deg,
-      rgb(18 17 15 / 0.62) 0%,
-      rgb(18 17 15 / 0.52) 20%,
-      rgb(18 17 15 / 0.34) 34%,
-      rgb(18 17 15 / 0) 50%
-    );
   }
 
   .al-why__inner {
@@ -203,62 +179,43 @@ const hasPhoto = Boolean(image);
     margin-top: 14px;
   }
 
-  /* --- over a photograph ------------------------------------------------- */
+  /* --- over a photograph -------------------------------------------------
+     The cards have no ground at all: the photograph runs straight through
+     where the wash used to be, and the grid hairlines are the only thing
+     giving the six reasons their structure. Colour and the cream glyph ring
+     come from .al-photo-panel--warm-edge on the section. */
+  /* .al-hairline-grid draws its lines by filling the container and letting
+     1px gaps show through between opaque cells. Transparent cells turn that
+     fill into a tinted rectangle across the whole grid -- a ground behind the
+     copy by the back door. So the container carries no fill here and each
+     card draws its own hairline instead, which meets its neighbour's in the
+     1px gap. */
   .al-why--photo .al-why__card {
-    background: rgb(18 17 15 / var(--why-card-tint));
-    -webkit-backdrop-filter: blur(2px) saturate(1);
-    backdrop-filter: blur(2px) saturate(1);
+    background: transparent;
+    box-shadow: 0 0 0 1px var(--color-rule-photo);
   }
 
   .al-why--photo .al-why__card:hover {
-    background: rgb(18 17 15 / calc(var(--why-card-tint) + 0.14));
+    background: transparent;
   }
 
-  .al-why--photo .al-why__title {
-    color: var(--color-gold-bright);
-  }
-
+  /* gold-bright was chosen to separate from the picture while a dark wash sat
+     under it. With the wash gone it is the colour of the sandstone -- 1.2:1
+     across the lit areas. Deep gold plus the ring reads instead. */
+  .al-why--photo .al-why__title,
   .al-why--photo .al-why__name {
-    color: var(--color-gold-bright);
+    color: var(--color-gold-deep);
   }
 
   .al-why--photo .al-why__desc {
-    color: var(--color-on-dark);
+    color: inherit;
   }
 
-  /* The shadow is the type's plate now that the card is not one. Two layers:
-     a tight one that draws the edge of each letter, and a wide soft one that
-     dims the picture immediately around the text block. Kept low enough not
-     to read as a glow. */
-  .al-why--photo .al-why__name,
-  .al-why--photo .al-why__desc {
-    text-shadow:
-      0 0 3px rgb(18 17 15 / 0.92),
-      0 1px 2px rgb(18 17 15 / 0.88),
-      0 0 14px rgb(18 17 15 / 0.8),
-      0 0 34px rgb(18 17 15 / 0.6);
-  }
-
-  .al-why--photo .al-why__title {
-    text-shadow:
-      0 1px 3px rgb(18 17 15 / 0.5),
-      0 0 28px rgb(18 17 15 / 0.42);
-  }
-
-  /* Light hairlines, since the grid now sits over a photograph. Slightly
-     stronger than the standard rule: with the cards this transparent, the
-     grid is the only thing giving the six reasons their structure. */
+  /* Dark hairlines now: 30% white was legible against a darkened picture and
+     is nothing against a bright one. No fill -- see the card rule above. */
   .al-why--photo .al-why__grid {
-    background: rgb(246 244 239 / 0.3);
-    border-color: rgb(246 244 239 / 0.3);
-  }
-
-  /* Without backdrop-filter the wash alone separates the card from the
-     picture, so it goes up a little. */
-  @supports not (backdrop-filter: blur(1px)) {
-    .al-why--photo .al-why__card {
-      background: rgb(18 17 15 / calc(var(--why-card-tint) + 0.16));
-    }
+    background: transparent;
+    border-color: var(--color-rule-photo);
   }
 
   /* Phones: the stacked cards make the section far taller than the 16:9
