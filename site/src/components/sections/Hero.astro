@@ -157,6 +157,17 @@ function columnSources(ci: number) {
     color: var(--color-on-dark);
     min-height: min(880px, 92vh);
     display: grid;
+    /* minmax(0, 1fr), not 1fr. A grid item's automatic minimum size is its
+       min-content width, so an `auto`/`1fr` column is free to grow past the
+       viewport to fit its contents -- and the pillar strip's
+       repeat(auto-fit, minmax(210px, 1fr)) reports a min-content of four full
+       columns when it is measured against an indefinite width. That made every
+       row 952px wide inside a 390px phone (4x210 + 3x24 gap + 40 padding), and
+       overflow:hidden below cropped the hero copy rather than wrapping it.
+       This was a flex column before and the bug could not arise: a column flex
+       container stretches its items to its own width, so nothing was ever
+       sized by content. Pinning the minimum to 0 restores that. */
+    grid-template-columns: minmax(0, 1fr);
     grid-template-rows: 1fr auto;
     overflow: hidden;
     isolation: isolate;
