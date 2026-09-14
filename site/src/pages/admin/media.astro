@@ -19,17 +19,16 @@ const GALLERY_GROUP = 'Products';
  */
 const SPLIT_SLOTS: Record<string, number> = {
   'alicore-factory': 2,
-  // The hero is a wall of three columns cycling three frames each, in reading
-  // order: positions 1-3 are column 1, 4-6 column 2, 7-9 column 3.
-  'alicore-hero': 9,
+  // The hero is a wall of three columns, one photograph each, left to right.
+  // It used to cycle three frames per column and offered nine positions; the
+  // cycle is gone, so positions 4-9 would have been uploads that never appear.
+  'alicore-hero': 3,
 };
 
 /** Friendly names for a split slot's positions, where "Photo N" would be confusing. */
 const SPLIT_LABELS: Record<string, Record<number, string>> = {
   'alicore-factory': { 1: 'Left photograph', 2: 'Right photograph' },
-  'alicore-hero': Object.fromEntries(
-    Array.from({ length: 9 }, (_, i) => [i + 1, `Column ${Math.floor(i / 3) + 1}, frame ${(i % 3) + 1}`]),
-  ),
+  'alicore-hero': { 1: 'Left column', 2: 'Middle column', 3: 'Right column' },
 };
 
 let slots: AdminSlot[] = [];

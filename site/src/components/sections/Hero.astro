@@ -11,28 +11,30 @@ import type { SlotImage as SlotImageType } from '../../lib/media';
  * Three full-height COLUMNS rather than one landscape image, because a
  * full-height column is a portrait frame -- and the supplied photography is
  * portrait. At 1366px each column is roughly 455x700 (ratio 0.65) against
- * sources of 736x1104 (0.67), so they land almost exactly, with no upscaling
+ * sources of 668x1000 (0.67), so they land almost exactly, with no upscaling
  * at 1x. One landscape image would have needed 2.6x upscaling and would have
  * cropped away 60% of every frame.
  *
- * Each column cycles its own three images on a staggered timer, so the wall
- * never changes all at once.
+ * One photograph per column, shown at all times. The hero used to cycle three
+ * frames per column on staggered timers; that is gone at the client's request,
+ * because copy over a backdrop that keeps changing has to stay legible against
+ * all nine photographs at once and could not.
  *
- * The nine frames are admin-managed through the `alicore-hero` slot, one
- * position per frame in reading order -- position 1 is column 1's first frame,
- * position 4 is column 2's first. Any position left empty falls back to the
- * photograph shipped in public/hero/, so the wall is never broken by a slot
- * nobody has filled and the site looks right on a first deploy.
+ * The three are admin-managed through the `alicore-hero` slot, position 1 to 3
+ * left to right. Any position left empty falls back to the photograph shipped
+ * in public/hero/, so the wall is never broken by a slot nobody has filled and
+ * the site looks right on a first deploy.
  */
 
 const COLUMNS = [
-  { id: 'facade', alt: 'GFRC perforated facade panels on a contemporary building' },
-  { id: 'screen', alt: 'GFRC jali screen used as an architectural partition' },
-  { id: 'detail', alt: 'Detail of a cast architectural surface' },
+  { id: 'home-1', alt: 'Stone-clad contemporary facade with a folded entrance reveal' },
+  { id: 'home-2', alt: 'Limestone and timber facade with vertical fin screening' },
+  { id: 'home-3', alt: 'Banded stone facade with a recessed timber entrance' },
 ] as const;
 
-const FRAMES = [1, 2, 3] as const;
-const src = (id: string, n: number, w: number) => `/hero/${id}-${n}-${w}.webp`;
+/** 440 and 620 are the two derivatives in public/hero -- the widest the
+    supplied files reach without upscaling (the smallest source is 633px). */
+const src = (id: string, w: number) => `/hero/${id}-${w}.webp`;
 
 interface Props {
   /** The `alicore-hero` gallery. Missing positions keep the shipped files. */
@@ -40,47 +42,40 @@ interface Props {
 }
 const { images = [] } = Astro.props;
 
-/** Position for column `ci` (0-based), frame `n` (1-based): 1..9, in reading order. */
-const positionOf = (ci: number, n: number) => ci * FRAMES.length + n;
-
 /**
- * Either the uploaded photograph for a frame or the file shipped with the
+ * Either the uploaded photograph for a column or the file shipped with the
  * repo. Both carry a srcset, so the two cases differ only in the URLs.
  */
-function frameSources(ci: number, n: number) {
-  const uploaded = images.find((i) => i.position === positionOf(ci, n));
+function columnSources(ci: number) {
+  const uploaded = images.find((i) => i.position === ci + 1);
   if (uploaded) return { src: uploaded.webp[1280] ?? uploaded.fallback, srcset: srcSet(uploaded) };
-  const id = COLUMNS[ci].id;
-  return { src: src(id, n, 660), srcset: `${src(id, n, 440)} 440w, ${src(id, n, 660)} 660w` };
+  const { id } = COLUMNS[ci];
+  return { src: src(id, 620), srcset: `${src(id, 440)} 440w, ${src(id, 620)} 620w` };
 }
 ---
 
 <section id="top" class="al-hero" data-ground="dark">
   <div class="al-hero__stage" aria-hidden="true">
     {
-      COLUMNS.map((col, ci) => (
-        <div class="al-hero__col" data-hero-col style={`--col-delay:${ci * 1.6}s`}>
-          {FRAMES.map((n) => {
-            const f = frameSources(ci, n);
-            return (
+      COLUMNS.map((_col, ci) => {
+        const f = columnSources(ci);
+        return (
+          <div class="al-hero__col">
             <img
-              class={`al-hero__frame${n === 1 ? ' is-on' : ''}`}
-              src={n === 1 ? f.src : undefined}
-              data-src={n === 1 ? undefined : f.src}
-              srcset={n === 1 ? f.srcset : undefined}
-              data-srcset={n === 1 ? undefined : f.srcset}
-              sizes="(max-width: 860px) 100vw, 34vw"
+              class="al-hero__frame"
+              src={f.src}
+              srcset={f.srcset}
+              sizes="33vw"
               alt=""
-              width="660"
-              height="990"
-              loading={n === 1 ? 'eager' : 'lazy'}
+              width="620"
+              height="928"
+              loading="eager"
               decoding="async"
-              fetchpriority={n === 1 && ci === 0 ? 'high' : 'auto'}
+              fetchpriority={ci === 0 ? 'high' : 'auto'}
             />
-            );
-          })}
-        </div>
-      ))
+          </div>
+        );
+      })
     }
   </div>
 
@@ -89,7 +84,7 @@ function frameSources(ci: number, n: number) {
        The stage is aria-hidden and this description is what a screen reader
        gets instead. -->
   <p class="sr-only">
-    Background: photographs of GFRC facades, jali screens and cast architectural details.
+    Background: three photographs of contemporary stone and timber facades.
   </p>
 
   <div class="al-container al-hero__inner">
@@ -130,65 +125,14 @@ function frameSources(ci: number, n: number) {
 </section>
 
 <script>
-  // --- hero image cycle ---------------------------------------------------
-  // Only the first frame of each column ships with a src. The rest are fetched
-  // one step ahead of being shown, so the hero costs three images on load
-  // rather than nine -- about 200KB instead of 700KB on a landing page whose
-  // largest contentful paint is one of these very images.
+  // The hero no longer cycles: every column shows one photograph, always.
+  // All that is left is revealing the copy once the page is ready.
   (() => {
-    const cols = document.querySelectorAll<HTMLElement>('[data-hero-col]');
-    if (!cols.length) return;
-
     const copy = document.querySelector<HTMLElement>('[data-hero-copy]');
-    // Reveal the copy on the next frame so the transition has a start state to
-    // animate from; setting it in the same frame as the class would jump.
-    requestAnimationFrame(() => requestAnimationFrame(() => copy?.setAttribute('data-in', '')));
-
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-    const HOLD = 6000; // how long a photograph stays before the next fades in
-
-    cols.forEach((col, ci) => {
-      const frames = Array.from(col.querySelectorAll<HTMLImageElement>('.al-hero__frame'));
-      if (frames.length < 2) return;
-
-      let i = 0;
-
-      const load = (el: HTMLImageElement) => {
-        const s = el.dataset.src;
-        if (!s) return;
-        el.srcset = el.dataset.srcset ?? '';
-        el.src = s;
-        delete el.dataset.src;
-      };
-
-      const advance = () => {
-        const next = (i + 1) % frames.length;
-        load(frames[next]);
-        frames[i].classList.remove('is-on');
-        frames[next].classList.add('is-on');
-        i = next;
-        // Fetch the one after this while the current fade plays.
-        load(frames[(next + 1) % frames.length]);
-      };
-
-      // Stagger the columns so the wall never changes all at once.
-      window.setTimeout(() => {
-        load(frames[1]);
-        window.setInterval(advance, HOLD);
-        advance();
-      }, 1800 + ci * 1600);
-    });
-
-    // A tab in the background still runs timers; pausing avoids burning
-    // through the cycle while nobody is watching.
-    let paused = false;
-    document.addEventListener('visibilitychange', () => {
-      paused = document.hidden;
-      document.querySelectorAll<HTMLElement>('[data-hero-col]').forEach((c) => {
-        c.style.animationPlayState = paused ? 'paused' : 'running';
-      });
-    });
+    if (!copy) return;
+    // Reveal on the next frame so the transition has a start state to animate
+    // from; setting it in the same frame as the class would jump.
+    requestAnimationFrame(() => requestAnimationFrame(() => copy.setAttribute('data-in', '')));
   })();
 </script>
 
@@ -227,17 +171,6 @@ function frameSources(ci: number, n: number) {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    opacity: 0;
-    /* A slow drift keeps the wall alive between changes. */
-    transform: scale(1.06);
-    transition:
-      opacity 1.6s var(--ease-premium),
-      transform 7s linear;
-  }
-
-  .al-hero__frame.is-on {
-    opacity: 1;
-    transform: scale(1);
   }
 
   /* --- the copy --------------------------------------------------------- */
@@ -248,16 +181,37 @@ function frameSources(ci: number, n: number) {
     padding-block: clamp(56px, 8vh, 110px) clamp(40px, 6vw, 72px);
   }
 
-  /* No full-image scrim: the client wants the photograph wall at full
-     brightness. The copy carries its own backdrop instead -- the same
-     device MediaStage uses -- so legibility no longer depends on darkening
-     the picture behind it. Dark, per the brand, but very transparent so the
-     photograph wall stays visible through it rather than being hidden
-     behind a solid card. */
+  /* No full-image scrim -- the photograph wall stays at full brightness, and
+     only the copy block gets a ground. That ground is the whole reason the
+     copy is legible: .al-photo-panel supplies a colour and a 1px glyph
+     outline but NO background, so until now an outline was all that stood
+     between white type and the facade behind it.
+
+     Measured on the three photographs now in the hero, which are pale
+     limestone throughout, white on the bare picture held 4.5:1 across 17% of
+     its glyph pixels. No colour fixes that: the copy spans a shaded corner in
+     column one and bright sky in column two, so the backdrop under it runs
+     0.05 to 0.67 and the best flat colour (near-black) still only reached
+     84%. A ground is the only treatment that does not depend on the picture.
+
+     0.62 is the value the pillar strip below already uses, and it takes every
+     glyph pixel in the block to 5.40:1 or better -- 100% at AA, worst pixel
+     included. Translucent enough that the facade still reads through it. */
   .al-hero__copy {
     max-width: 640px;
-    /* Ground and colour from .al-photo-panel. */
     padding: clamp(26px, 3vw, 40px) clamp(22px, 2.6vw, 36px);
+    background: rgb(18 17 15 / 0.62);
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
+  }
+
+  /* The outline was doing the separating while there was no ground. There is
+     one now, so it comes off: at these sizes it thickened the copy without
+     adding contrast the ground had not already provided. */
+  .al-hero__copy,
+  .al-hero__copy :global(*) {
+    -webkit-text-stroke: 0;
+    text-shadow: none;
   }
 
   /* Each element rises in turn once the page is ready. Scoped to [data-in],
@@ -306,15 +260,16 @@ function frameSources(ci: number, n: number) {
 
   /* font-weight was declared twice here, 600 and then 300, so the lead had
      been rendering light the whole time -- visibly fainter than the support
-     paragraph directly beneath it. One declaration, and the same values as
-     the FRP panel's intro. */
+     paragraph directly beneath it. One declaration now, at 400: the 600 was
+     there to give the glyph outline more stem to hold, and the outline is
+     gone. Same weight as every stage panel lead on the site. */
   .al-hero__lead {
     margin-top: 26px;
     max-width: 52ch;
     font-size: clamp(19.5px, 1.85vw, 23px);
     line-height: 1.6;
     color: var(--color-on-dark);
-    font-weight: 600;
+    font-weight: 400;
   }
 
   /* Was --color-ink: black copy inside a panel whose other text is white,
@@ -326,7 +281,7 @@ function frameSources(ci: number, n: number) {
     font-size: 18.5px;
     line-height: 1.7;
     color: var(--color-on-dark);
-    font-weight: 600;
+    font-weight: 400;
   }
 
   .al-hero__cta {
@@ -379,23 +334,12 @@ function frameSources(ci: number, n: number) {
   }
 
   /* --- narrow screens ---------------------------------------------------- */
-  /* Three columns at phone width would be 130px slivers. One column, still
-     cycling, keeps the photograph readable. */
-  @media (max-width: 860px) {
-    .al-hero__stage {
-      grid-template-columns: 1fr;
-    }
-
-    .al-hero__col:nth-child(n + 2) {
-      display: none;
-    }
-  }
+  /* All three stay up at every width, per the brief. On a 390px phone that is
+     three 130px strips -- narrow, but these are wall-texture photographs
+     rather than pictures anyone has to read, and dropping to one would mean
+     two of the three were not "displayed at all times". */
 
   @media (prefers-reduced-motion: reduce) {
-    .al-hero__frame {
-      transition: none;
-      transform: none;
-    }
     .al-hero__copy[data-in] > :global(*) {
       animation: none;
     }
