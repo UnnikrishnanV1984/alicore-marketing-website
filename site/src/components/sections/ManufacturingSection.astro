@@ -11,8 +11,10 @@ interface Props {
   /** The `alicore-journey` slot, behind the six stages. Absent -> flat ground. */
   journeyImage?: SlotImageType;
   headingLevel?: 'h1' | 'h2';
+  /** Panel copy treatment -- see MediaStage. Decided by the photograph. */
+  tone?: 'light' | 'warm' | 'warm-deep' | 'ink' | 'plain';
 }
-const { images, journeyImage, headingLevel = 'h2' } = Astro.props;
+const { images, journeyImage, headingLevel = 'h2', tone = 'light' } = Astro.props;
 const Heading = headingLevel;
 const hasJourneyPhoto = Boolean(journeyImage);
 ---
@@ -28,6 +30,7 @@ const hasJourneyPhoto = Boolean(journeyImage);
     images={images}
     align="right"
     ground="ink2"
+    tone={tone}
   >
     <Eyebrow label="Manufacturing" ground="dark" />
     <Heading class="al-mfg__title al-balance">From Design to Reality</Heading>

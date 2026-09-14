@@ -23,7 +23,7 @@ interface Props {
   /** 'ink' = #12110F (GFRC), 'ink2' = #1A1917 (FRP) */
   ground?: 'ink' | 'ink2';
   /** Panel copy treatment -- see MediaStage. Decided by the photograph. */
-  tone?: 'light' | 'warm' | 'warm-deep';
+  tone?: 'light' | 'warm' | 'warm-deep' | 'ink' | 'plain';
   /** Which part of the photograph the crop keeps -- see SlotImage. */
   focus?: string;
   /** Which side the copy panel sits on. */
@@ -152,7 +152,8 @@ const align = media === 'left' ? 'right' : 'left';
   /* The hairline stays 12% white over a dark picture and flips to 34% black
      over a light one, where 12% white is nothing. */
   .al-photo-panel--warm .al-material-sec__points li,
-  .al-photo-panel--warm-deep .al-material-sec__points li {
+  .al-photo-panel--warm-deep .al-material-sec__points li,
+  .al-photo-panel--ink .al-material-sec__points li {
     border-bottom-color: var(--color-rule-photo);
   }
 
@@ -166,7 +167,8 @@ const align = media === 'left' ? 'right' : 'left';
   /* Gold measures about 2:1 on these pictures. The bullet is 5px of pure
      decoration; let it take the copy's colour rather than vanish. */
   .al-photo-panel--warm .al-material-sec__bullet,
-  .al-photo-panel--warm-deep .al-material-sec__bullet {
+  .al-photo-panel--warm-deep .al-material-sec__bullet,
+  .al-photo-panel--ink .al-material-sec__bullet {
     background: currentColor;
   }
 

@@ -53,7 +53,7 @@ interface Props {
    * a property of the photograph in it, not of the section -- see the
    * numbers in global.css.
    */
-  tone?: 'light' | 'warm' | 'warm-deep';
+  tone?: 'light' | 'warm' | 'warm-deep' | 'ink' | 'plain';
   /**
    * 'cover' (default) fills the stage and crops. 'contain' letterboxes a
    * photo whose own shape doesn't suit a wide 16:9 band -- a square or tall
@@ -159,7 +159,9 @@ const splitPanels = split ? Array.from({ length: columns }, (_, i) => images![i]
 
   <div
     class={`al-stage__panel al-stage__panel--${ground} al-photo-panel${
-      tone === 'light' ? '' : ` al-photo-panel--${tone} al-stage__panel--warm`
+      tone === 'light'
+        ? ''
+        : ` al-photo-panel--${tone}${tone.startsWith('warm') ? ' al-stage__panel--warm' : ''}`
     }`}
     data-reveal
   >
@@ -284,6 +286,12 @@ const splitPanels = split ? Array.from({ length: columns }, (_, i) => images![i]
 
   .al-stage__panel.al-photo-panel--warm-deep::before {
     background: var(--color-bronze);
+  }
+
+  /* The outline-free tones take a rule that matches their own copy, for the
+     same reason: 2px of decoration at 2:1 is 2px of nothing. */
+  .al-stage__panel.al-photo-panel--ink::before {
+    background: var(--color-ink);
   }
 
   .al-stage--left .al-stage__panel {

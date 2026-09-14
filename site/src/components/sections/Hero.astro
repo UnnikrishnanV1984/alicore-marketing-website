@@ -26,10 +26,15 @@ import type { SlotImage as SlotImageType } from '../../lib/media';
  * the site looks right on a first deploy.
  */
 
+/* `focus` is object-position for the cover crop. Column one carries the copy
+   and has a deep recessed window in it; aiming its crop right keeps more of
+   that shadow out from behind the type, which is worth 3 points of contrast
+   (86.8% of glyph pixels at 3:1 against 83.9% centred) and costs nothing.
+   Column two measured the same either way, so it stays centred. */
 const COLUMNS = [
-  { id: 'home-1', alt: 'Stone-clad contemporary facade with a folded entrance reveal' },
-  { id: 'home-2', alt: 'Limestone and timber facade with vertical fin screening' },
-  { id: 'home-3', alt: 'Banded stone facade with a recessed timber entrance' },
+  { id: 'home-1', alt: 'Stone-clad contemporary facade with a folded entrance reveal', focus: '100% center' },
+  { id: 'home-2', alt: 'Limestone and timber facade with vertical fin screening', focus: '50% center' },
+  { id: 'home-3', alt: 'Banded stone facade with a recessed timber entrance', focus: '50% center' },
 ] as const;
 
 /** 440 and 620 are the two derivatives in public/hero -- the widest the
@@ -57,12 +62,13 @@ function columnSources(ci: number) {
 <section id="top" class="al-hero" data-ground="dark">
   <div class="al-hero__stage" aria-hidden="true">
     {
-      COLUMNS.map((_col, ci) => {
+      COLUMNS.map((col, ci) => {
         const f = columnSources(ci);
         return (
           <div class="al-hero__col">
             <img
               class="al-hero__frame"
+              style={`object-position:${col.focus}`}
               src={f.src}
               srcset={f.srcset}
               sizes="33vw"
@@ -88,7 +94,7 @@ function columnSources(ci: number) {
   </p>
 
   <div class="al-container al-hero__inner">
-    <div class="al-hero__copy al-photo-panel al-photo-panel--warm-edge" data-hero-copy>
+    <div class="al-hero__copy al-photo-panel al-photo-panel--ink" data-hero-copy>
       <Eyebrow label="Architectural Products Manufacturer" ground="dark" />
       <h1 class="al-hero__title al-balance">
         Architectural Products. Engineered to <span class="al-hero__accent">Elevate</span>.
@@ -109,7 +115,7 @@ function columnSources(ci: number) {
     </div>
   </div>
 
-  <div class="al-hero__pillars al-photo-panel al-photo-panel--warm-edge">
+  <div class="al-hero__pillars">
     <div class="al-container al-hero__pillars-grid">
       {
         pillars.map((p) => (
@@ -137,22 +143,28 @@ function columnSources(ci: number) {
 </script>
 
 <style>
+  /* Two rows: the photographs and the copy share the first, stacked in one
+     grid cell; the pillar strip gets the second, below the pictures.
+
+     It used to sit on top of them behind a 0.62 band. With no band and no
+     glyph outline the four labels held 3:1 across 59% of their pixels -- a
+     word like PRECAST lands on dark planting and disappears. Putting the strip
+     under the photographs rather than over them fixes that without veiling
+     anything: the pictures end where it begins instead of being covered. */
   .al-hero {
     position: relative;
     background: var(--color-ash);
     color: var(--color-on-dark);
     min-height: min(880px, 92vh);
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
+    display: grid;
+    grid-template-rows: 1fr auto;
     overflow: hidden;
     isolation: isolate;
   }
 
   /* --- the wall of photographs ------------------------------------------ */
   .al-hero__stage {
-    position: absolute;
-    inset: 0;
+    grid-area: 1 / 1;
     z-index: 0;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -175,6 +187,8 @@ function columnSources(ci: number) {
 
   /* --- the copy --------------------------------------------------------- */
   .al-hero__inner {
+    grid-area: 1 / 1;
+    align-self: end;
     position: relative;
     z-index: 2;
     width: 100%;
@@ -247,8 +261,8 @@ function columnSources(ci: number) {
   .al-hero__lead {
     margin-top: 26px;
     max-width: 52ch;
-    font-size: clamp(19.5px, 1.85vw, 23px);
-    line-height: 1.6;
+    font-size: clamp(21px, 2vw, 25px);
+    line-height: 1.58;
     color: inherit;
     font-weight: 400;
   }
@@ -259,8 +273,8 @@ function columnSources(ci: number) {
   .al-hero__support {
     margin-top: 16px;
     max-width: 62ch;
-    font-size: 18.5px;
-    line-height: 1.7;
+    font-size: 20px;
+    line-height: 1.72;
     color: inherit;
     font-weight: 400;
   }
@@ -273,12 +287,13 @@ function columnSources(ci: number) {
   }
 
   /* --- pillar strip ------------------------------------------------------ */
-  /* No band behind these either -- same rule as the copy above. The strip is
-     a hairline and four labels sitting straight on the photographs. */
+  /* Its own row, on the hero's ash ground -- not a wash over a picture. */
   .al-hero__pillars {
+    grid-row: 2;
     position: relative;
     z-index: 2;
-    border-top: 1px solid var(--color-rule-photo);
+    background: var(--color-ash);
+    border-top: 1px solid var(--color-rule-dark);
   }
 
   .al-hero__pillars-grid {
@@ -293,15 +308,13 @@ function columnSources(ci: number) {
     flex-direction: column;
     gap: 12px;
     padding-left: 18px;
-    border-left: 1px solid var(--color-rule-photo);
+    border-left: 1px solid var(--color-rule-dark-soft);
   }
 
-  /* Was gold-on-ash, a light gold chosen for the 0.62 band that used to sit
-     behind this strip. On the bare facade it is the colour of the stone. */
   .al-pillar__n {
     font-family: var(--font-mono);
     font-size: 11px;
-    color: var(--color-gold-deep);
+    color: var(--color-gold-on-ash);
     letter-spacing: 0.2em;
   }
 
@@ -311,11 +324,9 @@ function columnSources(ci: number) {
     letter-spacing: 0.06em;
   }
 
-  /* 12.5px on a photograph owes the full 4.5:1, so it takes the tone's colour
-     at full strength rather than the 68% white the dark band allowed. */
   .al-pillar__full {
     font-size: 12.5px;
-    color: inherit;
+    color: var(--color-on-dark-68);
     line-height: 1.5;
   }
 

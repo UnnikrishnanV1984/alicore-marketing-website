@@ -376,6 +376,57 @@ button {
   color: var(--color-brown-deep);
 }
 
+/* --- no outline at all ---------------------------------------------------
+
+   The client's rule for the home page: no border around any glyph, and no
+   ground behind any block. That leaves colour as the only lever, so the tone
+   has to be picked against the picture rather than the section.
+
+   Measured on the home page's own photographs, with a single glyph mask
+   shared across every candidate -- a colour that blends into the picture must
+   be scored on the pixels it failed to show up in, or it flatters itself:
+
+                       hero copy      FRP panel    Manufacturing
+     white              34% / 21%     74% /  8%     70% / 57%
+     near-black         83% / 77%     98% / 72%     52% / 37%
+     brown-deep         78% / 59%          --            --
+     bronze             38% /  3%      4% /  0%     29% / 28%
+                                              (>=3:1 / >=4.5:1)
+
+   So near-black for the hero and the FRP panel, warm white for the
+   manufacturing floor, whose picture carries bright concrete highlights and
+   deep shadow in the same frame (backdrop p5 0.044, p95 0.939). Nothing wins
+   everywhere on that one -- see the note in index.astro. */
+.al-photo-panel--ink {
+  color: var(--color-ink);
+  -webkit-text-stroke: 0;
+  text-shadow: none;
+}
+
+.al-photo-panel--ink :is(h1, h2, h3) {
+  color: var(--color-ink);
+}
+
+/* Brand gold is the colour of pale limestone. The accent only has to stay
+   recognisably gold beside near-black, so it goes deep. */
+.al-photo-panel--ink .al-photo-accent {
+  color: var(--color-gold-deep);
+}
+
+.al-photo-panel--plain {
+  color: var(--color-on-dark);
+  -webkit-text-stroke: 0;
+  text-shadow: none;
+}
+
+.al-photo-panel--plain :is(h1, h2, h3) {
+  color: var(--color-on-dark);
+}
+
+.al-photo-panel--plain .al-photo-accent {
+  color: var(--color-gold-bright);
+}
+
 /* --- warm-edge: dark copy carried by a LIGHT outline ---------------------
 
    The inverse of the default treatment, and the answer when a photograph is

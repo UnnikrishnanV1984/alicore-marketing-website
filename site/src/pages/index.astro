@@ -68,12 +68,20 @@ const [slots, galleries, projects, contact] = await Promise.all([
     ground="ink2"
     media="right"
     ctaVariant="gold"
+    tone="ink"
   />
 
   <WhySection image={slots.get('alicore-why')} />
   <CustomSection image={slots.get('alicore-custom')} />
   {contact.showProjects && <ProjectsSection projects={projects} />}
+  <!-- Warm white with no outline. This photograph carries bright concrete and
+       deep shadow in the same frame (backdrop p5 0.044, p95 0.939), so nothing
+       clears the bar across all of it: white holds 3:1 over 70% of the copy,
+       near-black over 52%. White is the better half. The real fix is an evenly
+       lit photograph in this slot -- the outline that used to cover the gap is
+       gone by the client's rule for this page. -->
   <ManufacturingSection
+    tone="plain"
     images={galleries.get('alicore-factory') ?? []}
     journeyImage={slots.get('alicore-journey')}
   />
