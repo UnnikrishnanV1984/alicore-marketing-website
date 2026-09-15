@@ -156,12 +156,22 @@ const frame = image
   }
 
   /* --- the copy --------------------------------------------------------- */
+  /* The copy leaves the centred container. .al-container caps itself at
+     --al-container (1320px) and centres what is left over, which on a wide
+     screen is dead margin down the side of a full-bleed photograph: at 1920
+     it started the copy 384px in, a third of that being margin nothing else
+     was using. Here the cap and the centring both come off, so the copy sits
+     one page gutter from the window edge at any width and the photograph has
+     the rest. The pillar strip below does the same, so the whole section
+     shares one left edge. */
   .al-hero__inner {
     grid-area: 1 / 1;
     align-self: end;
     position: relative;
     z-index: 2;
     width: 100%;
+    max-width: none;
+    margin-inline: 0;
     padding-block: clamp(56px, 8vh, 110px) clamp(40px, 6vw, 72px);
   }
 
@@ -179,9 +189,11 @@ const frame = image
      the outline button and the focus ring went with it.
 
      `al-photo-panel--plain` is the one-line way back to white. */
+  /* No horizontal padding: it was a second inset on top of the container's
+     gutter, and with the container gone the gutter is the whole left margin. */
   .al-hero__copy {
     max-width: 640px;
-    padding: clamp(26px, 3vw, 40px) clamp(22px, 2.6vw, 36px);
+    padding-block: clamp(26px, 3vw, 40px);
   }
 
   /* Each element rises in turn once the page is ready. Scoped to [data-in],
@@ -274,7 +286,13 @@ const frame = image
     border-top: 1px solid var(--color-rule-dark);
   }
 
+  /* Same escape from the centred container as the copy above it: with the two
+     on different left edges the strip read as a misalignment rather than as a
+     second band. The 18px on .al-pillar is its own rule's offset, so the first
+     hairline lands on the gutter and its label sits just inside it. */
   .al-hero__pillars-grid {
+    max-width: none;
+    margin-inline: 0;
     padding-block: clamp(28px, 3.5vw, 40px);
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
