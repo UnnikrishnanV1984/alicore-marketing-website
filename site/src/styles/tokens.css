@@ -36,16 +36,16 @@
      Something Remarkable" uses these; the rest of the site's dark sections
      stay on ash.
 
-     Every one of them is darker than the --color-ash they replace, so the
-     copy over them gained contrast rather than losing it: warm white reads
-     11.4:1 on -deep and 8.4:1 on -card, against 7.8:1 on ash, and the gold
-     labels 7.5:1 and 5.5:1 against 5.1:1. -lift is the one to watch -- it
-     puts the 10px gold label at 4.49:1, a hair under AA, which is why the
-     cards hover DOWN to -deep rather than up to it. */
-  --color-green-deep: #0a3b2c;
-  --color-green: #0f4f3c;
-  --color-green-card: #10513e;
-  --color-green-lift: #146046;
+     Darkened a step at the client's request, which cost nothing and bought
+     contrast: every one is well below the --color-ash they replace, so warm
+     white reads 14.1:1 on -deep and 10.8:1 on -card against 7.8:1 on ash,
+     and the gold labels 9.2:1 and 7.1:1 against 5.1:1. -lift is still the
+     one to watch at 5.6:1 for those labels, which is why the cards hover
+     DOWN to -deep rather than up to it. */
+  --color-green-deep: #052a1f;
+  --color-green: #0a3b2c;
+  --color-green-card: #0b3f2f;
+  --color-green-lift: #10503d;
   /* The ribbon itself: deep amber through champagne, the two ends of the
      gold in the reference. */
   --color-green-gold: #c9a14a;
