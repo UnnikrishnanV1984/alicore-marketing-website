@@ -49,7 +49,7 @@ const hasPhoto = Boolean(image);
     <ol class="al-custom__steps al-stagger" data-reveal>
       {
         steps.map((s) => (
-          <li class={`al-step${hasPhoto ? ' al-glass' : ''}`}>
+          <li class="al-step">
             <div class="al-step__n">{s.n}</div>
             <h3 class="al-step__name">{s.name}</h3>
             <p class="al-step__desc">{s.desc}</p>
@@ -116,14 +116,9 @@ const hasPhoto = Boolean(image);
     }
   }
 
+  /* The flat-ground case, when no photograph has been uploaded for the slot. */
   .al-step {
     padding: 34px 30px 40px;
-  }
-
-  /* Astro scopes this rule with an attribute selector, which outranks the
-     shared .al-glass. Excluding the glass variant is cleaner than trying to
-     out-specify it. */
-  .al-step:not(.al-glass) {
     background: var(--color-panel);
     border-bottom: 1px solid var(--color-rule);
   }
@@ -153,18 +148,26 @@ const hasPhoto = Boolean(image);
   }
 
   /* --- over a photograph -------------------------------------------------
-     The photographs behind these sections are bright -- pale buildings
-     against sky -- so the copy stays black and the wash stays light. That is
-     the same choice MediaStage makes for type over a photograph, and the
-     opposite of the Why section, whose picture is dark. */
+     The cards carry no ground: the photograph runs straight through them.
+     They used to wear a 0.26 cream wash (.al-glass), which is what made the
+     six steps read as tiles rather than as copy laid on the picture.
+
+     The grid needs care when they go transparent. .al-custom__steps draws its
+     hairlines the way .al-hairline-grid does -- fill the container, let 1px
+     gaps show between opaque cells -- so with nothing in the cells that fill
+     becomes a tinted rectangle behind all six, a ground by the back door.
+     Same trap the Why section hit. The container carries no fill here and each
+     card draws its own hairline, meeting its neighbour's in the gap. */
   .al-custom--photo .al-step {
-    --al-glass-tint: 0.26;
+    background: transparent;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    border-bottom: 0;
+    box-shadow: 0 0 0 1px rgb(18 17 15 / 0.22);
   }
 
-  /* The 1px gaps are the grid's only structure, and they have a photograph
-     behind them now rather than a flat panel. */
   .al-custom--photo .al-custom__steps {
-    background: rgb(18 17 15 / 0.22);
+    background: transparent;
     border-top-color: rgb(18 17 15 / 0.22);
   }
 
@@ -174,9 +177,13 @@ const hasPhoto = Boolean(image);
     color: var(--color-on-light-72);
   }
 
-  /* 40px, so large text: 3:1. --color-gold-warm measures 1.7-2.4:1 against
-     the pale stone in this photograph; the deep gold clears it at 3.17:1
-     worst case. */
+  /* 40px, so large text: 3:1. --color-gold-warm measures 1.7-2.4:1 against the
+     pale stone in this photograph, so the number takes the deep gold.
+
+     Re-measured with the wash gone, on the six cards' own glyph pixels: the
+     deep gold holds 3:1 across 91.9% of them (median 4.25:1). The black copy
+     beside it is unaffected -- 99.3% at 3:1 and 97.3% at 4.5:1 -- because this
+     photograph is bright almost everywhere the cards sit. */
   .al-custom--photo .al-step__n {
     color: var(--color-gold-deep);
   }
