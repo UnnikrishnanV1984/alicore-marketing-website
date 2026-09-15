@@ -26,10 +26,9 @@ const directs = [
 ];
 ---
 
-<section id="contact" class="al-contact" data-ground="dark">
-  <!-- The scattered gold. Two layers of flecks that drift while the pointer is
-       over the section and hold still the rest of the time. Decorative only. -->
-  <div class="al-contact__sheen" aria-hidden="true"></div>
+<section id="contact" class="al-contact al-goldgreen" data-ground="dark">
+  <!-- The scattered gold. See .al-goldgreen in global.css. -->
+  <div class="al-goldgreen__sheen" aria-hidden="true"></div>
 
   <div class="al-container al-contact__grid">
     <div>
@@ -81,139 +80,15 @@ const directs = [
 </section>
 
 <style>
-  /* Golden green, from the reference the client supplied: a dark emerald
-     field with a gold ribbon through it. The grey this replaces was
-     --color-ash, the site's standard dark ground; the green is scoped to
-     this section, so the masthead, materials, projects and footer keep it.
-
-     The field is a diagonal two-stop green -- darkest at the corners, open
-     in the middle, the way the reference lights its own -- with a low gold
-     wash rising from the bottom left, under the copy rather than over it.
-     The ribbon is the rule across the top edge: the one literal quotation
-     from the reference, and 2px of it is enough to set the pairing. */
+  /* The ground is .al-goldgreen in global.css, shared with the hero's pillar
+     strip. Everything left here is what only the contact section wants. */
   .al-contact {
-    position: relative;
-    overflow: hidden;
-    background:
-      radial-gradient(
-        140% 110% at 10% 100%,
-        rgb(232 207 143 / 0.1) 0%,
-        rgb(232 207 143 / 0) 46%
-      ),
-      linear-gradient(
-        152deg,
-        var(--color-green-deep) 0%,
-        var(--color-green) 52%,
-        var(--color-green-deep) 100%
-      );
-    color: var(--color-on-dark);
     padding-block: var(--spacing-section);
   }
 
-  .al-contact::before {
-    content: '';
-    position: absolute;
-    inset-inline: 0;
-    top: 0;
-    height: 2px;
-    background: linear-gradient(
-      90deg,
-      rgb(201 161 74 / 0) 0%,
-      var(--color-green-gold) 20%,
-      var(--color-green-gold-lit) 48%,
-      var(--color-green-gold) 74%,
-      rgb(201 161 74 / 0) 100%
-    );
-  }
-
-  /* --- the scattered gold -------------------------------------------------
-     Radial flecks rather than one wash, so the gold reads as scattered
-     across the field the way it is in the client's reference. Two layers:
-     this element and its ::before, drifting in opposite directions at
-     different speeds, which is what stops the movement reading as the whole
-     panel sliding.
-
-     Both animations are PAUSED until the pointer is over the section. At
-     rest the flecks are exactly where the stylesheet puts them, so a visitor
-     who never hovers sees a still composition rather than something that
-     moves on its own.
-
-     The alphas are the ceiling, not a taste: at 0.16 the lightest fleck puts
-     the ground under the intro copy at L 0.09, and the 10px gold labels are
-     the first thing to fail there. Measured after the change, every block in
-     the section still clears AA across 100% of its glyph pixels. */
-  .al-contact__sheen {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    background:
-      radial-gradient(34% 30% at 14% 84%, rgb(232 207 143 / 0.16), transparent 62%),
-      radial-gradient(20% 24% at 43% 46%, rgb(232 207 143 / 0.09), transparent 64%),
-      radial-gradient(15% 19% at 27% 20%, rgb(232 207 143 / 0.08), transparent 60%);
-    opacity: 0.8;
-    transition: opacity 0.7s var(--ease-premium);
-    animation: al-sheen-a 16s ease-in-out infinite alternate;
-    animation-play-state: paused;
-  }
-
-  .al-contact__sheen::before {
-    content: '';
-    position: absolute;
-    inset: -10%;
-    background:
-      radial-gradient(24% 22% at 74% 18%, rgb(201 161 74 / 0.14), transparent 60%),
-      radial-gradient(28% 26% at 88% 72%, rgb(201 161 74 / 0.11), transparent 62%),
-      radial-gradient(16% 20% at 60% 88%, rgb(232 207 143 / 0.08), transparent 60%);
-    animation: al-sheen-b 21s ease-in-out infinite alternate;
-    animation-play-state: paused;
-  }
-
-  /* Two things happen on hover, because the drift alone is slow enough that
-     a visitor would not connect it to their own pointer: the flecks come up
-     to full strength at once, which is the acknowledgement, and then they
-     start to move. */
-  .al-contact:hover .al-contact__sheen {
-    opacity: 1;
-  }
-
-  .al-contact:hover .al-contact__sheen,
-  .al-contact:hover .al-contact__sheen::before {
-    animation-play-state: running;
-  }
-
-  /* Small amounts. The flecks are soft-edged and low-alpha, so a few percent
-     of travel is all it takes to read as movement; more looks like a sheet
-     being dragged. */
-  @keyframes al-sheen-a {
-    from {
-      transform: translate3d(0, 0, 0) scale(1);
-    }
-    to {
-      transform: translate3d(6%, -4.5%, 0) scale(1.12);
-    }
-  }
-
-  @keyframes al-sheen-b {
-    from {
-      transform: translate3d(0, 0, 0) scale(1.06);
-    }
-    to {
-      transform: translate3d(-7%, 5%, 0) scale(1);
-    }
-  }
-
-  /* The brightening stays -- it is a fade, not motion -- and the drift goes. */
-  @media (prefers-reduced-motion: reduce) {
-    .al-contact:hover .al-contact__sheen,
-    .al-contact:hover .al-contact__sheen::before {
-      animation-play-state: paused;
-    }
-  }
-
-  /* Above the sheen. Without this the grid and the sheen are both in the
-     section's own stacking context at z-index auto, and the form island --
-     which paints late -- is the only part guaranteed to sit on top. */
+  /* Above the sheen, which .al-goldgreen puts at z-index 0. Without this the
+     grid and the sheen are both at z-index auto and the form island -- which
+     paints late -- is the only part guaranteed to land on top. */
   .al-contact__grid {
     position: relative;
     z-index: 1;

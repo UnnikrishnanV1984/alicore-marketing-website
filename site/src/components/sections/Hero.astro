@@ -80,7 +80,11 @@ const frame = image
     </div>
   </div>
 
-  <div class="al-hero__pillars">
+  <div class="al-hero__pillars al-goldgreen">
+    <!-- The scattered gold. See .al-goldgreen in global.css -- same treatment
+         as the contact section, which is where the client asked for it. -->
+    <div class="al-goldgreen__sheen" aria-hidden="true"></div>
+
     <div class="al-container al-hero__pillars-grid">
       {
         pillars.map((p) => (
@@ -277,13 +281,17 @@ const frame = image
   }
 
   /* --- pillar strip ------------------------------------------------------ */
-  /* Its own row, on the hero's ash ground -- not a wash over a picture. */
+  /* Its own row, on its own ground -- not a wash over a picture. The ground
+     is .al-goldgreen (global.css), the same golden green as the contact
+     section: the client asked for the two to match. It brings its own top
+     edge, a gold rule, so the hairline border this used to carry is gone.
+
+     z-index 2 keeps the whole strip above the photograph's grid cell; the
+     sheen's own z-index 0 is inside this box and does not fight it. */
   .al-hero__pillars {
     grid-row: 2;
     position: relative;
     z-index: 2;
-    background: var(--color-ash);
-    border-top: 1px solid var(--color-rule-dark);
   }
 
   /* Same escape from the centred container as the copy above it: with the two
@@ -291,6 +299,9 @@ const frame = image
      second band. The 18px on .al-pillar is its own rule's offset, so the first
      hairline lands on the gutter and its label sits just inside it. */
   .al-hero__pillars-grid {
+    /* Above the sheen -- see the note on .al-goldgreen__sheen. */
+    position: relative;
+    z-index: 1;
     max-width: none;
     margin-inline: 0;
     padding-block: clamp(28px, 3.5vw, 40px);
