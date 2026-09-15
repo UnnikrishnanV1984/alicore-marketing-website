@@ -257,17 +257,11 @@ function columnSources(ci: number) {
     max-width: 17ch;
   }
 
-  /* The same gold as the Explore Products button's fill, at the client's
-     request -- one gold in the hero rather than two.
-
-     It is the weaker choice on contrast and worth recording why. --color-gold
-     is very nearly the tone of pale limestone, so over these photographs it
-     measures far below what gold-deep managed. The word is 88px display type,
-     which owes 3:1 rather than 4.5:1, and it is one word of five in a heading
-     whose other four carry the meaning -- but it is under that bar on the
-     lighter stretches of the picture. See the numbers in the commit. */
+  /* Client-specified #f2b229. Brighter and more saturated than the button
+     fill it replaces, which was very nearly the tone of the limestone behind
+     it -- see the measurements on --color-gold-accent in tokens.css. */
   .al-hero__accent {
-    color: var(--color-gold);
+    color: var(--color-gold-accent);
   }
 
   /* font-weight was declared twice here, 600 and then 300, so the lead had

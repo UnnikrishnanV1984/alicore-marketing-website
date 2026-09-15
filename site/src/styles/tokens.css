@@ -54,6 +54,11 @@
   /* For gold type over a photograph, where the mid-tone golds vanish
      into sand and stone. Lighter, so it separates from the picture. */
   --color-gold-bright: #e0bb6a;
+  /* Client-specified, for the hero's accent word. Brighter and more saturated
+     than --color-gold, which is the button fill: over pale limestone the fill
+     gold is almost exactly the tone of the stone, and this lifts clear of it.
+     Not a general-purpose gold -- buttons, rules and nav keep --color-gold. */
+  --color-gold-accent: #f2b229;
   /* The inverse case: gold type over a BRIGHT photograph. The mid-tone golds
      measure 1.7-2.4:1 against pale stone and sky, so large gold type there
      goes deep enough to clear 3:1 (measured worst case 3.17:1). Reads as
