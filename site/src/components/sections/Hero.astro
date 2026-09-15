@@ -6,95 +6,60 @@ import { srcSet } from '../../lib/media';
 import type { SlotImage as SlotImageType } from '../../lib/media';
 
 /**
- * The photographs fill the hero and the copy arrives over them.
+ * One photograph fills the hero and the copy arrives over it.
  *
- * Three full-height COLUMNS rather than one landscape image, because a
- * full-height column is a portrait frame -- and the supplied photography is
- * portrait. At 1366px each column is roughly 455x700 (ratio 0.65) against
- * sources of 668x1000 (0.67), so they land almost exactly, with no upscaling
- * at 1x. One landscape image would have needed 2.6x upscaling and would have
- * cropped away 60% of every frame.
+ * This was a wall of three portrait columns until the client swapped the home
+ * page's backdrop with the one behind "Your Design. Our Manufacturing." -- the
+ * three portraits moved to that section (see CustomSection) and its wide
+ * landscape came here. A landscape frame is what a full-bleed hero wants: the
+ * 2000x1333 source covers a 1366x880 hero at 1.0x with a modest crop, where a
+ * portrait would have had to upscale.
  *
- * One photograph per column, shown at all times. The hero used to cycle three
- * frames per column on staggered timers; that is gone at the client's request,
- * because copy over a backdrop that keeps changing has to stay legible against
- * all nine photographs at once and could not.
- *
- * The three are admin-managed through the `alicore-hero` slot, position 1 to 3
- * left to right. Any position left empty falls back to the photograph shipped
- * in public/hero/, so the wall is never broken by a slot nobody has filled and
- * the site looks right on a first deploy.
+ * The photograph is admin-managed through the `alicore-hero` slot, position 1.
+ * An empty slot falls back to the file shipped in public/hero/, so the hero is
+ * never a bare grey band on a first deploy or a local build without database
+ * credentials.
  */
 
-/* `focus` is object-position for the cover crop. Column one carries the copy
-   and has a deep recessed window in it; aiming its crop right keeps more of
-   that shadow out from behind the type, which is worth 3 points of contrast
-   (86.8% of glyph pixels at 3:1 against 83.9% centred) and costs nothing.
-   Column two measured the same either way, so it stays centred. */
-const COLUMNS = [
-  { id: 'home-1', alt: 'Stone-clad contemporary facade with a folded entrance reveal', focus: '100% center' },
-  { id: 'home-3', alt: 'Banded stone facade with a recessed timber entrance', focus: '50% center' },
-  { id: 'home-2', alt: 'Limestone and timber facade with vertical fin screening', focus: '50% center' },
-] as const;
-
-/** 440 and 620 are the two derivatives in public/hero -- the widest the
-    supplied files reach without upscaling (the smallest source is 633px). */
-const src = (id: string, w: number) => `/hero/${id}-${w}.webp`;
+/** The shipped fallback, at the two widths a hero actually needs. 2000 is the
+    source's own width -- no upscaling at any viewport. */
+const FALLBACK_SRC = '/hero/hero-wide-2000.webp';
+const FALLBACK_SRCSET = '/hero/hero-wide-1280.webp 1280w, /hero/hero-wide-2000.webp 2000w';
 
 interface Props {
-  /** The `alicore-hero` gallery. Missing positions keep the shipped files. */
-  images?: SlotImageType[];
+  /** The `alicore-hero` slot. Absent -> the shipped photograph. */
+  image?: SlotImageType;
 }
-const { images = [] } = Astro.props;
+const { image } = Astro.props;
 
-/**
- * Either the uploaded photograph for a column or the file shipped with the
- * repo. Both carry a srcset, so the two cases differ only in the URLs.
- */
-function columnSources(ci: number) {
-  const uploaded = images.find((i) => i.position === ci + 1);
-  if (uploaded) return { src: uploaded.webp[1280] ?? uploaded.fallback, srcset: srcSet(uploaded) };
-  const { id } = COLUMNS[ci];
-  return { src: src(id, 620), srcset: `${src(id, 440)} 440w, ${src(id, 620)} 620w` };
-}
+const frame = image
+  ? { src: image.webp[2000] ?? image.fallback, srcset: srcSet(image) }
+  : { src: FALLBACK_SRC, srcset: FALLBACK_SRCSET };
 ---
 
-<section id="top" class="al-hero" data-ground="dark">
+<section id="top" class="al-hero">
   <div class="al-hero__stage" aria-hidden="true">
-    {
-      COLUMNS.map((col, ci) => {
-        const f = columnSources(ci);
-        return (
-          <div class="al-hero__col">
-            <img
-              class="al-hero__frame"
-              style={`object-position:${col.focus}`}
-              src={f.src}
-              srcset={f.srcset}
-              sizes="33vw"
-              alt=""
-              width="620"
-              height="928"
-              loading="eager"
-              decoding="async"
-              fetchpriority={ci === 0 ? 'high' : 'auto'}
-            />
-          </div>
-        );
-      })
-    }
+    <img
+      class="al-hero__frame"
+      src={frame.src}
+      srcset={frame.srcset}
+      sizes="100vw"
+      alt=""
+      width="2000"
+      height="1333"
+      loading="eager"
+      decoding="async"
+      fetchpriority="high"
+    />
   </div>
 
-  <!-- The photographs are decorative: they carry no information the copy does
-       not, and alt text on a rotating backdrop would be read aloud repeatedly.
-       The stage is aria-hidden and this description is what a screen reader
-       gets instead. -->
-  <p class="sr-only">
-    Background: three photographs of contemporary stone and timber facades.
-  </p>
+  <!-- The photograph is decorative: it carries no information the copy does
+       not, and the hero's heading already says what the page is. The stage is
+       aria-hidden and this description is what a screen reader gets instead. -->
+  <p class="sr-only">Background: a photograph of a contemporary building facade.</p>
 
   <div class="al-container al-hero__inner">
-    <div class="al-hero__copy al-photo-panel al-photo-panel--plain" data-hero-copy>
+    <div class="al-hero__copy al-photo-panel al-photo-panel--ink" data-hero-copy>
       <Eyebrow label="Architectural Products Manufacturer" ground="dark" />
       <h1 class="al-hero__title al-balance">
         Architectural Products. Engineered to <span class="al-hero__accent">Elevate</span>.
@@ -110,7 +75,7 @@ function columnSources(ci: number) {
       </p>
       <div class="al-hero__cta">
         <Button href="/products" variant="gold">Explore Products</Button>
-        <Button href="/contact" variant="outline" ground="dark">Request a Quote</Button>
+        <Button href="/contact" variant="outline">Request a Quote</Button>
       </div>
     </div>
   </div>
@@ -131,8 +96,8 @@ function columnSources(ci: number) {
 </section>
 
 <script>
-  // The hero no longer cycles: every column shows one photograph, always.
-  // All that is left is revealing the copy once the page is ready.
+  // The photograph is static. All this does is reveal the copy once the page
+  // is ready.
   (() => {
     const copy = document.querySelector<HTMLElement>('[data-hero-copy]');
     if (!copy) return;
@@ -173,19 +138,13 @@ function columnSources(ci: number) {
     isolation: isolate;
   }
 
-  /* --- the wall of photographs ------------------------------------------ */
+  /* --- the photograph ---------------------------------------------------- */
   .al-hero__stage {
     grid-area: 1 / 1;
     z-index: 0;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2px;
-    background: var(--color-ash-2);
-  }
-
-  .al-hero__col {
     position: relative;
     overflow: hidden;
+    background: var(--color-ash-2);
   }
 
   .al-hero__frame {
@@ -210,8 +169,16 @@ function columnSources(ci: number) {
      are the point of this section and anything laid behind the type hides part
      of them. That is a rule for the whole site, not a choice made here.
 
-     Which means the copy has to carry itself on colour and outline alone. See
-     .al-hero__copy below the fold for how, and global.css for the widths. */
+     Which means the copy has to carry itself on colour alone, and the colour
+     changed with the photograph. The three portraits this hero used to show
+     were dark enough for warm white; the landscape that replaced them is a
+     pale building under a bright sky, and white measured 1.4-2.4:1 across it
+     -- 7.4% of the copy's glyph pixels at 3:1, which is the lead paragraph
+     being white on white. Near-black holds 3:1 across 97.1% of them, median
+     7-12:1, so the panel is --ink and the hero is a light-ground section now:
+     the outline button and the focus ring went with it.
+
+     `al-photo-panel--plain` is the one-line way back to white. */
   .al-hero__copy {
     max-width: 640px;
     padding: clamp(26px, 3vw, 40px) clamp(22px, 2.6vw, 36px);

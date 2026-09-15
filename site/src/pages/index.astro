@@ -31,7 +31,7 @@ const [slots, galleries, projects, contact] = await Promise.all([
 ---
 
 <Page meta={meta['/']} path="/" scrollSpy active="/">
-  <Hero images={galleries.get('alicore-hero') ?? []} />
+  <Hero image={slots.get('alicore-hero')} />
   <AboutSection images={galleries.get('alicore-about') ?? []} capSlots={slots} />
   <ProductsSection slots={galleries} />
 
@@ -72,7 +72,7 @@ const [slots, galleries, projects, contact] = await Promise.all([
   />
 
   <WhySection image={slots.get('alicore-why')} />
-  <CustomSection image={slots.get('alicore-custom')} />
+  <CustomSection images={galleries.get('alicore-custom') ?? []} />
   {contact.showProjects && <ProjectsSection projects={projects} />}
   <!-- Warm white with no outline. This photograph carries bright concrete and
        deep shadow in the same frame (backdrop p5 0.044, p95 0.939), so nothing

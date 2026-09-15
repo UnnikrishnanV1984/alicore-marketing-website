@@ -3,32 +3,67 @@ import Eyebrow from '../ui/Eyebrow.astro';
 import Button from '../ui/Button.astro';
 import PhotoBackdrop from '../ui/PhotoBackdrop.astro';
 import { steps } from '../../content/sections';
+import { srcSet } from '../../lib/media';
 import type { SlotImage as SlotImageType } from '../../lib/media';
+
+/**
+ * The backdrop is a wall of three portrait photographs, left to right.
+ *
+ * It was one wide landscape until the client swapped this section's backdrop
+ * with the home hero's: the landscape went to the hero (see Hero.astro) and
+ * the hero's three portraits came here. A portrait frame wants height, and
+ * this section is tall -- heading, intro and two rows of cards -- so three
+ * full-height columns fit the sources better than they ever fit a hero.
+ *
+ * Admin-managed through the `alicore-custom` slot, position 1 to 3 left to
+ * right. Any position left empty falls back to the file shipped in
+ * public/custom/, so the wall is never broken by a slot nobody has filled.
+ */
+
+/** `focus` is object-position for the cover crop, carried over from the hero:
+    column one has a deep recessed window in it, and aiming its crop right
+    keeps that shadow from sitting under the copy. */
+const COLUMNS = [
+  { id: 'home-1', focus: '100% center' },
+  { id: 'home-3', focus: '50% center' },
+  { id: 'home-2', focus: '50% center' },
+] as const;
+
+/** 440 and 620 are the two derivatives in public/custom -- the widest the
+    supplied files reach without upscaling (the smallest source is 633px). */
+const shipped = (id: string, w: number) => `/custom/${id}-${w}.webp`;
 
 interface Props {
   headingLevel?: 'h1' | 'h2';
-  /** The `alicore-custom` slot. Absent -> the original flat panel ground. */
-  image?: SlotImageType;
+  /** The `alicore-custom` gallery. Missing positions keep the shipped files. */
+  images?: SlotImageType[];
 }
-const { headingLevel = 'h2', image } = Astro.props;
+const { headingLevel = 'h2', images = [] } = Astro.props;
 const Heading = headingLevel;
-const hasPhoto = Boolean(image);
+
+const frames = COLUMNS.map((col, ci) => {
+  const uploaded = images.find((i) => i.position === ci + 1);
+  return uploaded
+    ? {
+        src: uploaded.webp[1280] ?? uploaded.fallback,
+        srcset: srcSet(uploaded),
+        focus: col.focus,
+      }
+    : {
+        src: shipped(col.id, 620),
+        srcset: `${shipped(col.id, 440)} 440w, ${shipped(col.id, 620)} 620w`,
+        focus: col.focus,
+      };
+});
 ---
 
-<section
-  id="custom"
-  class={`al-section al-custom${hasPhoto ? ' al-custom--photo al-photo-sec' : ''}`}
->
-  {
-    hasPhoto && (
-      <PhotoBackdrop
-        slot="alicore-custom"
-        placeholder='Wide photograph behind "Your Design. Our Manufacturing."'
-        image={image}
-        ground="light"
-      />
-    )
-  }
+<section id="custom" class="al-section al-custom al-custom--photo al-photo-sec">
+  <PhotoBackdrop
+    slot="alicore-custom"
+    placeholder='Portrait photograph for one of the three columns'
+    frames={frames}
+    ground="light"
+  />
 
   <div class="al-container al-photo-sec__inner">
     <div class="al-custom__head al-stagger" data-reveal>
@@ -61,12 +96,14 @@ const hasPhoto = Boolean(image);
 </section>
 
 <style>
+  /* The wall behind this section always renders -- every column has a shipped
+     file behind it -- so .al-custom--photo is always on and the flat panel
+     ground below never shows. Both are kept: they are what the section falls
+     back to if the backdrop is ever removed again. */
   .al-custom {
     background: var(--color-panel);
   }
 
-  /* The photograph is the ground now, so the flat panel colour would sit on
-     top of it. */
   .al-custom--photo {
     background: none;
   }
