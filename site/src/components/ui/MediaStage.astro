@@ -39,6 +39,17 @@ interface Props {
   /** Panel ground: 'ink' is near-black, 'ink2' the slightly lifted variant. */
   ground?: 'ink' | 'ink2';
   /**
+   * What shows around a CONTAINED image, and what the copy panel sits on once
+   * the stage stacks below 860px.
+   *
+   * 'ash' (default) is the dark grey a photograph wants: it reads as the edge
+   * of a frame. 'light' is the page colour, for an image whose own ground is
+   * near-white -- a brand panel, say -- which would otherwise look pasted on
+   * to a grey rectangle. It carries the stacked panel with it, or the copy
+   * would be light-grounded on a desktop and ash-grounded on a phone.
+   */
+  mediaGround?: 'ash' | 'light';
+  /**
    * Panel copy treatment.
    *
    * 'light' (default) is warm white carried by a glyph outline, which works
@@ -100,6 +111,7 @@ const {
   columns = 2,
   align = 'left',
   ground = 'ink',
+  mediaGround = 'ash',
   tone = 'light',
   fit = 'cover',
   fits,
@@ -119,7 +131,9 @@ const splitPanels = split ? Array.from({ length: columns }, (_, i) => images![i]
 ---
 
 <div
-  class={`al-stage al-stage--${align}${fill ? ' al-stage--fill' : ''} ${className}`}
+  class={`al-stage al-stage--${align}${fill ? ' al-stage--fill' : ''}${
+    mediaGround === 'light' ? ' al-stage--ground-light' : ''
+  } ${className}`}
   style={`--stage-h:${height}`}
   data-reveal
 >
@@ -211,6 +225,14 @@ const splitPanels = split ? Array.from({ length: columns }, (_, i) => images![i]
     overflow: hidden;
     background: var(--color-ash-2);
     z-index: 0;
+  }
+
+  /* The page colour instead of the frame grey -- see `mediaGround`. Both
+     layers: this box, and the slot's own ground inside it, which is the one
+     actually showing beside a contained image. */
+  .al-stage--ground-light .al-stage__media,
+  .al-stage--ground-light :global(.al-slot) {
+    background: var(--color-bg);
   }
 
   /* Fill by taking the slot out of flow. height:100% against a parent with
@@ -435,6 +457,16 @@ const splitPanels = split ? Array.from({ length: columns }, (_, i) => images![i]
          it is just a black edge drawn around white type on flat ash. */
       -webkit-text-stroke: 0;
       text-shadow: none;
+    }
+
+    /* Last, so it wins the specificity tie with the four selectors above. A
+     light-ground stage keeps its ground and its dark copy when it stacks. */
+    .al-stage--ground-light .al-stage__panel,
+    .al-stage--ground-light.al-stage--left .al-stage__panel,
+    .al-stage--ground-light.al-stage--right .al-stage__panel,
+    .al-stage--ground-light.al-stage--centre .al-stage__panel {
+      background: var(--color-bg);
+      color: var(--color-ink);
     }
   }
 

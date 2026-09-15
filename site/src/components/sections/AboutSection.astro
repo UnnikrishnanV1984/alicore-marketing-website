@@ -15,9 +15,22 @@ interface Props {
    * up by position rather than array index -- an empty gallery must give
    * nothing back, not the first thing that happens to be in the array.
    *
-   * It crops to fill (object-fit: cover): the stage is full-bleed and its box
-   * shape varies with viewport width, so no fixed photo aspect ratio fills it
-   * edge to edge on every screen without cropping.
+   * It is CONTAINED rather than cropped to fill. What the client put in this
+   * slot is a brand panel -- the Alicore lockup, the four product marks, the
+   * strapline -- rather than a photograph, and a graphic with its own type in
+   * it has to be seen whole: cover cropped the monogram's apex off the top
+   * and the whole INNOVATE / CREATE / DELIVER / SUSTAIN band off the bottom.
+   *
+   * That changes the section's shape. Contained, the panel sits to the right
+   * on a page-coloured ground it blends into, and the copy sits beside it
+   * rather than over it -- laid over, the site's heading and the panel's own
+   * ALICORE wordmark ran straight through each other. The stage is shorter
+   * than the old full-height one for the same reason: contain sizes the
+   * graphic off the stage HEIGHT, so a taller stage would push it back under
+   * the copy.
+   *
+   * Put a photograph back in this slot and it wants `fill` + `cover` + the
+   * warm tone again.
    */
   images: SlotImageType[];
   /** One photograph per capability tile, keyed by `capabilities[].slot`. */
@@ -38,19 +51,22 @@ const at = (position: number) => images.find((i) => i.position === position);
        the panel would make it taller than the image it sits on. -->
   <MediaStage
     slotId="alicore-about"
-    placeholder="Close-up: GFRC surface texture / finished panel"
+    placeholder="Brand panel: the Alicore lockup and product range"
     image={at(1)}
-    fill
-    tone="warm"
+    height="clamp(420px, 62vh, 660px)"
+    fit="contain"
+    focus="right center"
+    tone="ink"
     align="left"
     ground="ink"
+    mediaGround="light"
   >
     <Eyebrow label="Who We Are" ground="dark" />
     <Heading class="al-about__title al-balance">
       Built for Architecture. Designed for Possibility.
     </Heading>
     <p class="al-about__lead">{about.lead}</p>
-    {showCta && <Button href="/about" variant="outline" ground="dark" size="sm" class="al-about__cta">Discover Alicore</Button>}
+    {showCta && <Button href="/about" variant="outline" size="sm" class="al-about__cta">Discover Alicore</Button>}
   </MediaStage>
 
   <div class="al-section al-about__below">
@@ -97,11 +113,10 @@ const at = (position: number) => images.find((i) => i.position === position);
   }
 
   /* 400 and 1.78, matching .al-about__body below it. The 600 was there to
-     give a 1px glyph outline more stem to hold on to; tone="warm" has no
-     outline, so it is not needed.
+     give a 1px glyph outline more stem to hold on to; the outline-free tones
+     do not need it.
 
-     Inherited, not set: a colour of its own here would override the tone and
-     put white back over the sky. */
+     Inherited, not set: a colour of its own here would override the tone. */
   .al-about__lead {
     margin-top: 16px;
     font-size: 19px;
