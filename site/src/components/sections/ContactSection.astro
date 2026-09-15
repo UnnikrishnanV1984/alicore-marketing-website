@@ -77,10 +77,48 @@ const directs = [
 </section>
 
 <style>
+  /* Golden green, from the reference the client supplied: a dark emerald
+     field with a gold ribbon through it. The grey this replaces was
+     --color-ash, the site's standard dark ground; the green is scoped to
+     this section, so the masthead, materials, projects and footer keep it.
+
+     The field is a diagonal two-stop green -- darkest at the corners, open
+     in the middle, the way the reference lights its own -- with a low gold
+     wash rising from the bottom left, under the copy rather than over it.
+     The ribbon is the rule across the top edge: the one literal quotation
+     from the reference, and 2px of it is enough to set the pairing. */
   .al-contact {
-    background: var(--color-ash);
+    position: relative;
+    background:
+      radial-gradient(
+        140% 110% at 10% 100%,
+        rgb(232 207 143 / 0.1) 0%,
+        rgb(232 207 143 / 0) 46%
+      ),
+      linear-gradient(
+        152deg,
+        var(--color-green-deep) 0%,
+        var(--color-green) 52%,
+        var(--color-green-deep) 100%
+      );
     color: var(--color-on-dark);
     padding-block: var(--spacing-section);
+  }
+
+  .al-contact::before {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: 2px;
+    background: linear-gradient(
+      90deg,
+      rgb(201 161 74 / 0) 0%,
+      var(--color-green-gold) 20%,
+      var(--color-green-gold-lit) 48%,
+      var(--color-green-gold) 74%,
+      rgb(201 161 74 / 0) 100%
+    );
   }
 
   .al-contact__grid {
@@ -118,7 +156,7 @@ const directs = [
   }
 
   .al-direct {
-    background: var(--color-ash);
+    background: var(--color-green-card);
     color: var(--color-on-dark);
     padding: 24px 26px;
     display: flex;
@@ -128,10 +166,11 @@ const directs = [
     transition: background-color 0.25s var(--ease-premium);
   }
 
-  /* Now that the ash is light, the hover goes DOWN rather than up: lifting it
-     further put the gold label at 3.9:1 against its own ground. */
+  /* The hover goes DOWN rather than up, as it did on ash and for the same
+     reason: --color-green-lift would put the 10px gold label at 4.49:1
+     against its own ground. Going darker takes it to 7.5:1. */
   .al-direct:hover {
-    background: var(--color-ash-deep);
+    background: var(--color-green-deep);
   }
 
   .al-direct--pending {
@@ -300,10 +339,12 @@ const directs = [
     border-bottom: 1px solid currentColor;
   }
 
+  /* The one grey left inside the form card, and it sat under a green section
+     looking like something nobody had got to. Same green as the field. */
   .al-form__submit {
     width: 100%;
     margin-top: 28px;
-    background: var(--color-ash);
+    background: var(--color-green);
     color: var(--color-bg);
     border: none;
     padding: 19px 26px;
@@ -388,7 +429,7 @@ const directs = [
   }
 
   .al-form__again:hover {
-    background: var(--color-ash);
+    background: var(--color-green);
     color: var(--color-bg);
   }
 </style>

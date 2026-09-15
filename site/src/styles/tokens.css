@@ -30,6 +30,27 @@
   --color-ash-3: #5d5b56; /* tile ground on dark */
   --color-ash-deep: #403f3c; /* footer, admin sidebar, hover on ash */
 
+  /* --- golden green ------------------------------------------------------
+     The contact section's ground, from a reference the client supplied: a
+     dark emerald field with a gold ribbon through it. Only "Let's Build
+     Something Remarkable" uses these; the rest of the site's dark sections
+     stay on ash.
+
+     Every one of them is darker than the --color-ash they replace, so the
+     copy over them gained contrast rather than losing it: warm white reads
+     11.4:1 on -deep and 8.4:1 on -card, against 7.8:1 on ash, and the gold
+     labels 7.5:1 and 5.5:1 against 5.1:1. -lift is the one to watch -- it
+     puts the 10px gold label at 4.49:1, a hair under AA, which is why the
+     cards hover DOWN to -deep rather than up to it. */
+  --color-green-deep: #0a3b2c;
+  --color-green: #0f4f3c;
+  --color-green-card: #10513e;
+  --color-green-lift: #146046;
+  /* The ribbon itself: deep amber through champagne, the two ends of the
+     gold in the reference. */
+  --color-green-gold: #c9a14a;
+  --color-green-gold-lit: #e8cf8f;
+
   --color-ink-2: #1a1917;
   --color-ink-3: #1f1d1a;
   --color-footer: #0c0b0a;
