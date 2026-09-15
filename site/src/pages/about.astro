@@ -27,24 +27,17 @@ const aboutAt = (position: number) => aboutGallery.find((i) => i.position === po
     lead="Built for architecture. Designed for possibility."
   />
 
-  <!-- Same treatment as the home page's About section, and it has to stay the
-       same: both read position 1 of `alicore-about`, so a change of props in
-       one without the other means the same upload renders two ways. What is
-       in that slot now is a brand panel rather than a photograph -- contained
-       so its own type is not cropped, on the page colour it blends into, with
-       the copy beside it rather than over it. See AboutSection for the whole
-       reasoning. -->
+  <!-- Same treatment as the home page's About section: the photograph is the
+       stage and the introduction rises over it. The full body copy and the
+       capability tiles follow below, where they have room to be read. -->
   <MediaStage
     slotId="alicore-about"
-    placeholder="Brand panel: the Alicore lockup and product range"
+    placeholder="Close-up: GFRC surface texture / finished panel"
     image={aboutAt(1)}
-    height="clamp(420px, 62vh, 660px)"
-    fit="contain"
-    focus="right center"
-    tone="ink"
-    align="left"
+    fill
+    tone="plain"
+    align="right"
     ground="ink"
-    mediaGround="light"
   >
     <Eyebrow label="Who We Are" ground="dark" />
     <p class="al-about-page__stagelead">{about.lead}</p>

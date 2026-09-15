@@ -15,22 +15,21 @@ interface Props {
    * up by position rather than array index -- an empty gallery must give
    * nothing back, not the first thing that happens to be in the array.
    *
-   * It is CONTAINED rather than cropped to fill. What the client put in this
-   * slot is a brand panel -- the Alicore lockup, the four product marks, the
-   * strapline -- rather than a photograph, and a graphic with its own type in
-   * it has to be seen whole: cover cropped the monogram's apex off the top
-   * and the whole INNOVATE / CREATE / DELIVER / SUSTAIN band off the bottom.
+   * It crops to fill (object-fit: cover): the stage is full-bleed and its box
+   * shape varies with viewport width, so no fixed photo aspect ratio fills it
+   * edge to edge on every screen without cropping.
    *
-   * That changes the section's shape. Contained, the panel sits to the right
-   * on a page-coloured ground it blends into, and the copy sits beside it
-   * rather than over it -- laid over, the site's heading and the panel's own
-   * ALICORE wordmark ran straight through each other. The stage is shorter
-   * than the old full-height one for the same reason: contain sizes the
-   * graphic off the stage HEIGHT, so a taller stage would push it back under
-   * the copy.
+   * The copy sits on the RIGHT, in warm white, and both follow from the
+   * photograph rather than from taste. This one looks up a gold ribbed facade
+   * into blue sky: bright gold across the left two thirds, a deep curved form
+   * down the right. Measured on the copy's own glyph pixels, the left-hand
+   * placement it used to have gave no colour a good answer -- the best was
+   * near-black at 81% of them over 3:1, and the deep brown it shipped with
+   * 78%. On the right the backdrop is dark and even (median luminance 0.03
+   * against 0.43), and warm white holds 3:1 across 95.4% and AA across 88.2%.
    *
-   * Put a photograph back in this slot and it wants `fill` + `cover` + the
-   * warm tone again.
+   * A different photograph in this slot may well want the left side and a
+   * dark tone again. Re-measure rather than assume.
    */
   images: SlotImageType[];
   /** One photograph per capability tile, keyed by `capabilities[].slot`. */
@@ -51,22 +50,19 @@ const at = (position: number) => images.find((i) => i.position === position);
        the panel would make it taller than the image it sits on. -->
   <MediaStage
     slotId="alicore-about"
-    placeholder="Brand panel: the Alicore lockup and product range"
+    placeholder="Close-up: GFRC surface texture / finished panel"
     image={at(1)}
-    height="clamp(420px, 62vh, 660px)"
-    fit="contain"
-    focus="right center"
-    tone="ink"
-    align="left"
+    fill
+    tone="plain"
+    align="right"
     ground="ink"
-    mediaGround="light"
   >
     <Eyebrow label="Who We Are" ground="dark" />
     <Heading class="al-about__title al-balance">
       Built for Architecture. Designed for Possibility.
     </Heading>
     <p class="al-about__lead">{about.lead}</p>
-    {showCta && <Button href="/about" variant="outline" size="sm" class="al-about__cta">Discover Alicore</Button>}
+    {showCta && <Button href="/about" variant="outline" ground="dark" size="sm" class="al-about__cta">Discover Alicore</Button>}
   </MediaStage>
 
   <div class="al-section al-about__below">
@@ -114,9 +110,10 @@ const at = (position: number) => images.find((i) => i.position === position);
 
   /* 400 and 1.78, matching .al-about__body below it. The 600 was there to
      give a 1px glyph outline more stem to hold on to; the outline-free tones
-     do not need it.
+     have none, so it is not needed.
 
-     Inherited, not set: a colour of its own here would override the tone. */
+     Inherited, not set: a colour of its own here would override the tone and
+     put white back over the sky. */
   .al-about__lead {
     margin-top: 16px;
     font-size: 19px;
