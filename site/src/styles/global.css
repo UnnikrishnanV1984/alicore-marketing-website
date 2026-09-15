@@ -42,6 +42,24 @@ video {
   max-width: 100%;
 }
 
+/* Headings default to the display face. Every component already sets this on
+   its own heading class, so this changes nothing today -- it is the safety net.
+   Without it `body`'s Manrope is what an unstyled heading inherits, which looks
+   almost right and so is the hardest kind of drift to catch by eye.
+
+   Anything that wants a heading in another face keeps saying so on its own
+   class: a scoped Astro class carries [data-astro-cid-*] and outranks a bare
+   element selector, so e.g. the footer's mono column labels are unaffected. */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-display);
+}
+
+
 a {
   color: inherit;
   text-decoration: none;
