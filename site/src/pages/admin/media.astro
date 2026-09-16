@@ -4,6 +4,7 @@ import '../../styles/admin.css';
 import MediaLibrary, { type AdminSlot } from '../../components/admin/MediaLibrary';
 import { serviceClient, mediaUrl } from '../../lib/supabase';
 import { slotPath, MAX_GALLERY_POSITIONS } from '../../lib/media';
+import { loadSettingsForAdmin } from '../../lib/settings';
 import type { StaffUser } from '../../lib/auth';
 
 export const prerender = false;
@@ -32,11 +33,22 @@ const SPLIT_LABELS: Record<string, Record<number, string>> = {
   'alicore-custom': { 1: 'Left column', 2: 'Middle column', 3: 'Right column' },
 };
 
+/**
+ * The Projects section is behind a settings toggle and is currently off. While
+ * it is off its six slots accept uploads that appear nowhere -- the same dead
+ * placement migration 0010 removed for the hero. They are hidden rather than
+ * deleted: turning Projects back on in Settings brings the tab back with
+ * anything already uploaded still attached.
+ */
+const PROJECT_GROUP = 'Projects';
+
 let slots: AdminSlot[] = [];
 let loadError: string | null = null;
+let showProjects = true;
 
 try {
   const supabase = serviceClient(Astro.locals);
+  showProjects = (await loadSettingsForAdmin(Astro.locals)).showProjects;
 
   const [{ data: slotRows, error: slotErr }, { data: assetRows }, { data: projectRows }] =
     await Promise.all([
@@ -65,7 +77,7 @@ try {
   // -- the Projects group's "visible on site" toggle rides on this.
   const projectBySlot = new Map((projectRows ?? []).map((p) => [p.image_path as string, p]));
 
-  slots = (slotRows ?? []).map((s) => {
+  slots = (slotRows ?? []).filter((s) => showProjects || s.group_title !== PROJECT_GROUP).map((s) => {
     const maxPositions =
       s.group_title === GALLERY_GROUP ? MAX_GALLERY_POSITIONS : (SPLIT_SLOTS[s.id] ?? 1);
     const byPosition = active.get(s.id) ?? new Map<number, ActiveAsset>();
@@ -109,10 +121,15 @@ try {
     browse — and it fills that position on the live page. Use landscape shots at 2000px wide or
     larger; they are resized and converted automatically, so upload the best original you have.
     Each product carries up to {MAX_GALLERY_POSITIONS} photographs, which the live site cycles
-    through automatically. The hero is a wall of nine — three columns of three, each column
-    cycling on its own timer — and any frame left empty keeps the photograph the site ships with.
-    Every other placement is a single photograph, except Manufacturing, which shows two side by
-    side.
+    through automatically. Custom Solutions is a wall of three columns, one photograph each, and
+    any column left empty keeps the photograph the site ships with. Every other placement is a
+    single photograph, except Manufacturing, which shows two side by side.
+    {!showProjects && (
+      <>
+        {' '}
+        Project imagery is hidden because the Projects section is switched off in Settings.
+      </>
+    )}
   </p>
 
   {
