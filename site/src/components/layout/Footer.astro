@@ -8,7 +8,17 @@ const quickLinks = footerQuickLinks.filter((l) => l.href !== '/projects' || cont
 
 ---
 
-<footer class="al-footer">
+<!-- The same golden-green field as the contact section, per the client. The
+     sheen is the shared treatment's first-child contract (see global.css):
+     an empty aria-hidden div at z-index 0, with everything else lifted above
+     it -- here that is the one container holding the whole footer.
+
+     data-ground="dark" comes with the darker field: it switches the keyboard
+     focus ring from --color-gold-ink to --color-gold. The footer is almost
+     entirely links, and the ink ring was already the wrong one on ash. -->
+<footer class="al-footer al-goldgreen" data-ground="dark">
+  <div class="al-goldgreen__sheen" aria-hidden="true"></div>
+
   <div class="al-container">
     <div class="al-footer__grid">
       <div>
@@ -83,10 +93,24 @@ const quickLinks = footerQuickLinks.filter((l) => l.href !== '/projects' || cont
 </footer>
 
 <style>
+  /* No background of its own: .al-goldgreen paints the field. A `background`
+     here would win -- a scoped class is (0,2,0) against the shared class's
+     (0,1,0) -- and quietly put the old ash back.
+
+     The text colour DOES stay local, and deliberately: .al-goldgreen sets a
+     full-strength --color-on-dark for copy sitting on it, and the footer's
+     body text is 60%. Measured on the field, that is 5.13:1 at its lightest
+     point against 4.62 on ash-deep, so the lower alpha still gains. */
   .al-footer {
-    background: var(--color-ash-deep);
     color: rgb(246 244 239 / 0.6);
     padding-block: clamp(56px, 7vw, 90px) 28px;
+  }
+
+  /* Above the sheen. One lift covers the whole footer because everything is
+     inside this container. */
+  .al-footer .al-container {
+    position: relative;
+    z-index: 1;
   }
 
   .al-footer__grid {
