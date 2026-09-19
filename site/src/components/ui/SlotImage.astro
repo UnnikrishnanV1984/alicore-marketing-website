@@ -98,7 +98,7 @@ const duration = list.length * HOLD_SECONDS;
     ) : isGallery ? (
       <div
         class="al-slot__gallery"
-        style={`--al-cycle-duration:${duration}s;--al-cycle-name:al-slot-cycle-${list.length}`}
+        style={`--al-cycle-duration:${duration}s;--al-cycle-name:al-cycle-${list.length}`}
       >
         {list.map((img, i) => (
           <img
@@ -153,10 +153,9 @@ const duration = list.length * HOLD_SECONDS;
 
   /* --- cycling gallery ---------------------------------------------------
      Pure-CSS crossfade: every photograph plays the same keyframe timeline,
-     just staggered by its own position (--al-cycle-delay). The percentages
-     below are fractions of the *whole* loop, so they hold regardless of how
-     many photographs are in the set -- with N images the effective on-screen
-     time per image is duration / N either way. */
+     staggered by its own position (--al-cycle-delay). The al-cycle-N keyframes
+     are in global.css -- PhotoBackdrop's wall cycles too, and Astro does not
+     scope keyframe names, so one definition serves both. */
   .al-slot__gallery {
     position: relative;
     width: 100%;
@@ -171,41 +170,11 @@ const duration = list.length * HOLD_SECONDS;
     object-fit: cover;
     object-position: var(--pos, 50% 50%);
     opacity: 0;
-    animation-name: var(--al-cycle-name, al-slot-cycle-5);
+    animation-name: var(--al-cycle-name, al-cycle-5);
     animation-duration: var(--al-cycle-duration, 20s);
     animation-timing-function: ease-in-out;
     animation-iteration-count: infinite;
     animation-delay: var(--al-cycle-delay, 0s);
-  }
-
-  /* One keyframe set per photograph count (2-5, the admin-enforced max).
-     Each holds fully opaque for most of its 1/N share of the loop and fades
-     at the edges, so pacing stays even whether a category has 2 photographs
-     or 5 -- a single keyframe tuned for one N would race or stall for the
-     others. */
-  @keyframes al-slot-cycle-2 {
-    0%, 100% { opacity: 0; }
-    6% { opacity: 1; }
-    44% { opacity: 1; }
-    50% { opacity: 0; }
-  }
-  @keyframes al-slot-cycle-3 {
-    0%, 100% { opacity: 0; }
-    5% { opacity: 1; }
-    28% { opacity: 1; }
-    33% { opacity: 0; }
-  }
-  @keyframes al-slot-cycle-4 {
-    0%, 100% { opacity: 0; }
-    4% { opacity: 1; }
-    21% { opacity: 1; }
-    25% { opacity: 0; }
-  }
-  @keyframes al-slot-cycle-5 {
-    0%, 100% { opacity: 0; }
-    4% { opacity: 1; }
-    16% { opacity: 1; }
-    20% { opacity: 0; }
   }
 
   @media (prefers-reduced-motion: reduce) {

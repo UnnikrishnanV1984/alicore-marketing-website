@@ -26,20 +26,30 @@ import type { SlotImage as SlotImageType } from '../../lib/media';
  * dominate the page, and the section's own flat ground is the better fallback.
  *
  * `frames` is the second mode: a wall of photographs side by side rather than
- * one across the whole width. Custom Solutions uses it for the three portraits
- * that used to be the home hero. The frames are plain <img>s, not SlotImages,
- * because a wall needs a shipped file behind every empty position -- one hole
- * in a row of three is far more obvious than a placeholder block would be, and
- * the section that owns the wall is the one that knows what to ship. The
- * scrim, the ground logic and the push-in are shared with the single-frame
- * mode.
+ * one across the whole width. Custom Solutions uses it. The frames are plain
+ * <img>s, not SlotImages, because a wall needs a shipped file behind every
+ * empty position -- one hole in a row of three is far more obvious than a
+ * placeholder block would be, and the section that owns the wall is the one
+ * that knows what to ship. The scrim, the ground logic and the push-in are
+ * shared with the single-frame mode.
+ *
+ * A column can hold more than one photograph, in which case it crossfades
+ * between them on the shared al-cycle-N keyframes (global.css). Columns are
+ * offset from one another by a NEGATIVE delay, so each starts part-way into
+ * its own timeline rather than blank: they change at different moments, and
+ * every column has a photograph showing at t=0. Keep COLUMN_OFFSET well below
+ * the point where a column's first image starts fading, or the wall opens with
+ * a hole -- see the note on the constant.
  */
 interface Props {
   slot: string;
   placeholder: string;
   image?: SlotImageType;
-  /** Wall mode. Given, `image` is ignored and these render side by side. */
-  frames?: { src: string; srcset: string; alt?: string; focus?: string }[];
+  /**
+   * Wall mode. Given, `image` is ignored and these render side by side, one
+   * entry per column. A column with several `shots` cycles through them.
+   */
+  frames?: { shots: { src: string; srcset: string }[]; focus?: string }[];
   /** 'light' -> warm-white scrim for dark copy. 'dark' -> the inverse. */
   ground?: 'light' | 'dark';
   class?: string;
@@ -55,6 +65,18 @@ const {
 } = Astro.props;
 
 const isWall = Boolean(frames?.length);
+
+/** Seconds each photograph holds before crossfading to the next. Slower than
+    SlotImage's 4.5: this is a backdrop behind body copy, not a product card
+    being browsed, and the brief asks for minimal animation. */
+const HOLD_SECONDS = 6.5;
+
+/** How far each column is shifted behind the one to its left, so the three do
+    not change in lockstep. Applied as a negative delay. It must stay inside
+    the first image's opaque window -- the shortest of those is the 2-shot
+    keyframe's 6%-44% of a 13s loop, i.e. 0.8s-5.7s -- or a column would open
+    mid-fade. 2.2s leaves room at both ends. */
+const COLUMN_OFFSET = 2.2;
 ---
 
 <div
@@ -65,19 +87,28 @@ const isWall = Boolean(frames?.length);
   {
     isWall ? (
       <div class="al-photobg__cols" style={`--cols:${frames!.length}`}>
-        {frames!.map((f, i) => (
-          <div class="al-photobg__col">
-            <img
-              class="al-photobg__frame"
-              style={`object-position:${f.focus ?? '50% 50%'}`}
-              src={f.src}
-              srcset={f.srcset}
-              sizes={`${Math.round(100 / frames!.length)}vw`}
-              alt=""
-              loading="lazy"
-              decoding="async"
-              fetchpriority={i === 0 ? 'low' : 'auto'}
-            />
+        {frames!.map((col, ci) => (
+          <div
+            class="al-photobg__col"
+            style={`--al-cycle-duration:${(col.shots.length * HOLD_SECONDS).toFixed(2)}s;--al-cycle-name:al-cycle-${col.shots.length};--pos:${col.focus ?? '50% 50%'}`}
+          >
+            {col.shots.map((s, i) => (
+              <img
+                class={`al-photobg__frame${col.shots.length > 1 ? ' al-photobg__frame--cycle' : ''}`}
+                style={
+                  col.shots.length > 1
+                    ? `--al-cycle-delay:${(i * HOLD_SECONDS - ci * COLUMN_OFFSET).toFixed(2)}s`
+                    : undefined
+                }
+                src={s.src}
+                srcset={s.srcset}
+                sizes={`${Math.round(100 / frames!.length)}vw`}
+                alt=""
+                loading="lazy"
+                decoding="async"
+                fetchpriority="low"
+              />
+            ))}
           </div>
         ))}
       </div>
@@ -144,6 +175,31 @@ const isWall = Boolean(frames?.length);
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: var(--pos, 50% 50%);
+  }
+
+  /* Crossfade, on the shared al-cycle-N keyframes in global.css. Only applied
+     when a column actually holds more than one photograph -- a single-shot
+     column keeps the plain .al-photobg__frame rule above and stays opaque. */
+  .al-photobg__frame--cycle {
+    opacity: 0;
+    animation-name: var(--al-cycle-name, al-cycle-3);
+    animation-duration: var(--al-cycle-duration, 19.5s);
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    animation-delay: var(--al-cycle-delay, 0s);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .al-photobg__frame--cycle {
+      animation: none;
+      opacity: 0;
+    }
+    /* Motion off: the wall becomes three still photographs, the first of each
+       column -- which is what it was before the set grew. */
+    .al-photobg__col .al-photobg__frame--cycle:first-child {
+      opacity: 1;
+    }
   }
 
   /* The push-in is on .al-slot in single-frame mode; in wall mode there is no

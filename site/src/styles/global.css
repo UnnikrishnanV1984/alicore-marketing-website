@@ -635,3 +635,50 @@ button {
     animation-play-state: paused;
   }
 }
+
+/* --------------------------------------------------------------------------
+   CROSSFADING SETS
+
+   One photograph at a time out of a set of N, each holding still for its share
+   of the loop and fading at the edges. Pure CSS: every image plays the same
+   timeline and is offset by its own position in the set, so nothing has to run
+   on the main thread and a script failure costs nothing.
+
+   The keyframes live here because two components now cycle: SlotImage, for the
+   product galleries, and PhotoBackdrop's wall, for the Custom Solutions
+   columns. They were SlotImage's alone until the wall arrived -- and Astro
+   does not scope keyframe names, so the same twenty lines were being inlined
+   into all eleven pages.
+
+   The percentages are fractions of the WHOLE loop, which is what keeps pacing
+   even across set sizes: with N images each gets 1/N of the loop whatever the
+   duration. A consumer sets --al-cycle-duration for the whole loop and gives
+   each image an --al-cycle-delay of (index x duration / N).
+-------------------------------------------------------------------------- */
+@keyframes al-cycle-2 {
+  0%, 100% { opacity: 0; }
+  6% { opacity: 1; }
+  44% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@keyframes al-cycle-3 {
+  0%, 100% { opacity: 0; }
+  5% { opacity: 1; }
+  28% { opacity: 1; }
+  33% { opacity: 0; }
+}
+
+@keyframes al-cycle-4 {
+  0%, 100% { opacity: 0; }
+  4% { opacity: 1; }
+  21% { opacity: 1; }
+  25% { opacity: 0; }
+}
+
+@keyframes al-cycle-5 {
+  0%, 100% { opacity: 0; }
+  4% { opacity: 1; }
+  16% { opacity: 1; }
+  20% { opacity: 0; }
+}

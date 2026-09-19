@@ -7,60 +7,94 @@ import { srcSet } from '../../lib/media';
 import type { SlotImage as SlotImageType } from '../../lib/media';
 
 /**
- * The backdrop is a wall of three portrait photographs, left to right.
+ * The backdrop is a wall of three columns, left to right, each cycling
+ * through its own photographs.
  *
  * It was one wide landscape until the client swapped this section's backdrop
  * with the home hero's: the landscape went to the hero (see Hero.astro) and
  * the hero's three portraits came here. A portrait frame wants height, and
- * this section is tall -- heading, intro and two rows of cards -- so three
- * full-height columns fit the sources better than they ever fit a hero.
+ * this section is tall -- heading, intro and two rows of cards -- so
+ * full-height columns fit the sources better than they ever fit a hero. The
+ * client then supplied eight photographs of custom architectural elements for
+ * it, to be shown three at a time and kept moving.
  *
- * Admin-managed through the `alicore-custom` slot, position 1 to 3 left to
- * right. Any position left empty falls back to the file shipped in
- * public/custom/, so the wall is never broken by a slot nobody has filled.
+ * Eight into three columns is uneven, so they are dealt round-robin: the wall
+ * shows entries 1, 2 and 3 of the list at t=0, and each column then advances
+ * through every third one. That spreads consecutive photographs across the
+ * width rather than stacking them in one column, and it means the two columns
+ * holding three and the one holding two fall out of step with each other on
+ * their own -- the loops are 19.5s and 13s. PhotoBackdrop staggers them a
+ * little further so no two change at the same moment.
+ *
+ * Admin-managed through the `alicore-custom` slot. Uploads take over the whole
+ * wall, dealt the same way, but only once there are at least as many as there
+ * are columns -- fewer than that would leave a column empty, and a hole in a
+ * row of three is exactly what shipping fallbacks is meant to prevent.
  */
 
-/** `focus` is object-position for the cover crop, carried over from the hero:
-    column one has a deep recessed window in it, and aiming its crop right
-    keeps that shadow from sitting under the copy. */
-const COLUMNS = [
-  { id: 'home-1', focus: '100% center' },
-  { id: 'home-3', focus: '50% center' },
-  { id: 'home-2', focus: '50% center' },
+const COLUMN_COUNT = 3;
+
+/**
+ * The shipped set, in the order the client listed them. `widths` is what each
+ * source can actually produce without upscaling, which is not the same for
+ * all of them: three arrived much smaller than the rest (see the note below),
+ * so their srcset tops out early rather than inventing pixels.
+ *
+ * Sources are Custom Architectural Elements_N in the supplied folder; the
+ * number here is that N, so a file can be traced back.
+ *
+ * NOTE ON RESOLUTION: 1 is 270x270, 3 is 375x500 and 4 is 564x564 square,
+ * against 633-736px wide portraits for the rest. A column is about 480px wide
+ * at 1440 and 640px at 1920, so 1 in particular is being asked to cover more
+ * than twice its native width and will read soft next to its neighbours.
+ * Larger copies of those three would fix it; nothing in code can.
+ */
+const SHIPPED = [
+  { n: 6, widths: [440, 620] },
+  { n: 7, widths: [440, 620] },
+  { n: 8, widths: [440, 620] },
+  { n: 1, widths: [270] },
+  { n: 2, widths: [440, 620] },
+  { n: 3, widths: [375] },
+  { n: 4, widths: [440] },
+  { n: 5, widths: [440, 620] },
 ] as const;
 
-/** 440 and 620 are the two derivatives in public/custom -- the widest the
-    supplied files reach without upscaling (the smallest source is 633px). */
-const shipped = (id: string, w: number) => `/custom/${id}-${w}.webp`;
+const shippedPath = (n: number, w: number) => `/custom/custom-${n}-${w}.webp`;
 
 interface Props {
   headingLevel?: 'h1' | 'h2';
-  /** The `alicore-custom` gallery. Missing positions keep the shipped files. */
+  /** The `alicore-custom` gallery. Fewer than COLUMN_COUNT keeps the shipped set. */
   images?: SlotImageType[];
 }
 const { headingLevel = 'h2', images = [] } = Astro.props;
 const Heading = headingLevel;
 
-const frames = COLUMNS.map((col, ci) => {
-  const uploaded = images.find((i) => i.position === ci + 1);
-  return uploaded
-    ? {
-        src: uploaded.webp[1280] ?? uploaded.fallback,
-        srcset: srcSet(uploaded),
-        focus: col.focus,
-      }
-    : {
-        src: shipped(col.id, 620),
-        srcset: `${shipped(col.id, 440)} 440w, ${shipped(col.id, 620)} 620w`,
-        focus: col.focus,
-      };
-});
+type Shot = { src: string; srcset: string };
+
+const uploaded: Shot[] = [...images]
+  .sort((a, b) => a.position - b.position)
+  .map((img) => ({ src: img.webp[1280] ?? img.fallback, srcset: srcSet(img) }));
+
+const pool: Shot[] =
+  uploaded.length >= COLUMN_COUNT
+    ? uploaded
+    : SHIPPED.map((s) => ({
+        src: shippedPath(s.n, s.widths[s.widths.length - 1]),
+        srcset: s.widths.map((w) => `${shippedPath(s.n, w)} ${w}w`).join(', '),
+      }));
+
+/** Deal round-robin: column c takes pool entries c, c+3, c+6, ... */
+const frames = Array.from({ length: COLUMN_COUNT }, (_, c) => ({
+  shots: pool.filter((_, i) => i % COLUMN_COUNT === c),
+  focus: '50% center',
+})).filter((col) => col.shots.length > 0);
 ---
 
 <section id="custom" class="al-section al-custom al-custom--photo al-photo-sec">
   <PhotoBackdrop
     slot="alicore-custom"
-    placeholder='Portrait photograph for one of the three columns'
+    placeholder="Portrait photograph for the Custom Solutions wall"
     frames={frames}
     ground="light"
   />

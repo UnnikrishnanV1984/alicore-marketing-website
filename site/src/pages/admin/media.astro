@@ -20,17 +20,21 @@ const GALLERY_GROUP = 'Products';
  */
 const SPLIT_SLOTS: Record<string, number> = {
   'alicore-factory': 2,
-  // Custom Solutions is a wall of three columns, one photograph each, left to
-  // right. The hero used to be that wall and this slot a single wide
-  // photograph; the client swapped the two backdrops over, so the three
-  // positions moved here and the hero went back to 1-up.
-  'alicore-custom': 3,
+  // Custom Solutions is a wall of three columns that cycles: the photographs
+  // are dealt across the columns in order and each column crossfades through
+  // the ones it was given. So these are not "left / middle / right" any more,
+  // and there are more of them than there are columns -- 5 is the ceiling the
+  // upload API enforces (MAX_GALLERY_POSITIONS).
+  //
+  // Nothing here is required: the section ships eight photographs of its own
+  // and keeps using them until at least three are uploaded, because two
+  // uploads across three columns would leave a hole.
+  'alicore-custom': MAX_GALLERY_POSITIONS,
 };
 
 /** Friendly names for a split slot's positions, where "Photo N" would be confusing. */
 const SPLIT_LABELS: Record<string, Record<number, string>> = {
   'alicore-factory': { 1: 'Left photograph', 2: 'Right photograph' },
-  'alicore-custom': { 1: 'Left column', 2: 'Middle column', 3: 'Right column' },
 };
 
 /**
@@ -121,9 +125,10 @@ try {
     browse — and it fills that position on the live page. Use landscape shots at 2000px wide or
     larger; they are resized and converted automatically, so upload the best original you have.
     Each product carries up to {MAX_GALLERY_POSITIONS} photographs, which the live site cycles
-    through automatically. Custom Solutions is a wall of three columns, one photograph each, and
-    any column left empty keeps the photograph the site ships with. Every other placement is a
-    single photograph, except Manufacturing, which shows two side by side.
+    through automatically. Custom Solutions is a wall of three columns that cycles: it ships with
+    eight photographs of its own and keeps using them until at least three are uploaded here.
+    Every other placement is a single photograph, except Manufacturing, which shows two side by
+    side.
     {!showProjects && (
       <>
         {' '}
