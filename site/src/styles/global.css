@@ -654,31 +654,49 @@ button {
    even across set sizes: with N images each gets 1/N of the loop whatever the
    duration. A consumer sets --al-cycle-duration for the whole loop and gives
    each image an --al-cycle-delay of (index x duration / N).
+
+   THE FADES MUST OVERLAP. Each image holds opacity 1 until f PAST the point
+   where the next one starts rising, and only then falls. The incoming image is
+   later in the DOM, so it paints on top and covers the outgoing one as it
+   arrives; the outgoing one then fades out underneath, where nothing can see
+   it. At every instant at least one layer is fully opaque.
+
+   An earlier version faded each image out BEFORE the next began -- hold to
+   28%, gone by 33%, next one starting at 33.3%. Measuring the computed opacity
+   of every layer across a loop showed all of them at zero at each changeover:
+   the container's flat ground flashed through the whole frame, three times per
+   loop, on a full-width backdrop. Hence the shape below. If these are ever
+   retuned, check the same way -- 1 - product(1 - opacity) across the layers
+   must never dip below 1.
 -------------------------------------------------------------------------- */
 @keyframes al-cycle-2 {
-  0%, 100% { opacity: 0; }
-  6% { opacity: 1; }
-  44% { opacity: 1; }
-  50% { opacity: 0; }
+  0% { opacity: 0; }
+  4% { opacity: 1; }
+  54% { opacity: 1; }
+  58% { opacity: 0; }
+  100% { opacity: 0; }
 }
 
 @keyframes al-cycle-3 {
-  0%, 100% { opacity: 0; }
-  5% { opacity: 1; }
-  28% { opacity: 1; }
-  33% { opacity: 0; }
+  0% { opacity: 0; }
+  3% { opacity: 1; }
+  36.33% { opacity: 1; }
+  39.33% { opacity: 0; }
+  100% { opacity: 0; }
 }
 
 @keyframes al-cycle-4 {
-  0%, 100% { opacity: 0; }
-  4% { opacity: 1; }
-  21% { opacity: 1; }
-  25% { opacity: 0; }
+  0% { opacity: 0; }
+  2.5% { opacity: 1; }
+  27.5% { opacity: 1; }
+  30% { opacity: 0; }
+  100% { opacity: 0; }
 }
 
 @keyframes al-cycle-5 {
-  0%, 100% { opacity: 0; }
-  4% { opacity: 1; }
-  16% { opacity: 1; }
-  20% { opacity: 0; }
+  0% { opacity: 0; }
+  2% { opacity: 1; }
+  22% { opacity: 1; }
+  24% { opacity: 0; }
+  100% { opacity: 0; }
 }

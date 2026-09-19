@@ -72,11 +72,22 @@ const isWall = Boolean(frames?.length);
 const HOLD_SECONDS = 6.5;
 
 /** How far each column is shifted behind the one to its left, so the three do
-    not change in lockstep. Applied as a negative delay. It must stay inside
-    the first image's opaque window -- the shortest of those is the 2-shot
-    keyframe's 6%-44% of a 13s loop, i.e. 0.8s-5.7s -- or a column would open
-    mid-fade. 2.2s leaves room at both ends. */
+    not change in lockstep. Applied as a negative delay, so a column opens
+    part-way through its first photograph rather than blank.
+
+    It has to land inside that photograph's opaque window, or the column opens
+    mid-fade. The shortest of those is the 2-shot keyframe's 4%-54% of a 13s
+    loop, i.e. 0.5s-7.0s; the 3-shot case is 0.6s-7.1s of 19.5s. The largest
+    offset in use is 2 x 2.2 = 4.4s for the third column, which sits inside
+    both with room at either end. */
 const COLUMN_OFFSET = 2.2;
+
+/** Every column gets this much head start on top of its own offset, so none
+    of them begins at progress zero -- where the first photograph is still
+    fading in and the frame is briefly the container's flat ground. Without it
+    the leftmost column opens blank for the length of its fade. One second puts
+    it past the 3% ramp with the rest of the hold still ahead. */
+const START_OFFSET = 1;
 ---
 
 <div
@@ -97,7 +108,7 @@ const COLUMN_OFFSET = 2.2;
                 class={`al-photobg__frame${col.shots.length > 1 ? ' al-photobg__frame--cycle' : ''}`}
                 style={
                   col.shots.length > 1
-                    ? `--al-cycle-delay:${(i * HOLD_SECONDS - ci * COLUMN_OFFSET).toFixed(2)}s`
+                    ? `--al-cycle-delay:${(i * HOLD_SECONDS - ci * COLUMN_OFFSET - START_OFFSET).toFixed(2)}s`
                     : undefined
                 }
                 src={s.src}
