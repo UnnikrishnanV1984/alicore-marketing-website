@@ -26,6 +26,21 @@ const canonical = new URL(canonicalPath, site.url).href;
 // robots.txt therefore permits crawling on staging so this tag is read.
 const isStaging = /\.workers\.dev$/i.test(new URL(site.url).hostname);
 
+/**
+ * The share card, used on every page.
+ *
+ * twitter:card is summary_large_image, which REQUIRES an image -- without one
+ * every share on WhatsApp, LinkedIn or X rendered blank. 1200x630 is the 1.91:1
+ * both Open Graph and X expect; it is cropped from the brand key visual, so it
+ * carries the monogram, the wordmark and the jali facade.
+ *
+ * Absolute, because crawlers do not resolve a relative og:image. One card for
+ * the whole site rather than one per route: a per-page image would be better
+ * still, but a generic brand card beats nothing everywhere.
+ */
+const ogImage = new URL('/brand/alicore-og.jpg', site.url).href;
+const OG_IMAGE_ALT = 'Alicore — Architectural Products, built beyond concrete';
+
 // Sitewide Organization node. Deliberately carries no rating, certification or
 // award properties -- none of that is verified. See the brand guidelines.
 const organization: Record<string, unknown> = {
@@ -33,12 +48,38 @@ const organization: Record<string, unknown> = {
   '@type': 'Organization',
   name: 'Alicore',
   url: site.url,
+  logo: new URL('/brand/alicore-badge.jpg', site.url).href,
+  image: ogImage,
   slogan: site.tagline,
   description:
     'Architectural products manufacturer specializing in GFRC and FRP panels, jalis, cornices, columns and custom architectural elements.',
   telephone: contact.phoneHref.replace('tel:', ''),
 };
 if (contact.email) organization.email = contact.email;
+
+/**
+ * Address and social profiles, both already held in site_settings and edited by
+ * staff -- so they are read from there rather than written here, and they drop
+ * out of the graph entirely when a value is blank. Nothing is invented: the
+ * brief's placeholders ([ADD ADDRESS] and friends) must never reach schema.
+ *
+ * `addressLocality` and `addressRegion` are not split out of the stored string.
+ * It is one free-text field the client types into, and guessing which comma
+ * separates city from state would be a fabrication the moment they write it
+ * differently. `addressCountry` is safe -- the phone is a +91 number and the
+ * company trades in India.
+ */
+if (contact.hasAddress) {
+  organization.address = {
+    '@type': 'PostalAddress',
+    streetAddress: contact.address,
+    addressCountry: 'IN',
+  };
+}
+
+/** sameAs consolidates the profiles onto the same entity. Blank ones are skipped. */
+const profiles = contact.social.map((s) => s.href).filter(Boolean);
+if (profiles.length) organization.sameAs = profiles;
 
 const graph = [organization, ...jsonLd];
 ---
@@ -55,12 +96,19 @@ const graph = [organization, ...jsonLd];
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Alicore" />
+    <meta property="og:locale" content="en_IN" />
     <meta property="og:title" content={meta.title} />
     <meta property="og:description" content={meta.description} />
     <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={OG_IMAGE_ALT} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={meta.title} />
     <meta name="twitter:description" content={meta.description} />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={OG_IMAGE_ALT} />
 
     <meta name="theme-color" content="#12110F" />
     <link rel="sitemap" href="/sitemap-index.xml" />

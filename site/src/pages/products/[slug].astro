@@ -20,6 +20,19 @@ const { product } = Astro.props;
 const slots = await loadSlotGalleries();
 const related = products.filter((p) => p.slug !== product.slug).slice(0, 3);
 
+/**
+ * Every photograph in this product's gallery, absolute and largest-first.
+ *
+ * Google asks for `image` on Product and will not consider the page for a
+ * product rich result without one. These are the same files the page already
+ * renders, so nothing here claims an image that a visitor cannot see. Empty
+ * when the slot has no upload, and the property is then left off rather than
+ * emitted blank.
+ */
+const productImages = (slots.get(product.slot) ?? [])
+  .map((img) => img.webp[2000] ?? img.fallback)
+  .filter(Boolean);
+
 const jsonLd = [
   {
     '@context': 'https://schema.org',
@@ -29,6 +42,7 @@ const jsonLd = [
     category: product.cat === 'Custom' ? 'Custom Architectural Elements' : product.cat,
     brand: { '@type': 'Brand', name: 'Alicore' },
     manufacturer: { '@type': 'Organization', name: 'Alicore' },
+    ...(productImages.length ? { image: productImages } : {}),
     // No offers/price and no aggregateRating -- neither is real. Fabricating
     // either would be structured-data spam and breaches the brief.
   },
