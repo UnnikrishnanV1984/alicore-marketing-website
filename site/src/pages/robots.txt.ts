@@ -1,11 +1,11 @@
 import type { APIRoute } from 'astro';
 
-const SITE = import.meta.env.PUBLIC_SITE_URL || 'https://www.alicore.in';
+const SITE = import.meta.env.PUBLIC_SITE_URL || 'https://alicore.in';
 
 /**
  * A workers.dev deploy is a staging URL, and it must not be indexed.
  *
- * Left crawlable it would compete with www.alicore.in for the same copy the
+ * Left crawlable it would compete with alicore.in for the same copy the
  * moment the real domain goes live -- and the staging URL, being indexed
  * first, can win. Cleaning that up afterwards is far more work than blocking
  * it now, so the host decides the policy.

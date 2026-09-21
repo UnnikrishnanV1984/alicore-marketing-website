@@ -11,7 +11,7 @@ import { loadEnv } from 'vite';
 // loadEnv merges both, so the two behave the same.
 const ENV = { ...loadEnv(process.env.NODE_ENV ?? 'production', process.cwd(), ''), ...process.env };
 
-const SITE = ENV.PUBLIC_SITE_URL || 'https://www.alicore.in';
+const SITE = ENV.PUBLIC_SITE_URL || 'https://alicore.in';
 
 /**
  * Is the Projects section switched on?

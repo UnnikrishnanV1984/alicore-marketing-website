@@ -13,8 +13,8 @@ export const site = {
   tagline: 'Architectural Products. Engineered to Elevate.',
   descriptor: 'Architectural Products',
   strapline: 'GFRC | FRP | Custom Architectural Solutions.',
-  domain: 'www.alicore.in',
-  url: env.PUBLIC_SITE_URL || 'https://www.alicore.in',
+  domain: 'alicore.in',
+  url: env.PUBLIC_SITE_URL || 'https://alicore.in',
   copyrightYear: 2026,
 } as const;
 

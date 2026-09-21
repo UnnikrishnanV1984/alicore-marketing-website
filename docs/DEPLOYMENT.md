@@ -152,23 +152,42 @@ customer leads.
 
 ## 6. Attaching the domain later
 
-`alicore.in` currently returns NXDOMAIN from every resolver: no NS, no SOA.
-It is either unregistered or registered at GoDaddy and never delegated.
+**The apex `alicore.in` is canonical, not `www`.** `content/site.ts`,
+`robots.txt.ts` and `astro.config.mjs` all default to `https://alicore.in`.
 
-Once it resolves:
+State as of 2026-09-21: the registrar hold is lifted (it was `clientHold` until
+2026-09-18) and the domain resolves. It is still on GoDaddy DNS
+(`ns53`/`ns54.domaincontrol.com`) serving their parked lander, and the
+Cloudflare account has **no zone** for it yet. The remaining registry statuses
+— `clientUpdateProhibited`, `clientTransferProhibited`, `clientDeleteProhibited`,
+`clientRenewProhibited` — are GoDaddy's ordinary locks and do not block
+nameserver changes made from their own dashboard.
+
+Nothing needs preserving: the domain has no MX and no TXT records, only the
+parking A records, so the cutover cannot break existing mail or services.
 
 1. Cloudflare → Add a site → `alicore.in`, and copy the two nameservers it gives
 2. GoDaddy → Domain settings → Nameservers → **Change** → paste both
 3. Wait for the zone to show **Active** (usually under an hour)
-4. Add to `site/wrangler.toml`:
+4. Uncomment the routes line in `site/wrangler.toml`:
    ```toml
-   routes = [{ pattern = "www.alicore.in", custom_domain = true }]
+   routes = [{ pattern = "alicore.in", custom_domain = true }]
    ```
-5. Change `PUBLIC_SITE_URL` to `https://www.alicore.in` and redeploy —
-   canonicals, sitemap, JSON-LD and `robots.txt` all derive from it, and the
-   staging `noindex` disappears on its own once the host is no longer
-   `workers.dev`
-6. Add a redirect rule sending `alicore.in/*` to `https://www.alicore.in/$1`
-7. Submit the sitemap in Google Search Console
+   It is commented rather than absent on purpose — naming a zone that does not
+   exist makes `wrangler deploy` fail, which would take the pipeline down.
+5. Change the `PUBLIC_SITE_URL` Actions variable to `https://alicore.in` and
+   redeploy — canonicals, sitemap, JSON-LD, `og:image` and `robots.txt` all
+   derive from it, and the staging `noindex` disappears on its own once the
+   host is no longer `workers.dev`
+6. Redirect `www` → apex with a Cloudflare **Redirect Rule** on the zone:
+   hostname equals `www.alicore.in` → 301 to `https://alicore.in${path}`.
+   This has to be a zone rule, not middleware — static assets are served ahead
+   of the Worker, so a redirect in code would never run for a static page.
+7. Point Supabase Auth's **Site URL** at `https://alicore.in`, so staff
+   password-reset links stop landing on `workers.dev`
+8. Submit the sitemap in Google Search Console
+
+Keep `workers_dev = true` through the switch: it costs nothing, stays noindex,
+and is the way back in if the custom domain misbehaves.
 
 Keep GoDaddy as registrar. Only the nameservers move.
