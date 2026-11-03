@@ -88,7 +88,10 @@ const contact = await loadContact(Astro.locals);
   .al-fab-row {
     position: fixed;
     right: 28px;
-    bottom: 28px;
+    /* --al-fab-lift is set by the script below, which keeps the buttons clear
+       of the footer's bottom row. It stays 0 if that script never runs, which
+       is the old behaviour rather than a broken one. */
+    bottom: calc(28px + var(--al-fab-lift, 0px));
     z-index: 80;
     display: flex;
     flex-direction: row-reverse;
@@ -168,3 +171,53 @@ const contact = await loadContact(Astro.locals);
     }
   }
 </style>
+
+<script>
+  /**
+   * Keep the floating buttons clear of the footer's bottom row.
+   *
+   * They are position:fixed at the bottom-right, so on a short laptop viewport
+   * they landed exactly on top of "Staff Login" and swallowed the click. Rather
+   * than parking them higher on every page -- which leaves them floating oddly
+   * in the middle of the right edge while reading -- they rest where they
+   * always did and rise only once that row comes into view, so they appear to
+   * sit on top of it.
+   *
+   * Driven by scroll position rather than a one-shot IntersectionObserver
+   * because the lift has to track the row continuously as it scrolls up, not
+   * just toggle once when it appears.
+   */
+  const row = document.querySelector('.al-fab-row');
+  const base = document.querySelector('.al-footer__base');
+
+  if (row instanceof HTMLElement && base) {
+    const REST = 28; // must match the bottom offset in the stylesheet above
+    const GAP = 18; // clearance left between the buttons and the row
+    const wide = window.matchMedia('(min-width: 768px)'); // below this the row is hidden
+    let queued = false;
+
+    const place = () => {
+      queued = false;
+      if (!wide.matches) {
+        row.style.setProperty('--al-fab-lift', '0px');
+        return;
+      }
+      // How far the row's top edge reaches up from the bottom of the viewport.
+      // Negative while it is still below the fold, which floors the lift at 0.
+      const intrusion = window.innerHeight - base.getBoundingClientRect().top;
+      const lift = Math.max(0, intrusion + GAP - REST);
+      row.style.setProperty('--al-fab-lift', lift + 'px');
+    };
+
+    const schedule = () => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(place);
+    };
+
+    addEventListener('scroll', schedule, { passive: true });
+    addEventListener('resize', schedule);
+    wide.addEventListener('change', schedule);
+    place();
+  }
+</script>
