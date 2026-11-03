@@ -3,45 +3,31 @@ main = "./dist/_worker.js/index.js"
 compatibility_date = "2026-08-01"
 compatibility_flags = ["nodejs_compat"]
 
-# Serve on <name>.<subdomain>.workers.dev while alicore.in is not yet delegated
-# to Cloudflare. Every page carries meta robots=noindex on a workers.dev host
-# (see layouts/Base.astro) so the staging URL cannot compete with the real
-# domain later.
+# Keep the workers.dev URL alongside the custom domain as a fallback. Every
+# page carries meta robots=noindex on a workers.dev host (see
+# layouts/Base.astro), so it cannot compete with alicore.in in the index.
 workers_dev = true
 
 # ---------------------------------------------------------------------------
-# GOING LIVE ON alicore.in
+# alicore.in is LIVE.
 #
-# The apex is canonical, not www -- that decision is already baked into
+# The apex is canonical, not www -- that decision is baked into
 # content/site.ts, robots.txt.ts and astro.config.mjs, which all default to
 # https://alicore.in.
 #
-# The domain resolves and is out of registrar hold, but it is still on GoDaddy
-# DNS (ns53/ns54.domaincontrol.com) serving their parked lander, and the
-# Cloudflare account has no zone for it. A `routes` entry naming a zone that
-# does not exist makes `wrangler deploy` FAIL, which would take the whole
-# pipeline down -- so the block below stays commented until the nameservers
-# move. Order matters:
+# The zone moved to Cloudflare on 2026-11-03 (GoDaddy's ns53/ns54 ->
+# danica/simon.ns.cloudflare.com) and the custom domain below was attached
+# from the dashboard, which replaced the imported GoDaddy parking A records
+# and issued the certificate. It is declared here too so config and reality
+# agree: a deploy from a clean checkout cannot quietly drop the binding.
 #
-#   1. Add alicore.in as a zone in Cloudflare; point GoDaddy's nameservers at
-#      the two it gives you. Nothing to preserve -- the domain has no MX and
-#      no TXT records, only the parking A records.
-#   2. Uncomment the routes line below.
-#   3. Set the PUBLIC_SITE_URL Actions variable to https://alicore.in. That one
-#      value switches the canonical tags, robots.txt from its staging form to
-#      production (which is what starts advertising the sitemap), the sitemap
-#      URLs, og:image and the JSON-LD.
-#   4. Redirect www -> apex with a Cloudflare Redirect Rule on the zone
-#      (hostname eq "www.alicore.in" -> 301 https://alicore.in${path}). It has
-#      to be a zone rule, not middleware: assets are served ahead of the Worker
-#      here, so a redirect in code would never run for a static page.
-#   5. Point Supabase Auth's Site URL at https://alicore.in so staff password
-#      reset links stop landing on workers.dev.
-#
-# Keep workers_dev = true through the switch. It costs nothing, stays noindex,
-# and is the way back in if the custom domain misbehaves.
+# www is NOT a second custom domain. It stays a proxied CNAME to the apex and
+# is caught by a zone Redirect Rule (hostname eq "www.alicore.in" -> 301
+# concat("https://alicore.in", http.request.uri.path)). It has to be a zone
+# rule, not middleware: assets are served ahead of the Worker here, so a
+# redirect written in code would never run for a static page.
 # ---------------------------------------------------------------------------
-# routes = [{ pattern = "alicore.in", custom_domain = true }]
+routes = [{ pattern = "alicore.in", custom_domain = true }]
 
 [assets]
 directory = "./dist"
